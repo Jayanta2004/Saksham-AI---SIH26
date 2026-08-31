@@ -1,0 +1,337 @@
+import bcrypt from 'bcryptjs';
+import { DataEncryption } from '../utils/encryption.js';
+
+// Seed Database State
+export class DatabaseState {
+  constructor() {
+    this.roles = [
+      { id: 'role_learner', name: 'Learner', description: 'Statistical Officer / Field Staff' },
+      { id: 'role_trainer', name: 'Trainer/Admin', description: 'NSSTA Faculty & Content Reviewer' },
+      { id: 'role_sysadmin', name: 'System_Admin', description: 'MoSPI Leadership & System Administrator' }
+    ];
+
+    const defaultHash = bcrypt.hashSync('Saksham@2026', 10);
+
+    this.users = [
+      {
+        id: 'usr_sso_01',
+        full_name: 'Arjun Sharma, ISS',
+        email: 'arjun.sharma@mospi.gov.in',
+        password_hash: defaultHash,
+        role_id: 'role_learner',
+        role_name: 'Learner',
+        designation: 'Senior Statistical Officer (SSO)',
+        department: 'National Accounts Division (NAD)',
+        cadre: 'Indian Statistical Service (Grade IV)',
+        educational_qualifications: [
+          { degree: 'M.Sc. Statistics', institution: 'Indian Statistical Institute (ISI) Kolkata', year: 2019 },
+          { degree: 'B.Sc. Mathematics & Statistics', institution: 'Delhi University', year: 2017 }
+        ],
+        work_experience_years: 5.5,
+        encrypted_national_id: DataEncryption.encrypt('AADHAAR-8821-4491-0192'),
+        avatar_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
+        is_active: true
+      },
+      {
+        id: 'usr_trainer_01',
+        full_name: 'Dr. Radhika Sen',
+        email: 'radhika.sen@nssta.gov.in',
+        password_hash: defaultHash,
+        role_id: 'role_trainer',
+        role_name: 'Trainer/Admin',
+        designation: 'Deputy Director & Senior Faculty',
+        department: 'National Statistical Systems Training Academy (NSSTA)',
+        cadre: 'Indian Statistical Service (Senior Time Scale)',
+        educational_qualifications: [
+          { degree: 'Ph.D. Econometrics', institution: 'JNU New Delhi', year: 2014 },
+          { degree: 'M.Stat', institution: 'ISI Delhi', year: 2009 }
+        ],
+        work_experience_years: 14.0,
+        encrypted_national_id: DataEncryption.encrypt('AADHAAR-5512-9901-8841'),
+        avatar_url: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150',
+        is_active: true
+      },
+      {
+        id: 'usr_admin_01',
+        full_name: 'Rajesh K. Verma, ISS',
+        email: 'rajesh.verma@mospi.gov.in',
+        password_hash: defaultHash,
+        role_id: 'role_sysadmin',
+        role_name: 'System_Admin',
+        designation: 'Deputy Director General (DDG)',
+        department: 'Coordination & Administration Division, MoSPI',
+        cadre: 'Indian Statistical Service (Higher Administrative Grade)',
+        educational_qualifications: [
+          { degree: 'M.Sc. Mathematical Statistics', institution: 'IIT Kanpur', year: 2000 }
+        ],
+        work_experience_years: 22.0,
+        encrypted_national_id: DataEncryption.encrypt('AADHAAR-1092-3382-7721'),
+        avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
+        is_active: true
+      },
+      {
+        id: 'usr_jso_02',
+        full_name: 'Priya Deshmukh',
+        email: 'priya.deshmukh@mospi.gov.in',
+        password_hash: defaultHash,
+        role_id: 'role_learner',
+        role_name: 'Learner',
+        designation: 'Junior Statistical Officer (JSO)',
+        department: 'Survey Design and Research Division (SDRD)',
+        cadre: 'Subordinate Statistical Service (SSS)',
+        educational_qualifications: [
+          { degree: 'M.Sc. Applied Statistics', institution: 'Pune University', year: 2022 }
+        ],
+        work_experience_years: 2.0,
+        encrypted_national_id: DataEncryption.encrypt('AADHAAR-9921-1182-3849'),
+        avatar_url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150',
+        is_active: true
+      }
+    ];
+
+    this.competency_domains = [
+      { id: 'dom_stat_methods', code: 'STAT_METHODS', name: 'Statistical Methods & Survey Sampling', icon_name: 'BarChart3', color_hex: '#1D4ED8' },
+      { id: 'dom_nat_accounts', code: 'NAT_ACCOUNTS', name: 'National Accounts & Macro Indicators', icon_name: 'TrendingUp', color_hex: '#0D9488' },
+      { id: 'dom_digital_data', code: 'DIGITAL_DATA', name: 'Digital, Data Engineering & Modern AI', icon_name: 'Cpu', color_hex: '#7C3AED' },
+      { id: 'dom_gov_ethics', code: 'GOV_ETHICS', name: 'Statistical Governance, DPDPA & UN FP', icon_name: 'ShieldCheck', color_hex: '#EA580C' },
+      { id: 'dom_leadership', code: 'LEADERSHIP', name: 'Policy Advisory & Strategic Leadership', icon_name: 'Users', color_hex: '#0284C7' }
+    ];
+
+    this.user_competencies = {
+      'usr_sso_01': {
+        'comp_sna_accounts': 2.80,
+        'comp_index_numbers': 3.50,
+        'comp_sampling': 2.20,
+        'comp_python_r_stats': 2.40,
+        'comp_ai_microdata': 1.60,
+        'comp_dpdpa_gov': 3.80,
+        'comp_policy_advisory': 2.90
+      },
+      'usr_jso_02': {
+        'comp_sna_accounts': 1.80,
+        'comp_index_numbers': 2.20,
+        'comp_sampling': 2.90,
+        'comp_python_r_stats': 1.90,
+        'comp_ai_microdata': 1.20,
+        'comp_dpdpa_gov': 2.50,
+        'comp_policy_advisory': 1.50
+      }
+    };
+
+    this.quizzes = [
+      {
+        id: 'qz_nss_sampling_01',
+        document_id: 'doc_nss79_01',
+        title: 'Diagnostic Assessment on Multi-Stage Stratified Sampling & Survey Multipliers',
+        description: 'Evaluates technical proficiency in FSU selection, second-stage stratification of households, and multiplier weighting formulas in NSS surveys.',
+        difficulty_level: 'Medium',
+        competency_tag: 'STAT_SMP_01',
+        total_questions: 4,
+        time_limit_minutes: 10,
+        passing_score_percentage: 70,
+        is_published: true,
+        created_at: new Date(Date.now() - 86400000 * 5).toISOString()
+      },
+      {
+        id: 'qz_sna_accounts_01',
+        document_id: 'doc_sna2008_02',
+        title: 'Diagnostic Assessment on SNA 2008 GVA & Supply-Use Tables',
+        description: 'Tests understanding of basic price valuation, FISIM sectoring, double deflation, and balancing discrepancy matrices.',
+        difficulty_level: 'Hard',
+        competency_tag: 'NAT_ACC_01',
+        total_questions: 4,
+        time_limit_minutes: 12,
+        passing_score_percentage: 70,
+        is_published: true,
+        created_at: new Date(Date.now() - 86400000 * 2).toISOString()
+      }
+    ];
+
+    this.quiz_questions = {
+      'qz_nss_sampling_01': [
+        {
+          id: 'qq_smp_01',
+          quiz_id: 'qz_nss_sampling_01',
+          question_text: 'In a two-stage stratified sampling design used in NSS socio-economic surveys, what constitutes the First Stage Unit (FSU) in rural and urban sectors respectively?',
+          option_a: 'Rural: Households; Urban: Census Enumeration Blocks',
+          option_b: 'Rural: Census Villages / Panchayats; Urban: Urban Frame Survey (UFS) Blocks',
+          option_c: 'Rural: Districts; Urban: Municipal Wards',
+          option_d: 'Rural: Agricultural Holdings; Urban: Commercial Establishments',
+          correct_option: 'B',
+          explanation: 'Under standard NSS survey methodology, FSUs in the rural sector are census villages (or panchayat wards in selected areas), while in the urban sector FSUs are Urban Frame Survey (UFS) blocks.',
+          source_citation: 'NSS 79th Round Manual, Chapter 2 (Sample Design), Page 14',
+          difficulty: 'Easy',
+          competency_tag: 'STAT_SMP_01',
+          order_index: 1
+        },
+        {
+          id: 'qq_smp_02',
+          quiz_id: 'qz_nss_sampling_01',
+          question_text: 'When calibrating survey weights using Generalized Regression (GREG) estimation, what is the primary objective of auxiliary population benchmark totals?',
+          option_a: 'To artificially eliminate all sampling errors regardless of sample size',
+          option_b: 'To adjust design weights so that weighted sample totals of auxiliary variables exactly match known population benchmarks, reducing variance',
+          option_c: 'To re-order questionnaire items based on respondent demographic status',
+          option_d: 'To convert qualitative survey responses into categorical numerical values',
+          correct_option: 'B',
+          explanation: 'GREG estimators incorporate auxiliary administrative or census totals to calibrate design weights, ensuring consistency with known population benchmarks and reducing sampling variance of target parameters.',
+          source_citation: 'Official Statistics Sampling Handbook, Section 4.3',
+          difficulty: 'Hard',
+          competency_tag: 'STAT_SMP_01',
+          order_index: 2
+        },
+        {
+          id: 'qq_smp_03',
+          quiz_id: 'qz_nss_sampling_01',
+          question_text: 'If a sample of n FSUs is selected with Probability Proportional to Size with Replacement (PPSWR) from a stratum with measure of size M_i and total size M_0, what is the inclusion probability of the i-th FSU across n draws?',
+          option_a: 'p_i = M_i / M_0',
+          option_b: 'p_i = n * (M_i / M_0)',
+          option_c: 'p_i = (M_0 - M_i) / n',
+          option_d: 'p_i = sqrt(M_i / n)',
+          correct_option: 'B',
+          explanation: 'In PPS sampling of size n, the selection probability of unit i in a single draw is M_i / M_0, and the expected inclusion frequency across n draws is n * (M_i / M_0).',
+          source_citation: 'NSS 79th Round Manual, Annexure B (Multiplier Formulas)',
+          difficulty: 'Medium',
+          competency_tag: 'STAT_SMP_01',
+          order_index: 3
+        },
+        {
+          id: 'qq_smp_04',
+          quiz_id: 'qz_nss_sampling_01',
+          question_text: 'Which method is recommended by MoSPI for estimating sampling variance of complex non-linear ratio estimators in multi-stage surveys?',
+          option_a: 'Simple random sample formula without finite population correction',
+          option_b: 'Linearized Taylor Series expansion or Jackknife repeated replications (JRR)',
+          option_c: 'Ignoring second-stage cluster variance entirely',
+          option_d: 'Multiplying variance by a constant arbitrary factor of 2.5',
+          correct_option: 'B',
+          explanation: 'For complex non-linear ratio estimators, MoSPI survey practice employs either Taylor Series Linearization or sub-sample replication methods (Jackknife / BRR) to compute robust standard errors.',
+          source_citation: 'NSS Methodology Guidelines, Chapter 5',
+          difficulty: 'Medium',
+          competency_tag: 'STAT_SMP_01',
+          order_index: 4
+        }
+      ],
+      'qz_sna_accounts_01': [
+        {
+          id: 'qq_sna_01',
+          quiz_id: 'qz_sna_accounts_01',
+          question_text: 'Under the System of National Accounts (SNA 2008), how is Gross Value Added (GVA) at basic prices derived from Output at basic prices?',
+          option_a: 'GVA at basic prices = Output at basic prices - Intermediate Consumption at purchasers prices',
+          option_b: 'GVA at basic prices = Output at basic prices + Product Taxes - Product Subsidies',
+          option_c: 'GVA at basic prices = GDP at market prices - Net Factor Income from Abroad',
+          option_d: 'GVA at basic prices = Final Consumption Expenditure + Gross Capital Formation',
+          correct_option: 'A',
+          explanation: 'By standard SNA 2008 definition, GVA at basic prices is equal to Gross Output measured at basic prices minus Intermediate Consumption measured at purchasers prices.',
+          source_citation: 'SNA 2008 Handbook, Chapter 6 (The Production Account)',
+          difficulty: 'Medium',
+          competency_tag: 'NAT_ACC_01',
+          order_index: 1
+        },
+        {
+          id: 'qq_sna_02',
+          quiz_id: 'qz_sna_accounts_01',
+          question_text: 'What is the correct treatment of Financial Intermediation Services Indirectly Measured (FISIM) in SNA 2008 compared to older 1968 standards?',
+          option_a: 'FISIM is treated purely as intermediate consumption of a nominal fictitious sector without allocation',
+          option_b: 'FISIM output is allocated as intermediate consumption to user industries or final consumption to households and government based on loan and deposit balances',
+          option_c: 'FISIM is excluded entirely from the production boundary as a transfer payment',
+          option_d: 'FISIM is recorded only in the financial account balance sheet',
+          correct_option: 'B',
+          explanation: 'SNA 2008 mandates that FISIM generated by financial intermediaries be allocated across user industries (intermediate consumption) and final consumers (households/government final consumption), directly impacting GDP.',
+          source_citation: 'SNA 2008 Implementation Guide for India, Section 3.4',
+          difficulty: 'Hard',
+          competency_tag: 'NAT_ACC_01',
+          order_index: 2
+        }
+      ]
+    };
+
+    this.attempts = [
+      {
+        id: 'qa_arjun_01',
+        user_id: 'usr_sso_01',
+        quiz_id: 'qz_nss_sampling_01',
+        quiz_title: 'Diagnostic Assessment on Multi-Stage Stratified Sampling & Survey Multipliers',
+        score_percentage: 75.0,
+        total_correct: 3,
+        total_questions: 4,
+        time_spent_seconds: 380,
+        passed: true,
+        attempted_at: new Date(Date.now() - 86400000 * 2).toISOString(),
+        competency_gain: { comp_sampling: 0.25 }
+      }
+    ];
+
+    this.uploaded_documents = [
+      {
+        id: 'doc_nss79_01',
+        uploader_id: 'usr_trainer_01',
+        title: 'National Sample Survey (NSS) 79th Round Instruction Manual: Sampling Design & Household Schedules',
+        file_name: 'NSS_79th_Round_Manual.pdf',
+        file_type: 'PDF',
+        file_size: '4.2 MB',
+        chunks_count: 48,
+        collection_name: 'coll_nss79_sampling',
+        competency_tag: 'STAT_SMP_01',
+        status: 'Indexed',
+        summary: 'Official MoSPI operational manual for NSS 79th Round detailing multi-stage stratified design, UFS block updates, and multiplier estimation formulas.',
+        created_at: new Date(Date.now() - 86400000 * 5).toISOString()
+      },
+      {
+        id: 'doc_sna2008_02',
+        uploader_id: 'usr_trainer_01',
+        title: 'System of National Accounts 2008 & India Implementation Guidelines: Gross Value Added & SUT',
+        file_name: 'SNA_2008_India_Handbook.pdf',
+        file_type: 'PDF',
+        file_size: '6.8 MB',
+        chunks_count: 72,
+        collection_name: 'coll_sna2008_gva',
+        competency_tag: 'NAT_ACC_01',
+        status: 'Indexed',
+        summary: 'Methodological handbook detailing compilation of GVA by economic activity, double deflation techniques, and Supply-Use Table balance reconciliation.',
+        created_at: new Date(Date.now() - 86400000 * 2).toISOString()
+      }
+    ];
+  }
+
+  getUserByEmail(email) {
+    return this.users.find((u) => u.email.toLowerCase() === email.toLowerCase());
+  }
+
+  getUserById(id) {
+    return this.users.find((u) => u.id === id);
+  }
+
+  getUserCompetencies(userId) {
+    return this.user_competencies[userId] || {
+      'comp_sna_accounts': 2.0,
+      'comp_index_numbers': 2.5,
+      'comp_sampling': 2.0,
+      'comp_python_r_stats': 2.0,
+      'comp_ai_microdata': 1.5,
+      'comp_dpdpa_gov': 3.0,
+      'comp_policy_advisory': 2.0
+    };
+  }
+
+  updateUserCompetency(userId, compId, delta) {
+    if (!this.user_competencies[userId]) {
+      this.user_competencies[userId] = {};
+    }
+    const current = this.user_competencies[userId][compId] || 2.0;
+    const updated = Math.min(5.0, Math.max(1.0, current + delta));
+    this.user_competencies[userId][compId] = Number(updated.toFixed(2));
+    return this.user_competencies[userId];
+  }
+
+  saveQuiz(quizData, questions) {
+    this.quizzes.unshift(quizData);
+    this.quiz_questions[quizData.id] = questions;
+    return quizData;
+  }
+
+  saveAttempt(attemptData) {
+    this.attempts.unshift(attemptData);
+    return attemptData;
+  }
+}
+
+export const db = new DatabaseState();

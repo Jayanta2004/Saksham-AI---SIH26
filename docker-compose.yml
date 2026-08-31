@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  # 1. Operational PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: saksham_postgres
+    environment:
+      POSTGRES_DB: saksham_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: SakshamPostgresPassword2026!
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - ./database/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql
+    restart: unless-stopped
+
+  # 2. Redis Session & API Cache
+  redis:
+    image: redis:7-alpine
+    container_name: saksham_redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
+  # 3. Python AI & RAG Engine (FastAPI)
+  ai_service:
+    build:
+      context: ./ai_service
+      dockerfile: Dockerfile
+    container_name: saksham_ai_service
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  # 4. Node.js API Gateway & RBAC Layer
+  gateway_service:
+    build:
+      context: ./gateway_service
+      dockerfile: Dockerfile
+    container_name: saksham_gateway
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - PYTHON_AI_URL=http://ai_service:8000
+      - DATABASE_URL=postgresql://postgres:SakshamPostgresPassword2026!@postgres:5432/saksham_db
+      - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=saksham_jwt_super_secret_key_mo_spi_2026
+      - DATA_ENCRYPTION_KEY=saksham_ai_mospi_secure_key_2026_32char!!
+    depends_on:
+      - postgres
+      - redis
+      - ai_service
+    restart: unless-stopped
+
+  # 5. Next.js Modern Web Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: saksham_frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_GATEWAY_URL=http://localhost:5000
+    depends_on:
+      - gateway_service
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
