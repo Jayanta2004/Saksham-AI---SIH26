@@ -105,107 +105,36 @@ graph TD
 
 ## 5. Repository Directory & Codebase Structure
 
-The codebase is organized into modular, decoupled tiers separating presentation, API orchestration, and AI computation:
-
 ```
-F:\Saksham-AI---SIH26
+Saksham-AI---SIH26/
 ├── backend/
-│   ├── ai_service/                    # Python FastAPI AI & RAG Engine (Port 8000)
-│   │   ├── services/
-│   │   │   ├── document_parser.py     # PDF, DOCX, PPTX chunker & PyMuPDF extractor
-│   │   │   ├── predictive_analytics.py# 12-month workforce predictive forecasting model
-│   │   │   ├── quiz_generator.py      # OpenAI / Gemini RAG MCQ synthesizer & offline fallback
-│   │   │   ├── skill_gap_engine.py    # Multi-dimensional competency deficit calculator
-│   │   │   └── vector_store.py        # Vector embeddings & semantic search store
-│   │   ├── .env                       # AI service configuration (OpenAI, Gemini keys)
-│   │   ├── Dockerfile                 # Container specification for Python service
-│   │   ├── main.py                    # FastAPI application entry point & chat handler
-│   │   └── requirements.txt           # Python dependencies
+│   ├── ai_service/             # FastAPI AI & RAG Engine (Port 8000)
+│   │   ├── services/           # Document Parsers, Quiz Gen, Skill-Gap, Vector Store
+│   │   ├── main.py             # FastAPI App & Chat Handler
+│   │   └── requirements.txt    # Python Dependencies
 │   │
-│   └── gateway_service/               # Node.js Express API Gateway (Port 5000)
+│   └── gateway_service/        # Node.js Express API Gateway (Port 5000)
 │       ├── src/
-│       │   ├── db/
-│       │   │   ├── inMemoryDb.js      # Relational in-memory fallback store
-│       │   │   ├── schema.sql         # PostgreSQL schema definition (Users, Comps, Quizzes)
-│       │   │   └── seed.sql           # Official seed dataset with demo personas
-│       │   ├── middleware/
-│       │   │   └── auth.js            # JWT verification & Role-Based Access Control (RBAC)
-│       │   ├── services/
-│       │   │   ├── db.js              # Persistence abstraction layer
-│       │   │   ├── emailService.js    # Gmail SMTP & Resend live 6-digit OTP delivery
-│       │   │   ├── igotSync.js        # iGOT Karmayogi course sync connector
-│       │   │   ├── nsstaSync.js       # NSSTA Greater Noida workshop sync connector
-│       │   │   ├── postgresDb.js      # PostgreSQL Neon Cloud client connection
-│       │   │   └── redisStore.js      # Redis cache client & session manager
-│       │   ├── utils/
-│       │   │   └── encryption.js      # AES-256-CBC field encryption for PII
-│       │   └── server.js              # Express API Gateway router & domain knowledge engine
-│       ├── .env                       # Gateway environment variables (DB, JWT, SMTP)
-│       ├── Dockerfile                 # Container specification for Gateway service
-│       └── package.json               # Gateway npm dependencies
+│       │   ├── db/             # Schema, Seeds & Database Adapters
+│       │   ├── middleware/     # JWT Auth & Role-Based Access Control
+│       │   ├── services/       # Email OTP, iGOT & NSSTA Sync Connectors
+│       │   └── server.js       # Express Gateway Router & Domain Engine
+│       └── package.json        # Gateway Dependencies
 │
-├── frontend/                          # React 18 + Vite + Tailwind CSS SPA (Port 3000)
+├── frontend/                   # React 18 + Vite + Tailwind CSS SPA (Port 3000)
 │   ├── src/
-│   │   ├── components/
-│   │   │   └── layout/
-│   │   │       ├── Header.jsx         # App header with notifications & user profile
-│   │   │       ├── MainLayout.jsx     # Responsive main shell with mobile drawer
-│   │   │       └── Sidebar.jsx        # Role-aware navigation (Learner / Admin)
-│   │   ├── context/
-│   │   │   └── AuthContext.jsx        # Global authentication & session state provider
-│   │   ├── data/
-│   │   │   ├── mockSkills.js          # MoSPI competency framework baseline dataset
-│   │   │   └── mockUsers.js           # Demo user personas and cadre information
+│   │   ├── components/         # Layout (Header, Sidebar, Main Layout)
 │   │   ├── pages/
-│   │   │   ├── admin/                 # Administrator & Trainer Portal
-│   │   │   │   ├── AdminAnalytics.jsx # Departmental matrix (NAD, SDRD, FOD, CSO) & forecasting
-│   │   │   │   ├── AdminDashboard.jsx # Workforce readiness KPIs & systemic skill gap charts
-│   │   │   │   ├── AdminReports.jsx   # Exportable audit reports (PDF / CSV)
-│   │   │   │   ├── AdminSettings.jsx  # Recommendation algorithm weights & sync frequency
-│   │   │   │   ├── CompetencyFramework.jsx # MoSPI benchmark standards framework
-│   │   │   │   ├── ContentStudio.jsx  # Document upload & RAG MCQ synthesis studio
-│   │   │   │   └── UserManagement.jsx # Officer roster and competency score auditing
-│   │   │   ├── auth/                  # Authentication & Onboarding
-│   │   │   │   ├── ForgotPassword.jsx # 6-digit OTP email verification with Gmail SMTP
-│   │   │   │   ├── Login.jsx          # JWT login with 1-click demo persona access
-│   │   │   │   └── Register.jsx       # Self-service registration with auto-activation
-│   │   │   └── learner/               # Statistical Officer Learner Portal
-│   │   │       ├── AiAssistant.jsx    # Multi-session chat with formula cards & domain intelligence
-│   │   │       ├── Assessments.jsx    # Diagnostic assessment catalogue
-│   │   │       ├── Certificates.jsx   # Verified certificate gallery with modal preview
-│   │   │       ├── CourseDetail.jsx   # Course module viewer & syllabus breakdown
-│   │   │       ├── LearnerDashboard.jsx # Competency radar chart & top skill gap cards
-│   │   │       ├── MyProgress.jsx     # Monthly capability trajectory & learning hours bar charts
-│   │   │       ├── MySkills.jsx       # 4-pillar competency breakdown
-│   │   │       ├── PersonalizedLearningPath.jsx # Step-by-step milestone roadmap
-│   │   │       ├── Profile.jsx        # Official profile & cadre details
-│   │   │       ├── QuizArena.jsx      # Diagnostic quiz interface with instant scoring
-│   │   │       ├── RecommendedCourses.jsx # AI-matched iGOT course suggestions
-│   │   │       ├── SkillGap.jsx       # Mathematical deficit matrix (Delta = B - C)
-│   │   │       └── TrainingProgrammes.jsx # NSSTA residential workshops & self-nomination
-│   │   ├── routes/
-│   │   │   ├── AppRoutes.jsx          # Declarative application route configuration
-│   │   │   └── ProtectedRoute.jsx     # Role-based route guard
-│   │   ├── services/
-│   │   │   ├── analyticsService.js    # Workforce analytics API client
-│   │   │   ├── api.js                 # Axios instance with JWT interceptors
-│   │   │   ├── assessmentService.js   # Quiz and content studio API client
-│   │   │   ├── authService.js         # Authentication API client
-│   │   │   ├── courseService.js       # Course catalogue & sync API client
-│   │   │   └── skillService.js        # Competency & skill gap API client
-│   │   ├── App.jsx                    # React root component
-│   │   ├── index.css                  # Global Tailwind CSS styling
-│   │   └── main.jsx                   # Vite entry point
-│   ├── Dockerfile                     # Container specification for Frontend
-│   ├── index.html                     # HTML root template
-│   ├── package.json                   # Frontend npm dependencies
-│   ├── tailwind.config.js             # Tailwind CSS design system configuration
-│   └── vite.config.js                 # Vite bundler configuration (Port 3000)
+│   │   │   ├── admin/          # Analytics, Content Studio, User Roster
+│   │   │   ├── auth/           # Login, Register, OTP Password Reset
+│   │   │   └── learner/        # Dashboard, Skill Gap, AI Assistant, Quizzes
+│   │   ├── services/           # API Client Modules
+│   │   └── App.jsx             # Root Component & Routes
+│   └── package.json            # Frontend Dependencies
 │
-├── docker-compose.yml                 # Multi-container orchestration (4 services)
-├── README.md                          # Comprehensive technical documentation
-├── start_all.bat                      # 1-Click Windows batch startup script
-└── start_all.ps1                      # 1-Click PowerShell startup script
+├── docker-compose.yml          # Multi-Container Orchestration (PostgreSQL, Redis, AI, Gateway)
+├── start_all.bat               # 1-Click Windows Batch Startup Script
+└── start_all.ps1               # 1-Click PowerShell Startup Script
 ```
 
 ---
