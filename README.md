@@ -191,15 +191,35 @@ The platform includes 1-click quick login buttons for all evaluation personas:
 
 ---
 
-## 9. Quick Start & Running Locally
+## 9. Quick Start & Execution Scripts
 
-### Prerequisites
-* **Node.js**: v18+ (v20+ recommended)
-* **Python**: v3.10+
-* **PostgreSQL**: Neon Cloud (pre-configured) or local PostgreSQL instance
-* **Git**
+The repository includes pre-configured single-command automation scripts for all major runtime environments:
 
-### Step-by-Step Execution
+### Option A: 1-Click Windows Batch Script (`start_all.bat`)
+Double-click `start_all.bat` or run from the root terminal:
+```cmd
+start_all.bat
+```
+*This simultaneously launches the Python AI engine (Port 8000), Node.js API Gateway (Port 5000), and Vite React frontend (Port 3000) in isolated, labeled command windows.*
+
+### Option B: 1-Click PowerShell Script (`start_all.ps1`)
+Run the PowerShell automation script:
+```powershell
+.\start_all.ps1
+```
+
+### Option C: Multi-Container Docker Deployment (`docker-compose.yml`)
+To spin up all services in isolated Docker containers with automated PostgreSQL schema initialization and Redis caching:
+```bash
+docker-compose up --build
+```
+*Containerized Architecture:*
+* `saksham_postgres` (Port 5432) — PostgreSQL 16 with automatic `schema.sql` and `seed.sql` mounting
+* `saksham_redis` (Port 6379) — Redis 7 Alpine cache
+* `saksham_ai_service` (Port 8000) — Python FastAPI RAG Engine
+* `saksham_gateway` (Port 5000) — Node.js Express API Gateway
+
+### Option D: Manual Service Execution
 
 #### 1. Start Python AI Microservice (Port 8000)
 ```bash
