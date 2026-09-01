@@ -253,10 +253,10 @@ npm run dev
 ```env
 PORT=5000
 NODE_ENV=development
-JWT_SECRET=saksham_super_secret_jwt_key_2026_mospi_diid
-DATABASE_URL=postgresql://neondb_owner:npg_n2z0aUuXjhLq@ep-lucky-smoke-a1t2f33l-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require
+JWT_SECRET=your_jwt_secret_key_here
+DATABASE_URL=postgresql://username:password@ep-sample-pooler.aws.neon.tech/neondb?sslmode=require
 PYTHON_AI_URL=http://127.0.0.1:8000
-AES_ENCRYPTION_KEY=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+AES_ENCRYPTION_KEY=your_32_character_hex_encryption_key_here
 ```
 
 ### `backend/ai_service/.env`
