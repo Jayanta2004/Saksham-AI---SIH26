@@ -13,8 +13,8 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
-      - ./database/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql
+      - ./backend/gateway_service/src/db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - ./backend/gateway_service/src/db/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql
     restart: unless-stopped
 
   # 2. Redis Session & API Cache
@@ -28,13 +28,14 @@ services:
   # 3. Python AI & RAG Engine (FastAPI)
   ai_service:
     build:
-      context: ./ai_service
+      context: ./backend/ai_service
       dockerfile: Dockerfile
     container_name: saksham_ai_service
     ports:
       - "8000:8000"
     environment:
       - PORT=8000
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
       - OPENAI_API_KEY=${OPENAI_API_KEY:-}
     depends_on:
       - redis
@@ -43,7 +44,7 @@ services:
   # 4. Node.js API Gateway & RBAC Layer
   gateway_service:
     build:
-      context: ./gateway_service
+      context: ./backend/gateway_service
       dockerfile: Dockerfile
     container_name: saksham_gateway
     ports:
