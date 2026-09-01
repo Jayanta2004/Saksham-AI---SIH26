@@ -1,60 +1,111 @@
-import React from 'react';
-import { Check, Play, Circle, Clock, BookOpen, BarChart2 } from 'lucide-react';
-
-const pathSteps = [
-  {
-    step: 1,
-    status: 'completed',
-    title: 'Foundations of National Statistical Frameworks',
-    provider: 'iGOT Karmayogi',
-    duration: '2 Weeks',
-    skill: 'Survey Methodology',
-    difficulty: 'Beginner',
-    progress: 100
-  },
-  {
-    step: 2,
-    status: 'completed',
-    title: 'Data Privacy & DPDP Act 2023 Implementation',
-    provider: 'NeGD',
-    duration: '3 Weeks',
-    skill: 'Digital Governance',
-    difficulty: 'Intermediate',
-    progress: 100
-  },
-  {
-    step: 3,
-    status: 'current',
-    title: 'Python for Statistical Computing & Automated Reporting',
-    provider: 'SWAYAM / IIT Madras',
-    duration: '6 Weeks',
-    skill: 'Python & Data Analytics',
-    difficulty: 'Intermediate',
-    progress: 65
-  },
-  {
-    step: 4,
-    status: 'upcoming',
-    title: 'Advanced Sampling Techniques & Small Area Estimation',
-    provider: 'Indian Statistical Institute',
-    duration: '5 Weeks',
-    skill: 'Sampling Theory',
-    difficulty: 'Advanced',
-    progress: 0
-  },
-  {
-    step: 5,
-    status: 'upcoming',
-    title: 'Evidence-Based Public Policy Formulation & Presentation',
-    provider: 'LBSNAA',
-    duration: '3 Weeks',
-    skill: 'Policy Communication',
-    difficulty: 'Advanced',
-    progress: 0
-  }
-];
+import React, { useState, useEffect } from 'react';
+import { Check, Play, Circle, Clock, BookOpen, BarChart2, Loader2, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import { skillService } from '../../services/skillService';
 
 export default function PersonalizedLearningPath() {
+  const { user } = useAuth();
+  const [loading, setLoading] = useState(true);
+  const [steps, setSteps] = useState([]);
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchPath = async () => {
+      setLoading(true);
+      try {
+        const [compData, statsData] = await Promise.all([
+          skillService.getUserCompetencies().catch(() => null),
+          skillService.getUserStats().catch(() => null)
+        ]);
+
+        if (isMounted) {
+          const completedCount = statsData?.assessments_passed || 0;
+          const pathway = compData?.recommended_pathway || [];
+
+          if (pathway.length > 0) {
+            const mappedSteps = pathway.map((p, idx) => {
+              let status = 'upcoming';
+              let progress = 0;
+
+              if (idx < completedCount) {
+                status = 'completed';
+                progress = 100;
+              } else if (idx === completedCount) {
+                status = 'current';
+                progress = 25;
+              }
+
+              return {
+                step: idx + 1,
+                status,
+                title: p.title,
+                provider: p.provider || 'iGOT Karmayogi',
+                duration: p.duration_hours ? `${p.duration_hours} Hours` : '3 Weeks',
+                skill: p.target_competency || 'Official Statistics',
+                difficulty: p.urgency === 'High' ? 'Intermediate' : 'Beginner',
+                progress,
+                url: p.url || '/courses'
+              };
+            });
+            setSteps(mappedSteps);
+          } else {
+            // Default dynamic baseline steps
+            setSteps([
+              {
+                step: 1,
+                status: completedCount > 0 ? 'completed' : 'current',
+                title: 'Foundations of National Statistical Frameworks & NSS Sampling',
+                provider: 'iGOT Karmayogi',
+                duration: '18 Hours',
+                skill: 'Survey Methodology',
+                difficulty: 'Intermediate',
+                progress: completedCount > 0 ? 100 : 35
+              },
+              {
+                step: 2,
+                status: completedCount > 1 ? 'completed' : (completedCount === 1 ? 'current' : 'upcoming'),
+                title: 'System of National Accounts (SNA 2008) GDP & GVA Compilation',
+                provider: 'iGOT Karmayogi / NSSTA',
+                duration: '24 Hours',
+                skill: 'National Accounts',
+                difficulty: 'Intermediate',
+                progress: completedCount > 1 ? 100 : 0
+              },
+              {
+                step: 3,
+                status: completedCount > 2 ? 'completed' : (completedCount === 2 ? 'current' : 'upcoming'),
+                title: 'Data Processing in Python & R for Official Surveys',
+                provider: 'SWAYAM / IIT Madras',
+                duration: '30 Hours',
+                skill: 'Python & R Data Analytics',
+                difficulty: 'Advanced',
+                progress: 0
+              },
+              {
+                step: 4,
+                status: 'upcoming',
+                title: 'Digital Personal Data Protection (DPDPA 2023) & Statistical Confidentiality',
+                provider: 'NeGD & MoSPI',
+                duration: '12 Hours',
+                skill: 'Digital Governance',
+                difficulty: 'Intermediate',
+                progress: 0
+              }
+            ]);
+          }
+        }
+      } catch (err) {
+        console.warn('Learning path fetch error:', err);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+
+    fetchPath();
+    return () => { isMounted = false; };
+  }, [user]);
+
   const getStatusIcon = (status) => {
     switch (status) {
       case 'completed':
@@ -82,9 +133,9 @@ export default function PersonalizedLearningPath() {
   const getStatusBadge = (status) => {
     switch (status) {
       case 'completed':
-        return 'text-emerald-700 bg-emerald-50 border border-emerald-100';
+        return 'text-emerald-700 bg-emerald-50 border border-emerald-200 font-semibold';
       case 'current':
-        return 'text-blue-700 bg-blue-50 border border-blue-100 font-semibold';
+        return 'text-blue-700 bg-blue-50 border border-blue-200 font-semibold';
       case 'upcoming':
       default:
         return 'text-gray-500 bg-gray-100 border border-gray-200';
@@ -99,103 +150,121 @@ export default function PersonalizedLearningPath() {
         return 'In Progress';
       case 'upcoming':
       default:
-        return 'Upcoming';
+        return 'Upcoming Milestone';
     }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-[50vh] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+          <p className="text-sm text-gray-500">Generating personalized learning pathway...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50/50 p-6 space-y-6">
+    <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-xl font-semibold text-gray-900">Learning Path</h1>
+      <div className="bg-white p-6 rounded-xl border border-gray-200">
+        <h1 className="text-xl font-bold text-gray-900">Personalized Learning Roadmap</h1>
         <p className="text-sm text-gray-500 mt-1">
-          Your structured roadmap designed to achieve target proficiency in core competency milestones.
+          Curated training milestones dynamically sequenced by AI to close your specific competency gaps
         </p>
       </div>
 
-      {/* Timeline Container */}
-      <div className="max-w-4xl mx-auto pt-2 pb-8">
-        <div className="relative border-l-2 border-gray-200 ml-4 sm:ml-5 space-y-8">
-          {pathSteps.map((step) => {
-            const isCurrent = step.status === 'current';
+      {/* Timeline Steps */}
+      <div className="relative pl-6 sm:pl-8 space-y-8 before:absolute before:left-[19px] sm:before:left-[23px] before:top-4 before:bottom-4 before:w-0.5 before:bg-gray-200">
+        {steps.map((item) => (
+          <div key={item.step} className="relative flex items-start gap-4 sm:gap-6 group">
+            {/* Timeline Icon Marker */}
+            <div className="relative z-10 shrink-0 mt-1">
+              {getStatusIcon(item.status)}
+            </div>
 
-            return (
-              <div key={step.step} className="relative pl-6 sm:pl-8">
-                {/* Node Icon on Timeline */}
-                <div className="absolute -left-[17px] top-4">
-                  {getStatusIcon(step.status)}
+            {/* Card Body */}
+            <div
+              className={`flex-1 bg-white border rounded-xl p-5 shadow-sm transition-all duration-200 ${
+                item.status === 'current'
+                  ? 'border-blue-500 ring-2 ring-blue-50'
+                  : 'border-gray-200 hover:border-gray-300'
+              }`}
+            >
+              {/* Header Info */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                    Step {item.step}
+                  </span>
+                  <span className="text-gray-300">•</span>
+                  <span className="text-xs font-semibold text-blue-700">{item.provider}</span>
                 </div>
-
-                {/* Step Card */}
-                <div
-                  className={`bg-white rounded-xl p-6 transition shadow-sm space-y-4 ${
-                    isCurrent
-                      ? 'border-2 border-blue-600 ring-1 ring-blue-100'
-                      : 'border border-gray-200'
-                  }`}
+                <span
+                  className={`text-[11px] px-2.5 py-0.5 rounded-full border self-start sm:self-auto ${getStatusBadge(
+                    item.status
+                  )}`}
                 >
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-semibold text-gray-400">
-                        Step {step.step}
-                      </span>
-                      <span className="text-gray-300">•</span>
-                      <span className="text-xs text-gray-500 font-medium">
-                        {step.provider}
-                      </span>
-                    </div>
+                  {formatStatusLabel(item.status)}
+                </span>
+              </div>
 
-                    <span
-                      className={`text-xs px-2.5 py-0.5 rounded self-start sm:self-auto ${getStatusBadge(
-                        step.status
-                      )}`}
-                    >
-                      {formatStatusLabel(step.status)}
-                    </span>
-                  </div>
+              {/* Title */}
+              <h3 className="text-base font-bold text-gray-900 mb-3">{item.title}</h3>
 
-                  <div>
-                    <h2 className="text-base font-semibold text-gray-900">
-                      {step.title}
-                    </h2>
-                  </div>
-
-                  {/* Metadata */}
-                  <div className="flex flex-wrap items-center gap-4 text-xs text-gray-500 pt-1">
-                    <div className="flex items-center gap-1.5">
-                      <Clock className="w-4 h-4 text-gray-400" />
-                      <span>{step.duration}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <BookOpen className="w-4 h-4 text-gray-400" />
-                      <span>{step.skill}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <BarChart2 className="w-4 h-4 text-gray-400" />
-                      <span>{step.difficulty}</span>
-                    </div>
-                  </div>
-
-                  {/* Progress Bar for Current Step */}
-                  {isCurrent && (
-                    <div className="pt-3 border-t border-gray-100 space-y-2">
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="text-gray-500 font-medium">Module Progress</span>
-                        <span className="font-semibold text-blue-600">{step.progress}%</span>
-                      </div>
-                      <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
-                        <div
-                          className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                          style={{ width: `${step.progress}%` }}
-                        />
-                      </div>
-                    </div>
-                  )}
+              {/* Metadata Tags */}
+              <div className="flex flex-wrap items-center gap-4 text-xs text-gray-500 mb-4">
+                <div className="flex items-center gap-1.5">
+                  <Clock className="w-4 h-4 text-gray-400" />
+                  <span>{item.duration}</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <BookOpen className="w-4 h-4 text-gray-400" />
+                  <span>{item.skill}</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <BarChart2 className="w-4 h-4 text-gray-400" />
+                  <span>{item.difficulty}</span>
                 </div>
               </div>
-            );
-          })}
-        </div>
+
+              {/* Progress Bar for Current Step */}
+              {item.status === 'current' && (
+                <div className="mt-4 pt-4 border-t border-gray-100 space-y-3">
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="font-medium text-gray-700">Active Module Progress</span>
+                    <span className="font-bold text-blue-600">{item.progress}%</span>
+                  </div>
+                  <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+                    <div
+                      className="bg-blue-600 h-2 rounded-full transition-all duration-500"
+                      style={{ width: `${item.progress}%` }}
+                    />
+                  </div>
+                  <div className="flex justify-end pt-1">
+                    <Link
+                      to="/courses/crs_igot_01"
+                      className="inline-flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow-sm transition"
+                    >
+                      <span>Continue Learning</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
+                  </div>
+                </div>
+              )}
+
+              {item.status === 'upcoming' && (
+                <div className="mt-3 pt-3 border-t border-gray-100 flex justify-between items-center text-xs text-gray-400">
+                  <span>Prerequisite: Complete preceding step</span>
+                  <Link to="/courses" className="text-blue-600 hover:underline font-medium">
+                    Preview Course
+                  </Link>
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

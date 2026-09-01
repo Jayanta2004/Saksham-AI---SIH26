@@ -1,34 +1,56 @@
-import React, { useState } from 'react';
-import { mockSkills as mockSkillsSource } from '../../data/mockSkills';
-
-const fallbackSkills = [
-  { id: 1, name: 'Statistical Sampling & Survey Design', category: 'Statistical', currentLevel: 3, requiredLevel: 5, priority: 'High' },
-  { id: 2, name: 'Time Series & Macroeconomic Forecasting', category: 'Statistical', currentLevel: 4, requiredLevel: 4, priority: 'Low' },
-  { id: 3, name: 'Python for Data Analysis', category: 'Technical', currentLevel: 2, requiredLevel: 4, priority: 'High' },
-  { id: 4, name: 'R & Biostatistics Modeling', category: 'Technical', currentLevel: 3, requiredLevel: 4, priority: 'Medium' },
-  { id: 5, name: 'SQL & Enterprise Relational Databases', category: 'Technical', currentLevel: 4, requiredLevel: 5, priority: 'Medium' },
-  { id: 6, name: 'Digital Personal Data Protection (DPDP) Act', category: 'Digital Governance', currentLevel: 2, requiredLevel: 4, priority: 'High' },
-  { id: 7, name: 'Open Data Standards & API Governance', category: 'Digital Governance', currentLevel: 3, requiredLevel: 4, priority: 'Medium' },
-  { id: 8, name: 'Public Policy Communication & Briefing', category: 'Behavioural', currentLevel: 4, requiredLevel: 4, priority: 'Low' },
-  { id: 9, name: 'Cross-Departmental Stakeholder Management', category: 'Behavioural', currentLevel: 3, requiredLevel: 5, priority: 'High' }
-];
+import React, { useState, useEffect } from 'react';
+import { Loader2 } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { skillService } from '../../services/skillService';
 
 export default function MySkills() {
+  const { user } = useAuth();
   const [activeCategory, setActiveCategory] = useState('All');
+  const [loading, setLoading] = useState(true);
+  const [skills, setSkills] = useState([]);
 
-  // Normalize skills data if imported mock data format differs
-  const rawSkills = Array.isArray(mockSkillsSource)
-    ? mockSkillsSource
-    : mockSkillsSource?.skills || fallbackSkills;
+  useEffect(() => {
+    let isMounted = true;
+    const fetchCompetencies = async () => {
+      setLoading(true);
+      try {
+        const res = await skillService.getUserCompetencies();
+        if (isMounted && res) {
+          if (res.competency_breakdown && Array.isArray(res.competency_breakdown)) {
+            const mapped = res.competency_breakdown.map((c, idx) => {
+              let cat = 'Statistical';
+              if (c.name.includes('Python') || c.name.includes('AI') || c.name.includes('Data')) cat = 'Technical';
+              else if (c.name.includes('DPDPA') || c.name.includes('Governance')) cat = 'Digital Governance';
+              else if (c.name.includes('Policy') || c.name.includes('Leadership')) cat = 'Behavioural';
 
-  const skills = rawSkills.map((s, idx) => ({
-    id: s.id || idx + 1,
-    name: s.name || s.skillName || 'Skill',
-    category: s.category || 'Technical',
-    currentLevel: s.currentLevel ?? s.current ?? 3,
-    requiredLevel: s.requiredLevel ?? s.required ?? 5,
-    priority: s.priority || (s.currentLevel < s.requiredLevel ? 'High' : 'Low')
-  }));
+              const cur = c.current_level || 2.0;
+              const req = c.required_level || 4.0;
+              const gap = Number((req - cur).toFixed(2));
+              const prio = gap >= 1.0 ? 'High' : gap >= 0.5 ? 'Medium' : 'Low';
+
+              return {
+                id: c.competency_id || idx + 1,
+                name: c.name,
+                category: cat,
+                currentLevel: cur,
+                requiredLevel: req,
+                gap,
+                priority: prio
+              };
+            });
+            setSkills(mapped);
+          }
+        }
+      } catch (err) {
+        console.warn('Skills fetch error:', err);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+
+    fetchCompetencies();
+    return () => { isMounted = false; };
+  }, [user]);
 
   const categories = ['All', 'Statistical', 'Technical', 'Digital Governance', 'Behavioural'];
 
@@ -36,23 +58,22 @@ export default function MySkills() {
     ? skills
     : skills.filter((s) => s.category.toLowerCase() === activeCategory.toLowerCase());
 
-  // Category average score calculation
   const getCategoryScore = (cat) => {
     const catSkills = skills.filter((s) => s.category.toLowerCase() === cat.toLowerCase());
     if (catSkills.length === 0) return 0;
-    const totalPercentage = catSkills.reduce((acc, s) => acc + (s.currentLevel / s.requiredLevel) * 100, 0);
+    const totalPercentage = catSkills.reduce((acc, s) => acc + (s.currentLevel / (s.requiredLevel || 4.0)) * 100, 0);
     return Math.round(totalPercentage / catSkills.length);
   };
 
   const getPriorityStyle = (priority) => {
     switch (priority?.toLowerCase()) {
       case 'high':
-        return 'text-rose-700 bg-rose-50 border border-rose-100';
+        return 'text-rose-700 bg-rose-50 border border-rose-200';
       case 'medium':
-        return 'text-amber-700 bg-amber-50 border border-amber-100';
+        return 'text-amber-700 bg-amber-50 border border-amber-200';
       case 'low':
       default:
-        return 'text-emerald-700 bg-emerald-50 border border-emerald-100';
+        return 'text-emerald-700 bg-emerald-50 border border-emerald-200';
     }
   };
 
@@ -60,26 +81,37 @@ export default function MySkills() {
     ? categories.filter((c) => c !== 'All')
     : [activeCategory];
 
+  if (loading) {
+    return (
+      <div className="min-h-[50vh] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+          <p className="text-sm text-gray-500">Loading competency profile...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50/50 p-6 space-y-6">
+    <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-xl font-semibold text-gray-900">My Skills</h1>
+      <div className="bg-white p-6 rounded-xl border border-gray-200">
+        <h1 className="text-xl font-bold text-gray-900">My Statistical & Technical Skills</h1>
         <p className="text-sm text-gray-500 mt-1">
-          Review your competency ratings, target proficiency levels, and skill gaps across categories.
+          Proficiency evaluation and benchmark gaps across official MoSPI competency frameworks
         </p>
       </div>
 
-      {/* Filter Tabs */}
+      {/* Category Filter Tabs */}
       <div className="flex flex-wrap gap-2 border-b border-gray-200 pb-3">
         {categories.map((cat) => (
           <button
             key={cat}
             onClick={() => setActiveCategory(cat)}
-            className={`px-3 py-1.5 text-sm font-medium rounded-lg transition ${
+            className={`px-4 py-2 rounded-lg text-xs font-semibold transition ${
               activeCategory === cat
-                ? 'bg-blue-600 text-white'
-                : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+                ? 'bg-blue-600 text-white shadow-sm'
+                : 'bg-white text-gray-600 hover:text-gray-900 border border-gray-200'
             }`}
           >
             {cat}
@@ -87,63 +119,56 @@ export default function MySkills() {
         ))}
       </div>
 
-      {/* Category Sections */}
+      {/* Skill Cards by Category */}
       <div className="space-y-8">
         {activeCategories.map((cat) => {
-          const categorySkills = filteredSkills.filter(
-            (s) => s.category.toLowerCase() === cat.toLowerCase()
-          );
-
+          const categorySkills = filteredSkills.filter((s) => s.category.toLowerCase() === cat.toLowerCase());
           if (categorySkills.length === 0) return null;
 
-          const catScore = getCategoryScore(cat);
+          const avgScore = getCategoryScore(cat);
 
           return (
             <div key={cat} className="space-y-4">
-              <div className="flex items-center justify-between pb-2 border-b border-gray-100">
-                <h2 className="text-base font-semibold text-gray-900">{cat}</h2>
-                <div className="text-xs text-gray-500 font-medium">
-                  Average Readiness: <span className="text-blue-600 font-semibold">{catScore}%</span>
-                </div>
+              <div className="flex items-center justify-between">
+                <h2 className="text-base font-semibold text-gray-900">{cat} Competencies</h2>
+                <span className="text-xs font-medium text-blue-700 bg-blue-50 px-2.5 py-1 rounded-md">
+                  Average Readiness: {avgScore}%
+                </span>
               </div>
 
-              {/* Grid of Skill Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {categorySkills.map((skill) => {
-                  const progressPct = Math.min(
-                    100,
-                    Math.round((skill.currentLevel / skill.requiredLevel) * 100)
-                  );
+                  const percent = Math.min(100, Math.round((skill.currentLevel / (skill.requiredLevel || 4.0)) * 100));
 
                   return (
                     <div
                       key={skill.id}
-                      className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm space-y-3"
+                      className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm space-y-3 flex flex-col justify-between"
                     >
-                      <div className="flex items-start justify-between gap-2">
-                        <h3 className="text-sm font-medium text-gray-900 leading-snug">
-                          {skill.name}
-                        </h3>
-                        <span
-                          className={`text-xs px-2 py-0.5 rounded font-medium ${getPriorityStyle(
-                            skill.priority
-                          )}`}
-                        >
-                          {skill.priority}
-                        </span>
-                      </div>
-
-                      <div className="space-y-1.5">
-                        <div className="flex justify-between text-xs text-gray-500">
-                          <span>Current: Level {skill.currentLevel}</span>
-                          <span>Required: Level {skill.requiredLevel}</span>
+                      <div className="space-y-2">
+                        <div className="flex items-start justify-between gap-2">
+                          <h3 className="text-sm font-semibold text-gray-900 leading-snug">{skill.name}</h3>
+                          <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold uppercase shrink-0 ${getPriorityStyle(skill.priority)}`}>
+                            {skill.priority} Gap
+                          </span>
                         </div>
-                        <div className="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
+
+                        <div className="flex justify-between items-center text-xs text-gray-500 pt-1">
+                          <span>Current: <strong className="text-gray-800">{skill.currentLevel} / 5.0</strong></span>
+                          <span>Target: <strong className="text-gray-800">{skill.requiredLevel} / 5.0</strong></span>
+                        </div>
+
+                        <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
                           <div
-                            className="bg-blue-600 h-1.5 rounded-full transition-all duration-300"
-                            style={{ width: `${progressPct}%` }}
+                            className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                            style={{ width: `${percent}%` }}
                           />
                         </div>
+                      </div>
+
+                      <div className="pt-2 border-t border-gray-100 flex justify-between items-center text-[11px] text-gray-500">
+                        <span>Deficit: {skill.gap > 0 ? `-${skill.gap}` : 'Target Met'}</span>
+                        <span className="font-semibold text-blue-600">{percent}% Ready</span>
                       </div>
                     </div>
                   );

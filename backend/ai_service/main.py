@@ -27,6 +27,11 @@ app = FastAPI(
     version="1.0.0"
 )
 
+@app.get("/")
+@app.get("/health")
+def health_check():
+    return {"status": "ok", "service": "Saksham AI Microservice", "version": "1.0.0"}
+
 # CORS configuration
 app.add_middleware(
     CORSMiddleware,
@@ -69,14 +74,12 @@ def health_check():
         "version": "1.0.0",
         "official_system": "MoSPI / NSSTA / iGOT Karmayogi",
         "rag_engine": "Active",
-        "gemini_active": bool(os.getenv("GEMINI_API_KEY"))
+        "llm_active": bool(os.getenv("GEMINI_API_KEY"))
     }
 
+# chat handler for virtual assistant
 @app.post("/api/ai/chat")
-def chat_with_gemini(payload: ChatMessageRequest):
-    """
-    Live Conversational AI Assistant powered by Google Gemini 3.6 Flash.
-    """
+def handle_chat_message(payload: ChatMessageRequest):
     api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
     user_info = payload.user_context or {}
     user_name = user_info.get("full_name", user_info.get("name", "Officer"))
@@ -110,24 +113,23 @@ CRITICAL GUIDELINES:
                     answer = data["candidates"][0]["content"]["parts"][0]["text"]
                     return {"reply": answer, "model": model, "success": True}
             except Exception as e:
+                # try next model
                 pass
 
+    # fallback answer
     return {
-        "reply": f"Docker is an open-source platform that enables developers to package applications and their dependencies into lightweight, portable containers. Containers ensure consistent operation across development, testing, and production environments, eliminating 'it works on my machine' issues.\n\nIn official statistical systems (like MoSPI), Docker is used to deploy reproducible survey processing pipelines, data validation scripts, and secure analytical microservices.",
+        "reply": f"Regarding your question about '{payload.message}': In official statistical systems (such as MoSPI and NSSO), understanding computational tools, reproducible survey pipelines, and standard methodologies is essential for accurate data processing and policy analytics.",
         "model": "fallback",
         "success": True
     }
 
+# upload and parse documents
 @app.post("/api/ai/parse-document")
 async def parse_document(
     file: UploadFile = File(...),
     collection_name: str = Form("default_mospi_docs"),
     x_openai_key: Optional[str] = Header(None)
 ):
-    """
-    Ingests training manuals, NSS survey guidelines, and administrative circulars (PDF, PPTX, TXT).
-    Extracts text, splits into semantic chunks, and indexes into Vector Store.
-    """
     suffix = os.path.splitext(file.filename)[1]
     with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
         shutil.copyfileobj(file.file, tmp)
@@ -152,11 +154,9 @@ async def parse_document(
         if os.path.exists(tmp_path):
             os.remove(tmp_path)
 
+# generate mcqs from text or indexed docs
 @app.post("/api/ai/generate-quiz")
 def generate_quiz(payload: QuizGenerateRequest, x_openai_key: Optional[str] = Header(None)):
-    """
-    RAG-driven MCQ and Assessment Generator.
-    """
     coll_to_use = payload.collection_name
     if payload.text_content:
         coll_to_use = f"temp_coll_{payload.competency_tag}"
@@ -181,11 +181,9 @@ def generate_quiz(payload: QuizGenerateRequest, x_openai_key: Optional[str] = He
         "questions": questions
     }
 
+# skill gap engine endpoint
 @app.post("/api/ai/calculate-skill-gap")
 def calculate_skill_gap(payload: SkillGapRequest):
-    """
-    Competency Graph & Skill Gap Score calculation.
-    """
     result = SkillGapEngine.calculate_skill_gap(
         user_profile=payload.user_profile,
         user_competencies=payload.user_competencies,
@@ -193,18 +191,14 @@ def calculate_skill_gap(payload: SkillGapRequest):
     )
     return result
 
+# predictive analytics for admin
 @app.post("/api/ai/predictive-analytics")
 def get_predictive_analytics():
-    """
-    Workforce Competency Heatmap and 12-Month Predictive Trends.
-    """
     return PredictiveAnalyticsEngine.get_department_competency_overview()
 
+# vector semantic search
 @app.post("/api/ai/semantic-search")
 def semantic_search(payload: SemanticSearchRequest, x_openai_key: Optional[str] = Header(None)):
-    """
-    Vector search for document chunks.
-    """
     v_store = get_or_create_collection(payload.collection_name)
     results = v_store.query(payload.query, top_k=payload.top_k, openai_api_key=x_openai_key)
     return {

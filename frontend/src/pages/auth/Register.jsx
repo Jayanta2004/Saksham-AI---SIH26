@@ -102,17 +102,17 @@ export default function Register() {
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center px-4 py-8">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-sm border border-gray-200 p-7">
         
-        {/* State 1: Success Submitted & Pending Admin Verification */}
+        {/* State 1: Success Submitted & Account Active */}
         {isSubmitted ? (
           <div className="text-center space-y-4 py-3">
-            <div className="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mx-auto">
-              <Clock className="w-6 h-6 animate-pulse" />
+            <div className="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto">
+              <CheckCircle2 className="w-6 h-6 text-emerald-600" />
             </div>
 
             <div>
-              <h2 className="text-lg font-bold text-gray-900">Registration Submitted</h2>
+              <h2 className="text-lg font-bold text-gray-900">Account Created Successfully</h2>
               <p className="text-xs text-gray-500 mt-1">
-                Awaiting Administrative Verification by MoSPI Authority
+                Your account is active and ready to use
               </p>
             </div>
 
@@ -131,22 +131,22 @@ export default function Register() {
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">Status:</span>
-                <span className="px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 font-semibold border border-amber-200 text-[10px]">
-                  Pending Admin Approval
+                <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold border border-emerald-200 text-[10px]">
+                  Active & Verified
                 </span>
               </div>
             </div>
 
-            <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 text-[11px] text-blue-800 text-left">
-              <ShieldCheck className="w-4 h-4 text-blue-600 inline mr-1.5 mb-0.5" />
-              Your credentials will be activated once verified in the <strong>Admin User Management</strong> portal.
+            <div className="bg-emerald-50 border border-emerald-100 rounded-lg p-3 text-[11px] text-emerald-800 text-left">
+              <ShieldCheck className="w-4 h-4 text-emerald-600 inline mr-1.5 mb-0.5" />
+              You can now sign in immediately to explore your competency radar and courses.
             </div>
 
             <Link
               to="/login"
               className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold flex items-center justify-center space-x-1.5 shadow-sm transition"
             >
-              <span>Back to Sign In</span>
+              <span>Proceed to Sign In</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>

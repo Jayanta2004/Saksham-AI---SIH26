@@ -74,11 +74,8 @@ export default function Sidebar({ isOpen, onClose }) {
     >
       {/* Brand Header */}
       <div className="h-14 flex items-center justify-between px-4 border-b border-slate-800 shrink-0">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold text-sm">
-            S
-          </div>
-          <span className="font-bold text-white text-sm tracking-tight">
+        <div className="flex items-center">
+          <span className="font-bold text-white text-base tracking-tight">
             SAKSHAM AI
           </span>
         </div>

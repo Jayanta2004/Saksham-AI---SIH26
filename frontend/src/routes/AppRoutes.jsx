@@ -25,6 +25,7 @@ import Certificates from '../pages/learner/Certificates';
 
 // Admin Pages
 import AdminDashboard from '../pages/admin/AdminDashboard';
+import AdminAnalytics from '../pages/admin/AdminAnalytics';
 import UserManagement from '../pages/admin/UserManagement';
 import CompetencyFramework from '../pages/admin/CompetencyFramework';
 import ContentStudio from '../pages/admin/ContentStudio';
@@ -80,7 +81,7 @@ const AppRoutes = () => {
         <Route path="/admin/training" element={<TrainingProgrammes />} />
         <Route path="/admin/assessments" element={<Assessments />} />
         <Route path="/admin/content" element={<ContentStudio />} />
-        <Route path="/admin/analytics" element={<AdminDashboard />} />
+        <Route path="/admin/analytics" element={<AdminAnalytics />} />
         <Route path="/admin/reports" element={<AdminReports />} />
         <Route path="/admin/settings" element={<AdminSettings />} />
       </Route>

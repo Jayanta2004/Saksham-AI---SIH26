@@ -44,7 +44,7 @@ export const initRedis = () => {
 
     redisClient.on('connect', () => {
       isRedisConnected = true;
-      console.log(`[Redis Store] Connected to Redis Cache Server successfully`);
+      console.log('connected to redis cache');
     });
 
     redisClient.on('error', (err) => {

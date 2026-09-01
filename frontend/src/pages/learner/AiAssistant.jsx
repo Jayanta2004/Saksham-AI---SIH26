@@ -93,118 +93,31 @@ const DEFAULT_WELCOME_MSG = {
   timestamp: 'Just now'
 };
 
-const INITIAL_CONVERSATIONS = [
-  {
-    id: 'conv_docker_01',
-    title: 'Docker Containerization Guide',
-    updatedAt: Date.now(),
-    timeLabel: 'now',
-    messages: [
-      {
-        sender: 'ai',
-        text: 'Namaste! I am your Saksham AI Learning & Capability Assistant. Ask me about official statistical methodologies (SNA 2008, CPI/WPI, Sampling, DPDPA), technical concepts (Docker, Python, SQL), or your personalized iGOT / NSSTA learning pathways.',
-        timestamp: '02:00 PM'
-      },
-      {
-        sender: 'user',
-        text: 'Explain how Docker containerization works',
-        timestamp: '02:05 PM'
-      },
-      {
-        sender: 'ai',
-        text: `**Docker containerization** is a lightweight virtualization technology that packages an application along with all its required dependencies, libraries, configuration files, and runtime environment into a single, standardized unit called a **container**.
-
-This ensures that applications run consistently and reliably across different computing environments, from a data analyst's local workstation to cloud-based statistical servers.
-
----
-
-### Core Components of Docker Architecture
-
-1. **Dockerfile:** A declarative text document containing sequential instructions used to build a Docker image (acts as the blueprint).
-2. **Docker Image:** An immutable, read-only executable package containing application code, runtimes, system tools, and configuration layers.
-3. **Docker Container:** A runnable, isolated instance of a Docker image in memory.
-4. **Docker Daemon (\`dockerd\`):** The persistent background service on the host OS that manages images, containers, networks, and storage volumes.
-
----
-
-### How Docker Works Under the Hood
-
-Unlike traditional Virtual Machines (VMs) that require a full Guest Operating System and Hypervisor, Docker utilizes **OS-level virtualization**. It directly leverages the host machine's OS kernel using primary Linux kernel primitives:
-
-* **Namespaces (Isolation):** Provides segregated workspaces for Process IDs (\`pid\`), Networking (\`net\`), Mount points (\`mnt\`), and Inter-Process Communication (\`ipc\`).
-* **Control Groups / cgroups (Resource Constraints):** Restricts and monitors physical hardware usage (CPU, RAM, Disk I/O, Network bandwidth) per container.
-* **Union File Systems (Layering):** Employs layered storage drivers (e.g., \`Overlay2\`) so multiple containers share underlying read-only base layers without duplicating disk footprint.
-
----
-
-### Relevance to Statistical Data Pipelines & MoSPI Workflows
-
-* **Environment Reproducibility:** Eliminates discrepancies between local test scripts and server production runs across Python, R, and SQL pipelines.
-* **Microservices Architecture:** Isolates distinct survey stages (data ingestion, validation, imputation, microdata tabulation) into modular, independently maintainable units.
-* **Scalability:** Integrates seamlessly with container orchestration systems (like Kubernetes) for high-throughput batch processing of national survey rounds.
-
----
-
-### Recommended Learning Pathways
-
-* **iGOT Karmayogi:** *"Introduction to Docker & Containerization for Data Pipelines"* under the Data Engineering Track.
-* **NSSTA Training Calendar:** Specialized residential workshops on Cloud Infrastructure and Modern Statistical Computing.`,
-        timestamp: '02:06 PM'
-      }
-    ]
-  },
-  {
-    id: 'conv_sna_02',
-    title: 'SNA 2008 GVA Methodology',
-    updatedAt: Date.now() - 86400000 * 2,
-    timeLabel: '2d',
-    messages: [
-      {
-        sender: 'ai',
-        text: 'Namaste! How can I assist with your National Accounts questions?',
-        timestamp: '10:15 AM'
-      },
-      {
-        sender: 'user',
-        text: 'How is Gross Value Added (GVA) calculated at basic prices?',
-        timestamp: '10:16 AM'
-      },
-      {
-        sender: 'ai',
-        text: `**Gross Value Added (GVA) at Basic Prices** is the measure of the value of goods and services produced by an economy, less the value of intermediate inputs used up in that production.\n\n### Formula:\n**GVA at Basic Prices = Gross Output at Basic Prices − Intermediate Consumption at Purchasers\' Prices**\n\n### Transition to GDP:\n**GDP at Market Prices = GVA at Basic Prices + Net Product Taxes (Product Taxes − Product Subsidies)**`,
-        timestamp: '10:17 AM'
-      }
-    ]
-  },
-  {
-    id: 'conv_sampling_03',
-    title: 'Multi-Stage Stratified Sampling',
-    updatedAt: Date.now() - 86400000 * 6,
-    timeLabel: '6d',
-    messages: [
-      {
-        sender: 'ai',
-        text: 'Namaste! Ready to explore survey sampling and estimation.',
-        timestamp: '03:30 PM'
-      },
-      {
-        sender: 'user',
-        text: 'What is the rationale for stratifying First Stage Units (FSUs)?',
-        timestamp: '03:31 PM'
-      },
-      {
-        sender: 'ai',
-        text: `Stratifying **First Stage Units (FSUs)** partitions heterogeneous populations into homogeneous sub-groups (strata). This minimizes within-stratum variance and significantly improves the precision of national survey multipliers.`,
-        timestamp: '03:32 PM'
-      }
-    ]
-  }
-];
-
 const AiAssistant = () => {
   const { user } = useAuth();
-  const listStorageKey = `saksham_conv_list_${user?.id || 'usr_sso_01'}`;
-  const activeStorageKey = `saksham_active_conv_id_${user?.id || 'usr_sso_01'}`;
+  const userId = user?.id || user?.email || 'guest_user';
+  const listStorageKey = `saksham_conv_list_${userId}`;
+  const activeStorageKey = `saksham_active_conv_id_${userId}`;
+
+  const userName = user?.full_name ? user.full_name.split(' ')[0] : 'Officer';
+  const userDept = user?.department || 'Ministry of Statistics & Programme Implementation';
+  const isDemoPersona = userId === 'usr_sso_01';
+
+  const createInitialConversations = () => [
+    {
+      id: `conv_init_${userId}`,
+      title: 'Statistical Guidance & Upskilling',
+      updatedAt: Date.now(),
+      timeLabel: 'now',
+      messages: [
+        {
+          sender: 'ai',
+          text: `Namaste **${user?.full_name || 'Officer'}**! I am your Saksham AI Learning & Capability Assistant for the **${userDept}**.\n\nFeel free to ask me about:\n* **Official Methodologies:** SNA 2008 GDP/GVA compilation, Survey Sampling & Multipliers, Price Indices.\n* **Computational Tools:** Python, R, SQL, Survey Anomaly Detection, Docker.\n* **Data Governance:** DPDPA 2023 compliance and statistical confidentiality.\n* **Learning Recommendations:** Relevant courses on iGOT Karmayogi and NSSTA residential workshops.`,
+          timestamp: 'Just now'
+        }
+      ]
+    }
+  ];
 
   // Load conversations list
   const [conversations, setConversations] = useState(() => {
@@ -212,12 +125,20 @@ const AiAssistant = () => {
       const saved = localStorage.getItem(listStorageKey);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          // If a new non-demo user has legacy seeded demo conversations in localStorage, reset cleanly
+          if (!isDemoPersona && parsed.some((c) => c.id === 'conv_docker_01' || c.id === 'conv_sna_02')) {
+            localStorage.removeItem(listStorageKey);
+            localStorage.removeItem(activeStorageKey);
+            return createInitialConversations();
+          }
+          return parsed;
+        }
       }
     } catch (e) {
       console.warn('Could not load conversations:', e);
     }
-    return INITIAL_CONVERSATIONS;
+    return createInitialConversations();
   });
 
   // Active conversation ID
@@ -228,7 +149,7 @@ const AiAssistant = () => {
         return savedId;
       }
     } catch (e) {}
-    return conversations[0]?.id || 'conv_docker_01';
+    return conversations[0]?.id || `conv_init_${userId}`;
   });
 
   const [input, setInput] = useState('');
@@ -419,12 +340,6 @@ const AiAssistant = () => {
             );
           })}
         </div>
-
-        {/* Footer info */}
-        <div className="p-3 border-t border-gray-200 text-[11px] text-gray-600 bg-white flex items-center justify-between shrink-0">
-          <span className="truncate font-medium">{user?.full_name || 'Statistical Officer'}</span>
-          <span className="text-[10px] bg-blue-50 text-blue-700 border border-blue-200 px-1.5 py-0.5 rounded font-medium">MoSPI</span>
-        </div>
       </div>
 
       {/* -------------------------------------------------------------------- */}
@@ -433,16 +348,11 @@ const AiAssistant = () => {
       <div className="flex-1 flex flex-col bg-gray-50 overflow-hidden">
         {/* Active Conversation Top Bar */}
         <div className="flex items-center justify-between bg-white px-5 py-3 border-b border-gray-200 shrink-0">
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
-              <Bot className="w-5 h-5" />
-            </div>
-            <div>
-              <h2 className="text-sm font-semibold text-gray-900 truncate max-w-md">
-                {activeConv?.title || 'Saksham AI Assistant'}
-              </h2>
-              <p className="text-[11px] text-gray-500">Official Statistical System AI Assistant</p>
-            </div>
+          <div>
+            <h2 className="text-sm font-semibold text-gray-900 truncate max-w-md">
+              {activeConv?.title || 'Saksham AI Assistant'}
+            </h2>
+            <p className="text-[11px] text-gray-500">Official Statistical System Assistant</p>
           </div>
 
           {/* Quick Prompts */}

@@ -33,13 +33,13 @@ let isPostgresConnected = false;
 export const initPostgres = async () => {
   try {
     const client = await pool.connect();
-    const result = await client.query('SELECT NOW()');
+    await client.query('SELECT 1');
     client.release();
     isPostgresConnected = true;
-    console.log(`[PostgreSQL DB] Connected to PostgreSQL successfully - Server Time: ${result.rows[0].now}`);
+    console.log('connected to postgres db');
   } catch (err) {
     isPostgresConnected = false;
-    console.warn(`[PostgreSQL DB] Connection attempt failed: ${err.message}. Enabling hybrid fallback to relational in-memory store.`);
+    console.warn(`db connection issue (${err.message}), using fallback store`);
   }
 };
 
@@ -169,7 +169,12 @@ export const pgDb = {
   getAllUsers: async () => {
     if (isPostgresConnected) {
       try {
-        const res = await pool.query('SELECT id, full_name, email, role_id, role_name, designation, department, cadre, is_active FROM users ORDER BY full_name ASC');
+        const res = await pool.query(`
+          SELECT u.id, u.full_name, u.email, u.role_id, COALESCE(r.name, u.role_id) AS role_name, u.designation, u.department, u.cadre, u.is_active 
+          FROM users u 
+          LEFT JOIN roles r ON u.role_id = r.id 
+          ORDER BY u.full_name ASC
+        `);
         if (res.rows.length > 0) return res.rows;
       } catch (err) {
         console.warn(`[PostgreSQL Query Error] getAllUsers: ${err.message}`);
@@ -223,21 +228,65 @@ export const pgDb = {
     if (isPostgresConnected) {
       try {
         const query = `
-          INSERT INTO quiz_attempts (id, user_id, quiz_id, score_percentage, passed, time_spent_seconds, completed_at)
-          VALUES ($1, $2, $3, $4, $5, $6, NOW());
+          INSERT INTO quiz_attempts (id, user_id, quiz_id, score_percentage, total_correct, total_questions, time_spent_seconds, passed, attempted_at)
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW());
         `;
         await pool.query(query, [
           attempt.id,
           attempt.user_id,
           attempt.quiz_id,
           attempt.score_percentage,
-          attempt.passed,
-          attempt.time_spent_seconds,
+          attempt.total_correct || 0,
+          attempt.total_questions || 4,
+          attempt.time_spent_seconds || 180,
+          attempt.passed
         ]);
       } catch (err) {
         console.warn(`[PostgreSQL Query Error] saveAttempt: ${err.message}`);
       }
     }
     return memoryDb.saveAttempt(attempt);
+  },
+
+  getUserCertificates: async (userId) => {
+    if (isPostgresConnected) {
+      try {
+        const query = `
+          SELECT qa.id, qa.score_percentage, qa.attempted_at, q.title as quiz_title, u.full_name as recipient_name, u.designation as recipient_designation, u.department
+          FROM quiz_attempts qa
+          JOIN quizzes q ON qa.quiz_id = q.id
+          JOIN users u ON qa.user_id = u.id
+          WHERE qa.user_id = $1 AND qa.passed = true
+          ORDER BY qa.attempted_at DESC;
+        `;
+        const res = await pool.query(query, [userId]);
+        if (res.rows.length > 0) {
+          return res.rows.map((r, idx) => ({
+            id: `cert_${r.id}`,
+            title: r.quiz_title || 'Certificate of Statistical Competency',
+            issuer: 'Ministry of Statistics & Programme Implementation & NSSTA',
+            issue_date: new Date(r.attempted_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
+            score_percentage: parseFloat(r.score_percentage) || 75.0,
+            credential_id: `SAKSHAM-${userId.slice(-6).toUpperCase()}-${r.id.slice(-6).toUpperCase()}-${idx + 101}`,
+            recipient_name: r.recipient_name,
+            recipient_designation: r.recipient_designation,
+            department: r.department,
+            skills_covered: ['Survey Sampling', 'Data Validation', 'Official Statistics Standards'],
+            status: 'Verified & Active'
+          }));
+        }
+      } catch (err) {
+        console.warn(`[PostgreSQL Query Error] getUserCertificates: ${err.message}`);
+      }
+    }
+    return memoryDb.getUserCertificates(userId);
+  },
+
+  getUserStats: async (userId) => {
+    return memoryDb.getUserStats(userId);
+  },
+
+  getUserTrajectory: async (userId) => {
+    return memoryDb.getUserTrajectory(userId);
   }
 };

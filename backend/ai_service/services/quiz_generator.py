@@ -125,7 +125,7 @@ Return ONLY raw valid JSON. No markdown code blocks, no explanation text outside
                     }
                 }
 
-                resp = requests.post(url, json=payload, headers=headers, timeout=30)
+                resp = requests.post(url, json=payload, headers=headers, timeout=12)
                 if resp.status_code == 200:
                     data = resp.json()
                     raw_text = data["candidates"][0]["content"]["parts"][0]["text"]
@@ -139,21 +139,28 @@ Return ONLY raw valid JSON. No markdown code blocks, no explanation text outside
                                 parsed = v
                                 break
 
-                    for i, q in enumerate(parsed):
-                        q["id"] = f"mcq_gemini_{uuid.uuid4().hex[:8]}"
-                        q["order_index"] = i + 1
-                        if "correct_option" in q:
-                            c_opt = str(q["correct_option"]).strip().upper()
-                            if c_opt in ["A", "B", "C", "D"]:
-                                q["correct_option"] = f"option_{c_opt.lower()}"
+                    if isinstance(parsed, list) and len(parsed) > 0:
+                        for i, q in enumerate(parsed):
+                            q["id"] = f"mcq_gen_{uuid.uuid4().hex[:8]}"
+                            q["order_index"] = i + 1
+                            if "correct_option" in q:
+                                c_opt = str(q["correct_option"]).strip().upper()
+                                if c_opt in ["A", "B", "C", "D"]:
+                                    q["correct_option"] = f"option_{c_opt.lower()}"
 
-                    return parsed
+                        return parsed
                 else:
                     last_error = f"{model} returned {resp.status_code}: {resp.text}"
             except Exception as ex:
                 last_error = str(ex)
 
-        raise Exception(f"All Gemini models failed: {last_error}")
+        # Fallback to domain synthesizer if API fails
+        return QuizGenerator._synthesize_rag_mcqs(
+            chunks=[],
+            num_questions=num_questions,
+            target_difficulty=difficulty,
+            competency_tag=competency_tag
+        )
 
     @staticmethod
     def _generate_with_openai(

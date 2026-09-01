@@ -1,14 +1,49 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, CheckCircle2, Circle, Clock, BookOpen, Award, Sparkles, Check } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 export default function CourseDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
-  const [enrolled, setEnrolled] = useState(false);
-  const [completedModules, setCompletedModules] = useState([0]);
+  const courseId = id || 'default_course';
+  const storageKey = `saksham_course_progress_${user?.id || 'guest'}_${courseId}`;
+
+  // Read saved state from localStorage (default: not enrolled, 0 modules completed)
+  const [enrolled, setEnrolled] = useState(() => {
+    try {
+      const saved = localStorage.getItem(`${storageKey}_enrolled`);
+      return saved ? JSON.parse(saved) : false;
+    } catch {
+      return false;
+    }
+  });
+
+  const [completedModules, setCompletedModules] = useState(() => {
+    try {
+      const saved = localStorage.getItem(`${storageKey}_modules`);
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
   const [toast, setToast] = useState(null);
+
+  // Sync with localStorage on changes
+  useEffect(() => {
+    try {
+      localStorage.setItem(`${storageKey}_enrolled`, JSON.stringify(enrolled));
+    } catch (e) {}
+  }, [enrolled, storageKey]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(`${storageKey}_modules`, JSON.stringify(completedModules));
+    } catch (e) {}
+  }, [completedModules, storageKey]);
 
   const modules = [
     {
@@ -28,20 +63,30 @@ export default function CourseDetail() {
     }
   ];
 
+  const handleEnroll = () => {
+    setEnrolled(true);
+    setToast('Enrolled successfully in course!');
+    setTimeout(() => setToast(null), 3000);
+  };
+
   const handleToggleModule = (index) => {
     if (!enrolled) {
       setEnrolled(true);
     }
+    
+    let updated;
     if (completedModules.includes(index)) {
-      setCompletedModules(completedModules.filter((i) => i !== index));
+      updated = completedModules.filter((i) => i !== index);
     } else {
-      setCompletedModules([...completedModules, index]);
+      updated = [...completedModules, index];
       setToast(`Completed Module ${index + 1}`);
       setTimeout(() => setToast(null), 3000);
     }
+    setCompletedModules(updated);
   };
 
-  const progressPercent = Math.round((completedModules.length / modules.length) * 100);
+  const progressPercent = modules.length > 0 ? Math.round((completedModules.length / modules.length) * 100) : 0;
+  const isFullyCompleted = completedModules.length === modules.length;
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
@@ -117,11 +162,16 @@ export default function CourseDetail() {
           {enrolled ? (
             <div className="flex-1 space-y-1.5 mr-4">
               <div className="flex justify-between text-xs font-medium text-gray-700">
-                <span>Course Progress</span>
+                <span>Course Progress ({completedModules.length}/{modules.length} Modules)</span>
                 <span>{progressPercent}% Complete</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
-                <div className="bg-blue-600 h-2 rounded-full transition-all duration-300" style={{ width: `${progressPercent}%` }}></div>
+                <div
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    isFullyCompleted ? 'bg-emerald-600' : 'bg-blue-600'
+                  }`}
+                  style={{ width: `${progressPercent}%` }}
+                ></div>
               </div>
             </div>
           ) : (
@@ -130,18 +180,16 @@ export default function CourseDetail() {
 
           <div className="flex items-center gap-3">
             <button
-              onClick={() => {
-                setEnrolled(true);
-                setToast('Enrolled in Course!');
-                setTimeout(() => setToast(null), 3000);
-              }}
+              onClick={handleEnroll}
               className={`px-5 py-2.5 rounded-lg text-sm font-medium transition ${
-                enrolled
+                isFullyCompleted
                   ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                  : enrolled
+                  ? 'bg-blue-50 text-blue-700 border border-blue-200'
                   : 'bg-blue-600 hover:bg-blue-700 text-white shadow-sm'
               }`}
             >
-              {enrolled ? 'Enrolled & Active' : 'Enroll & Start Learning'}
+              {isFullyCompleted ? '✓ Course Completed' : enrolled ? 'Enrolled (In Progress)' : 'Enroll & Start Learning'}
             </button>
 
             <Link
@@ -187,11 +235,18 @@ export default function CourseDetail() {
                   </div>
                 </div>
 
-                <span className={`text-xs px-2.5 py-1 rounded font-medium shrink-0 ${
-                  isDone ? 'bg-blue-100 text-blue-800' : 'bg-gray-200 text-gray-700'
-                }`}>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleToggleModule(idx);
+                  }}
+                  className={`text-xs px-2.5 py-1 rounded font-medium shrink-0 transition ${
+                    isDone ? 'bg-blue-100 text-blue-800 hover:bg-blue-200' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  }`}
+                >
                   {isDone ? 'Completed' : 'Mark Done'}
-                </span>
+                </button>
               </div>
             );
           })}
