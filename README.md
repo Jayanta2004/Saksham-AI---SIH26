@@ -250,15 +250,24 @@ Run the PowerShell automation script:
 ### Option C: Multi-Container Docker Deployment (`docker-compose.yml`)
 To spin up all services in isolated Docker containers with automated PostgreSQL schema initialization and Redis caching:
 ```bash
-docker-compose up --build
+docker compose up --build -d
 ```
 *Containerized Architecture:*
 * `saksham_postgres` (Port 5432) — PostgreSQL 16 with automatic `schema.sql` and `seed.sql` mounting
 * `saksham_redis` (Port 6379) — Redis 7 Alpine cache
 * `saksham_ai_service` (Port 8000) — Python FastAPI RAG Engine
 * `saksham_gateway` (Port 5000) — Node.js Express API Gateway
+* `saksham_frontend` (Port 3000) — Multi-stage Nginx serving production Vite build
 
-### Option D: Manual Service Execution
+### Option D: 100% Free Cloud Deployment (Vercel + Render + Neon + Upstash)
+For complete instructions on deploying the full stack on free-tier cloud platforms, see the dedicated [**DEPLOYMENT_GUIDE.md**](./DEPLOYMENT_GUIDE.md).
+- **Frontend:** Vercel (Vite React SPA)
+- **API Gateway:** Render (Node.js Express)
+- **AI Engine:** Render (Python FastAPI)
+- **Database:** Neon (Serverless PostgreSQL)
+- **Cache:** Upstash (Serverless Redis)
+
+### Option E: Manual Local Service Execution
 
 #### 1. Start Python AI Microservice (Port 8000)
 ```bash
@@ -272,7 +281,7 @@ python -m uvicorn main:app --host 127.0.0.1 --port 8000 --reload
 ```bash
 cd backend/gateway_service
 npm install
-npm run dev
+npm start
 ```
 *Gateway Health Status:* **[http://localhost:5000/health](http://localhost:5000/health)**
 
@@ -293,22 +302,35 @@ npm run dev
 PORT=5000
 NODE_ENV=development
 JWT_SECRET=your_jwt_secret_key_here
-DATABASE_URL=postgresql://username:password@ep-sample-pooler.aws.neon.tech/neondb?sslmode=require
+DATA_ENCRYPTION_KEY=your_32_character_encryption_key_here
 PYTHON_AI_URL=http://127.0.0.1:8000
-AES_ENCRYPTION_KEY=your_32_character_hex_encryption_key_here
+DATABASE_URL=postgresql://username:password@ep-sample-pooler.aws.neon.tech/neondb?sslmode=require
+REDIS_URL=rediss://default:password@sample.upstash.io:6379
+
+# Email OTP Notifications (Optional)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
 SMTP_USER=your_gmail_address@gmail.com
 SMTP_PASS=your_gmail_app_password_here
-RESEND_API_KEY=your_resend_api_key_here
+SMTP_FROM="Saksham AI - MoSPI" <your_gmail_address@gmail.com>
 ```
 
 ### `backend/ai_service/.env`
 ```env
 PORT=8000
-ENVIRONMENT=development
+HOST=127.0.0.1
+GEMINI_API_KEY=your_google_gemini_api_key_here
 OPENAI_API_KEY=your_openai_api_key_here
-GEMINI_API_KEY=your_gemini_api_key_here
-GROQ_API_KEY=your_groq_api_key_here
 ```
+
+### `frontend/.env` (Optional in local dev, required on Vercel)
+```env
+VITE_API_URL=https://your-gateway-service.onrender.com
+```
+
+### Key Design & Interface Highlights
+* **Official White Theme Design System:** Built with accessible high-contrast typography, solid white cards, and MoSPI institutional accents (`#1e3a8a` navy, `#047857` emerald).
+* **High-Resolution PNG Certificate Generator:** HTML5 Canvas engine rendering 1200x850 verified credentials complete with Government of India seals and digital signature watermarks.
 
 ### AI LLM Priority Chain
 The AI service uses a cascading fallback strategy for chat and quiz generation:
