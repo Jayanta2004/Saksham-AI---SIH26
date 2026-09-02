@@ -62,7 +62,7 @@ services:
       - ai_service
     restart: unless-stopped
 
-  # 5. Next.js Modern Web Frontend
+  # 5. React Web Frontend (Vite + Tailwind)
   frontend:
     build:
       context: ./frontend
@@ -71,7 +71,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - NEXT_PUBLIC_GATEWAY_URL=http://localhost:5000
+      - VITE_API_URL=http://localhost:5000
     depends_on:
       - gateway_service
     restart: unless-stopped
