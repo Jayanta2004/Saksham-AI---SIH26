@@ -88,7 +88,7 @@ Based on the MoSPI Official Competency Framework, here is the diagnostic breakdo
 #### 2. Python & R Data Analytics for Surveys (High Priority Deficit)
 * **Current Proficiency Baseline:** 2.0 / 5.0 (Target: 4.0)
 * **Gap Analysis:** Transitioning from manual spreadsheet tabulation to reproducible Python (*Pandas, NumPy, Statsmodels*) and R survey pipelines.
-* **Recommended Next Step:** Complete **"Data Processing in Python & R for Official Surveys"** (SWAYAM / IIT Madras).
+* **Recommended Next Step:** Complete **"Data Processing in Python & R for Official Surveys"** (iGOT Karmayogi / NSSTA).
 
 #### 3. National Accounts (SNA 2008) GVA Balancing (Moderate Priority)
 * **Current Proficiency Baseline:** 2.0 / 5.0 (Target: 3.5)

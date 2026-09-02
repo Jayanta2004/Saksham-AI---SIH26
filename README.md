@@ -1,7 +1,7 @@
 # SAKSHAM AI — Skill Intelligence & Learning Platform
 ### *AI-Enabled Competency Assessment, Skill-Gap Analytics & Personalized Training Engine for India's Official Statistical System*
 
-[![Smart India Hackathon 2026](https://img.shields.io/badge/SIH-2026-blue.svg)](https://sih.gov.in)
+[![Platform](https://img.shields.io/badge/Platform-Saksham%20AI-blue.svg)](#)
 [![Organization](https://img.shields.io/badge/Organization-MoSPI%20%2F%20DIID-orange.svg)](https://mospi.gov.in)
 [![FastAPI Docs](https://img.shields.io/badge/Swagger%20UI-FastAPI%20%7C%20Port%208000-009688.svg)](http://127.0.0.1:8000/docs)
 [![API Gateway](https://img.shields.io/badge/API%20Gateway-Express%20%7C%20Port%205000-339933.svg)](http://localhost:5000/health)
@@ -30,7 +30,7 @@ While the **iGOT Karmayogi** platform provides vast e-learning repositories, sta
 
 ## 2. Key Platform Capabilities
 
-| Capability | Technical Description | SIH Problem Alignment |
+| Capability | Technical Description | Strategic Objective |
 | :--- | :--- | :--- |
 | **AI Competency Profiling** | Evaluates baseline proficiency across official statistical standards (*Survey Sampling, SNA 2008 National Accounts, Python/R Analytics, DPDPA 2023*). | *Automated Competency Framework Mapping* |
 | **Mathematical Skill-Gap Engine** | Computes multi-dimensional capability deficits ($\Delta = Benchmark - Current$) and renders interactive 7-axis Recharts Radar Charts. | *Automated Skill-Gap Analysis* |
@@ -106,7 +106,7 @@ graph TD
 ## 5. Repository Directory & Codebase Structure
 
 ```
-Saksham-AI---SIH26/
+Saksham-AI/
 ├── backend/
 │   ├── ai_service/             # FastAPI AI & RAG Engine (Port 8000)
 │   │   ├── services/           # Document Parsers, Quiz Gen, Skill-Gap, Vector Store
@@ -374,7 +374,7 @@ python -m uvicorn main:app --host 127.0.0.1 --port 8000 --reload
 
 ---
 
-## 14. License & Attribution
-Developed for the **Smart India Hackathon (SIH) 2026** under the **Ministry of Statistics & Programme Implementation (MoSPI)** problem statement.
+## 14. License & Institutional Attribution
+Developed for the **Ministry of Statistics & Programme Implementation (MoSPI)**, Government of India.
 
-All rights reserved (c) 2026 Team 404 not founders.
+All rights reserved (c) 2026 SAKSHAM AI. Official Statistics Skill Intelligence Platform.

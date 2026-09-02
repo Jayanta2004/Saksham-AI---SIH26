@@ -11,7 +11,7 @@ export const authService = {
     return response.data;
   },
 
-  // 1-Click Demo Persona Login for Hackathon Evaluation
+  // 1-Click Demo Persona Login for Role Exploration
   demoLogin: async (role) => {
     const response = await api.post('/api/auth/demo-login', { role });
     if (response.data && response.data.token) {

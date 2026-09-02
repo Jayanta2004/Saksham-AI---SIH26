@@ -54,7 +54,7 @@ class EmailService {
         </div>
         
         <div style="background-color: #f8fafc; padding: 18px; text-align: center; border-top: 1px solid #e2e8f0; font-size: 12px; color: #64748b;">
-          Smart India Hackathon 2026 • Official Statistical System Intelligence Platform<br>
+          Saksham AI • National Skill Intelligence & Learning Platform<br>
           Government of India • Ministry of Statistics & Programme Implementation (MoSPI)
         </div>
       </div>

@@ -3,8 +3,8 @@
 # ============================================================================
 
 Write-Host "============================================================================" -ForegroundColor Cyan
-Write-Host "  SAKSHAM AI - Skill Intelligence Platform (SIH26101)" -ForegroundColor Yellow
-Write-Host "  IIT Madras BS Degree Programme • Team 404 not founders" -ForegroundColor White
+Write-Host "  SAKSHAM AI - Skill Intelligence & Learning Platform" -ForegroundColor Yellow
+Write-Host "  Ministry of Statistics & Programme Implementation (MoSPI)" -ForegroundColor White
 Write-Host "============================================================================" -ForegroundColor Cyan
 Write-Host ""
 

@@ -76,7 +76,7 @@ export default function PersonalizedLearningPath() {
                 step: 3,
                 status: completedCount > 2 ? 'completed' : (completedCount === 2 ? 'current' : 'upcoming'),
                 title: 'Data Processing in Python & R for Official Surveys',
-                provider: 'SWAYAM / IIT Madras',
+                provider: 'iGOT Karmayogi / NSSTA',
                 duration: '30 Hours',
                 skill: 'Python & R Data Analytics',
                 difficulty: 'Advanced',

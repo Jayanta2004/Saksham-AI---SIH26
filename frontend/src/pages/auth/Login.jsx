@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import ThemeToggle from '../../components/common/ThemeToggle';
 
 const DEMO_PERSONAS = [
   { name: 'Arjun Sharma', roleLabel: 'Learner', role: 'learner', email: 'arjun.sharma@mospi.gov.in' },
@@ -62,23 +63,33 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center px-4 py-12">
-      <div className="w-full max-w-sm bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col justify-center items-center px-4 py-12 transition-colors duration-200">
+      <div className="w-full max-w-sm mb-4 flex justify-between items-center text-xs">
+        <Link to="/" className="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1 font-medium">
+          ← Back to Saksham AI Home
+        </Link>
+        <div className="flex items-center gap-3">
+          <ThemeToggle size="sm" />
+          <span className="text-slate-400 dark:text-slate-500 font-medium">MoSPI Official</span>
+        </div>
+      </div>
+
+      <div className="w-full max-w-sm bg-white dark:bg-slate-900 rounded-2xl shadow-sm dark:shadow-2xl border border-slate-200 dark:border-slate-800 p-8 transition-colors duration-200">
         <div className="text-center mb-6">
-          <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold text-base mx-auto mb-3 shadow-sm">
+          <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold text-base mx-auto mb-3 shadow-md shadow-blue-600/30">
             S
           </div>
-          <h1 className="text-xl font-bold text-gray-900">Sign in to Saksham AI</h1>
-          <p className="text-sm text-gray-500 mt-1">Skill Intelligence & Learning Platform</p>
+          <h1 className="text-xl font-bold text-slate-900 dark:text-white">Sign in to Saksham AI</h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Skill Intelligence &amp; Learning Platform</p>
         </div>
 
         {error && (
-          <p className="text-sm text-red-600 mb-4 text-center bg-red-50 py-2 px-3 rounded-lg border border-red-100">{error}</p>
+          <p className="text-sm text-red-600 dark:text-red-400 mb-4 text-center bg-red-50 dark:bg-red-950/50 py-2 px-3 rounded-lg border border-red-200 dark:border-red-900/50">{error}</p>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="email">
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1" htmlFor="email">
               Email address
             </label>
             <input
@@ -87,17 +98,17 @@ export default function Login() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+              className="w-full px-3 py-2 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-colors"
               placeholder="name@mospi.gov.in"
             />
           </div>
 
           <div>
             <div className="flex items-center justify-between mb-1">
-              <label className="block text-sm font-medium text-gray-700" htmlFor="password">
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300" htmlFor="password">
                 Password
               </label>
-              <Link to="/forgot-password" className="text-xs text-blue-600 hover:underline">
+              <Link to="/forgot-password" className="text-xs text-blue-600 dark:text-blue-400 hover:underline">
                 Forgot password?
               </Link>
             </div>
@@ -108,14 +119,13 @@ export default function Login() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                className="w-full px-3 py-2 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent pr-10 transition-colors"
                 placeholder="••••••••"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition"
-                tabIndex="-1"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -126,25 +136,25 @@ export default function Login() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 shadow-sm"
+            className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm transition-colors shadow-sm disabled:opacity-50"
           >
             {isSubmitting ? 'Signing in...' : 'Sign in'}
           </button>
         </form>
 
-        <div className="mt-4 text-center">
-          <p className="text-xs text-gray-500">
+        <div className="mt-5 text-center">
+          <p className="text-xs text-slate-500 dark:text-slate-400">
             Don't have an account?{' '}
-            <Link to="/register" className="text-blue-600 font-semibold hover:underline">
-              Create an account
+            <Link to="/register" className="text-blue-600 dark:text-blue-400 font-medium hover:underline">
+              Register here
             </Link>
           </p>
         </div>
 
-        <div className="my-5 border-t border-gray-200" />
+        <div className="my-5 border-t border-slate-200 dark:border-slate-800" />
 
         <div>
-          <p className="text-xs text-gray-500 mb-3 text-center">Quick demo access</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mb-3 text-center">Quick demo access</p>
           <div className="grid grid-cols-2 gap-2">
             {DEMO_PERSONAS.map((persona) => (
               <button
@@ -152,17 +162,17 @@ export default function Login() {
                 type="button"
                 onClick={() => handleDemoClick(persona)}
                 disabled={isSubmitting}
-                className="border border-gray-200 rounded-lg p-3 hover:bg-blue-50 hover:border-blue-200 text-left transition-colors disabled:opacity-50 group"
+                className="border border-slate-200 dark:border-slate-800 rounded-lg p-3 hover:bg-blue-50 dark:hover:bg-slate-800/80 hover:border-blue-200 dark:hover:border-blue-800 text-left transition-colors disabled:opacity-50 group"
               >
-                <div className="text-sm font-medium text-gray-900 group-hover:text-blue-700">{persona.name}</div>
-                <div className="text-xs text-gray-500">{persona.roleLabel}</div>
+                <div className="text-sm font-medium text-slate-900 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400">{persona.name}</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400">{persona.roleLabel}</div>
               </button>
             ))}
           </div>
         </div>
       </div>
 
-      <p className="text-xs text-gray-400 mt-6 text-center">Ministry of Statistics & Programme Implementation (MoSPI) • SIH 2026</p>
+      <p className="text-xs text-slate-400 dark:text-slate-500 mt-6 text-center">Ministry of Statistics &amp; Programme Implementation (MoSPI) • Government of India</p>
     </div>
   );
 }

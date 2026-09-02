@@ -1,8 +1,8 @@
 @echo off
-title Saksham AI - Skill Intelligence & Learning Platform (SIH26101)
+title Saksham AI - Skill Intelligence & Learning Platform
 echo ============================================================================
 echo   SAKSHAM AI - Skill Intelligence Platform for Official Statistical System
-echo   Smart India Hackathon 2026 • SIH26101 • Team 404 not founders
+echo   Ministry of Statistics & Programme Implementation (MoSPI)
 echo ============================================================================
 echo.
 

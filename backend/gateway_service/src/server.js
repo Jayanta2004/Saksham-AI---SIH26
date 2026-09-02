@@ -311,7 +311,7 @@ app.post('/api/auth/reset-password', async (req, res) => {
   }
 });
 
-// Quick 1-Click Demo Login for Hackathon & Evaluation
+// Quick 1-Click Demo Login for Role Exploration
 app.post('/api/auth/demo-login', async (req, res) => {
   const { role } = req.body; // 'learner', 'trainer', 'admin'
   let targetUser = db.users[0]; // Arjun (Learner)

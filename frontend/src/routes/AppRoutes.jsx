@@ -3,6 +3,9 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedRoute from './ProtectedRoute';
 import MainLayout from '../components/layout/MainLayout';
 
+// Public Landing Page
+import LandingPage from '../pages/public/LandingPage';
+
 // Auth Pages
 import Login from '../pages/auth/Login';
 import Register from '../pages/auth/Register';
@@ -35,13 +38,14 @@ import AdminSettings from '../pages/admin/AdminSettings';
 const AppRoutes = () => {
   return (
     <Routes>
-      {/* Public Routes */}
+      {/* Public Landing & Home Routes */}
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/home" element={<LandingPage />} />
+
+      {/* Auth Routes */}
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
-
-      {/* Root Redirect */}
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
       {/* Learner Protected Routes */}
       <Route
