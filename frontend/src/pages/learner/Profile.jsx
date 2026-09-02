@@ -9,31 +9,38 @@ export default function Profile() {
   const [certs, setCerts] = useState([]);
   const [savedSuccess, setSavedSuccess] = useState(false);
 
+  const isDemo = user?.id === 'usr_sso_01';
+
   const [formData, setFormData] = useState({
-    name: user?.full_name || user?.name || 'Arjun Sharma',
-    email: user?.email || 'arjun.sharma@mospi.gov.in',
-    phone: user?.phone || '+91 98100 12345',
-    employeeId: user?.id ? `GOI-${user.id.slice(-6).toUpperCase()}` : 'GOI-STAT-2024-019',
-    department: user?.department || 'National Accounts Division (NAD)',
-    designation: user?.designation || 'Senior Statistical Officer (SSO)',
-    cadre: user?.cadre || 'Indian Statistical Service (ISS)',
-    experience: user?.work_experience_years ? `${user.work_experience_years} Years` : '4 Years',
-    qualification: user?.educational_qualifications || 'M.Sc. Statistics',
-    institution: 'Indian Statistical Institute (ISI)',
-    passingYear: '2020'
+    name: user?.full_name || user?.name || (isDemo ? 'Arjun Sharma' : ''),
+    email: user?.email || (isDemo ? 'arjun.sharma@mospi.gov.in' : ''),
+    phone: user?.phone || (isDemo ? '+91 98100 12345' : ''),
+    employeeId: user?.id ? `GOI-${user.id.slice(-6).toUpperCase()}` : (isDemo ? 'GOI-STAT-2024-019' : 'GOI-PENDING'),
+    department: user?.department || (isDemo ? 'National Accounts Division (NAD)' : 'Field Operations Division (FOD)'),
+    designation: user?.designation || (isDemo ? 'Senior Statistical Officer (SSO)' : 'Statistical Officer'),
+    cadre: user?.cadre || (isDemo ? 'Indian Statistical Service (ISS)' : 'Subordinate Statistical Service (SSS)'),
+    experience: user?.work_experience_years ? `${user.work_experience_years} Years` : (isDemo ? '4 Years' : '0 Years'),
+    qualification: user?.educational_qualifications || (isDemo ? 'M.Sc. Statistics' : 'Not Specified'),
+    institution: isDemo ? 'Indian Statistical Institute (ISI)' : 'National Academy',
+    passingYear: isDemo ? '2020' : new Date().getFullYear().toString()
   });
 
   useEffect(() => {
     if (user) {
-      setFormData((prev) => ({
-        ...prev,
-        name: user.full_name || user.name || prev.name,
-        email: user.email || prev.email,
-        department: user.department || prev.department,
-        designation: user.designation || prev.designation,
-        cadre: user.cadre || prev.cadre,
-        experience: user.work_experience_years ? `${user.work_experience_years} Years` : prev.experience
-      }));
+      const isDemoAccount = user.id === 'usr_sso_01';
+      setFormData({
+        name: user.full_name || user.name || (isDemoAccount ? 'Arjun Sharma' : ''),
+        email: user.email || (isDemoAccount ? 'arjun.sharma@mospi.gov.in' : ''),
+        phone: user.phone || (isDemoAccount ? '+91 98100 12345' : ''),
+        employeeId: user.id ? `GOI-${user.id.slice(-6).toUpperCase()}` : (isDemoAccount ? 'GOI-STAT-2024-019' : 'GOI-PENDING'),
+        department: user.department || (isDemoAccount ? 'National Accounts Division (NAD)' : 'Field Operations Division (FOD)'),
+        designation: user.designation || (isDemoAccount ? 'Senior Statistical Officer (SSO)' : 'Statistical Officer'),
+        cadre: user.cadre || (isDemoAccount ? 'Indian Statistical Service (ISS)' : 'Subordinate Statistical Service (SSS)'),
+        experience: user.work_experience_years ? `${user.work_experience_years} Years` : (isDemoAccount ? '4 Years' : '0 Years'),
+        qualification: user.educational_qualifications || (isDemoAccount ? 'M.Sc. Statistics' : 'Not Specified'),
+        institution: isDemoAccount ? 'Indian Statistical Institute (ISI)' : 'National Academy',
+        passingYear: isDemoAccount ? '2020' : new Date().getFullYear().toString()
+      });
     }
 
     skillService.getUserCertificates().then((data) => {

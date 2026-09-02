@@ -2,8 +2,12 @@ import api from './api';
 
 export const skillService = {
   getUserCompetencies: async () => {
-    const response = await api.get('/api/users/competencies');
-    return response.data;
+    try {
+      const response = await api.get('/api/users/competencies');
+      return response.data;
+    } catch {
+      return null;
+    }
   },
 
   getUserStats: async () => {
@@ -23,7 +27,9 @@ export const skillService = {
   getUserCertificates: async () => {
     try {
       const response = await api.get('/api/users/certificates');
-      return response.data?.certificates || [];
+      const certs = response.data?.certificates || response.data;
+      if (Array.isArray(certs)) return certs;
+      return [];
     } catch {
       return [];
     }

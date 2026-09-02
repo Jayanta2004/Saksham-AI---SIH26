@@ -70,16 +70,17 @@ app.get('/health', async (req, res) => {
 
 // user login
 app.post('/api/auth/login', async (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password) {
+  const { email, password } = req.body || {};
+  const cleanEmail = (typeof email === 'string') ? email.trim().toLowerCase() : '';
+  if (!cleanEmail || !password) {
     return res.status(400).json({ error: 'Email and password are required.' });
   }
 
-  let user = (await pgDb.getUserByEmail(email)) || db.users.find((u) => u.email.toLowerCase() === email.toLowerCase());
+  let user = (await pgDb.getUserByEmail(cleanEmail)) || db.users.find((u) => u.email && u.email.toLowerCase() === cleanEmail);
   
   // if registered in pending list previously, auto-activate immediately
   if (!user && db.pending_users) {
-    const pending = db.pending_users.find((u) => u.email.toLowerCase() === email.toLowerCase());
+    const pending = db.pending_users.find((u) => u.email && u.email.toLowerCase() === cleanEmail);
     if (pending) {
       pending.is_active = true;
       db.users.push(pending);
@@ -117,13 +118,14 @@ app.post('/api/auth/login', async (req, res) => {
 // Officer Registration Endpoint (Active Immediately)
 app.post('/api/auth/register', async (req, res) => {
   try {
-    const { full_name, email, password, designation, department, cadre, role_id } = req.body;
-    if (!email || !password || !full_name) {
+    const { full_name, email, password, designation, department, cadre, role_id } = req.body || {};
+    const cleanEmail = (typeof email === 'string') ? email.trim().toLowerCase() : '';
+    if (!cleanEmail || !password || !full_name) {
       return res.status(400).json({ error: 'Full name, official email, and password are required.' });
     }
 
     // Check if user already exists
-    const existing = (await pgDb.getUserByEmail(email)) || db.users.find((u) => u.email.toLowerCase() === email.toLowerCase());
+    const existing = (await pgDb.getUserByEmail(cleanEmail)) || db.users.find((u) => u.email && u.email.toLowerCase() === cleanEmail);
     if (existing) {
       return res.status(400).json({ error: 'An account with this official email already exists.' });
     }
@@ -136,16 +138,17 @@ app.post('/api/auth/register', async (req, res) => {
     const newUser = {
       id: newUserId,
       full_name,
-      email: email.toLowerCase(),
+      email: cleanEmail,
       password_hash: hashedPassword,
       role_id: selectedRole,
       role_name: roleName,
-      designation: designation || 'Senior Statistical Officer (SSO)',
-      department: department || 'National Accounts Division (NAD)',
-      cadre: cadre || 'ISS',
+      designation: designation || 'Statistical Officer',
+      department: department || 'Field Operations Division (FOD)',
+      cadre: cadre || 'Subordinate Statistical Service (SSS)',
       is_active: true,
-      educational_qualifications: 'M.Sc. Statistics',
-      work_experience_years: 3,
+      educational_qualifications: req.body.educational_qualifications || '',
+      work_experience_years: Number(req.body.work_experience_years) || 0,
+      phone: req.body.phone || '',
       encrypted_national_id: DataEncryption.encrypt('ID-' + Math.floor(100000 + Math.random() * 900000)),
       avatar_url: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(full_name)}`
     };
@@ -424,24 +427,24 @@ app.get('/api/users/competencies', verifyToken, async (req, res) => {
       }));
     }
   } catch (err) {
-    // fallback radar dataset if ai service busy
+    const isDemo = userId === 'usr_sso_01';
     const radarData = [
-      { domain: 'Survey Sampling', current: userComps['comp_sampling'] || 2.2, benchmark: 3.5, fullMark: 5 },
-      { domain: 'National Accounts', current: userComps['comp_sna_accounts'] || 2.8, benchmark: 4.0, fullMark: 5 },
-      { domain: 'Price Indices', current: userComps['comp_index_numbers'] || 3.5, benchmark: 4.0, fullMark: 5 },
-      { domain: 'Python/R Stats', current: userComps['comp_python_r_stats'] || 2.4, benchmark: 4.0, fullMark: 5 },
-      { domain: 'AI in Microdata', current: userComps['comp_ai_microdata'] || 1.6, benchmark: 3.0, fullMark: 5 },
-      { domain: 'DPDPA Governance', current: userComps['comp_dpdpa_gov'] || 3.8, benchmark: 4.0, fullMark: 5 },
-      { domain: 'Policy Advisory', current: userComps['comp_policy_advisory'] || 2.9, benchmark: 3.0, fullMark: 5 }
+      { domain: 'Survey Sampling', current: userComps['comp_sampling'] || (isDemo ? 2.2 : 1.0), benchmark: 3.5, fullMark: 5 },
+      { domain: 'National Accounts', current: userComps['comp_sna_accounts'] || (isDemo ? 2.8 : 1.0), benchmark: 4.0, fullMark: 5 },
+      { domain: 'Price Indices', current: userComps['comp_index_numbers'] || (isDemo ? 3.5 : 1.0), benchmark: 4.0, fullMark: 5 },
+      { domain: 'Python/R Stats', current: userComps['comp_python_r_stats'] || (isDemo ? 2.4 : 1.0), benchmark: 4.0, fullMark: 5 },
+      { domain: 'AI in Microdata', current: userComps['comp_ai_microdata'] || (isDemo ? 1.6 : 1.0), benchmark: 3.0, fullMark: 5 },
+      { domain: 'DPDPA Governance', current: userComps['comp_dpdpa_gov'] || (isDemo ? 3.8 : 1.0), benchmark: 4.0, fullMark: 5 },
+      { domain: 'Policy Advisory', current: userComps['comp_policy_advisory'] || (isDemo ? 2.9 : 1.0), benchmark: 3.0, fullMark: 5 }
     ];
 
     responseData = {
       user_id: userId,
       designation: user.designation,
-      overall_gap_score: 25.1,
-      readiness_percentage: 74.9,
-      readiness_label: 'Moderate Gap - Upskilling Recommended',
-      status_color: '#F59E0B',
+      overall_gap_score: isDemo ? 25.1 : 72.5,
+      readiness_percentage: isDemo ? 74.9 : 27.5,
+      readiness_label: isDemo ? 'Moderate Gap - Upskilling Recommended' : 'Initial Baseline - Diagnostic Assessments Recommended',
+      status_color: isDemo ? '#F59E0B' : '#3B82F6',
       radar_chart: radarData,
       competency_breakdown: radarData.map((r) => ({
         competency_id: r.domain,
@@ -638,8 +641,8 @@ app.post('/api/assessments/submit', verifyToken, async (req, res) => {
   const { quiz_id, time_spent_seconds } = req.body;
   const user_answers = req.body.user_answers || req.body.answers || {};
   const quizzes = await pgDb.getQuizzes();
-  const quiz = quizzes.find((q) => q.id === quiz_id) || db.quizzes.find((q) => q.id === quiz_id);
-  const questions = db.quiz_questions[quiz_id] || [];
+  const quiz = quizzes.find((q) => q.id === quiz_id) || db.quizzes.find((q) => q.id === quiz_id) || db.quizzes.find((q) => q.id.includes(quiz_id) || quiz_id.includes(q.id)) || db.quizzes[0];
+  const questions = db.quiz_questions[quiz?.id] || db.quiz_questions['qz_nss_sampling_01'] || [];
 
   if (!quiz || questions.length === 0) {
     return res.status(404).json({ error: 'Quiz not found.' });
@@ -648,9 +651,11 @@ app.post('/api/assessments/submit', verifyToken, async (req, res) => {
   let totalCorrect = 0;
   const feedbackList = [];
 
-  questions.forEach((q) => {
-    const chosen = user_answers[q.id];
-    const isCorrect = chosen === q.correct_option;
+  questions.forEach((q, idx) => {
+    const chosen = user_answers[q.id] !== undefined ? user_answers[q.id] : (user_answers[`q${idx + 1}`] !== undefined ? user_answers[`q${idx + 1}`] : user_answers[idx]);
+    const normChosen = (chosen || '').toString().toLowerCase().replace('option_', '');
+    const normCorrect = (q.correct_option || '').toString().toLowerCase().replace('option_', '');
+    const isCorrect = normChosen.length > 0 && normChosen === normCorrect;
     if (isCorrect) totalCorrect += 1;
 
     feedbackList.push({
@@ -669,7 +674,10 @@ app.post('/api/assessments/submit', verifyToken, async (req, res) => {
 
   const competencyId = quiz.competency_id || 'comp_sampling';
   const deltaGain = passed ? 0.35 : 0.10;
-  const updatedComps = await pgDb.updateUserCompetency(req.user.id, competencyId, deltaGain);
+  const currentComps = (await pgDb.getUserCompetencies(req.user.id)) || {};
+  const currentVal = typeof currentComps[competencyId] === 'number' ? currentComps[competencyId] : 1.0;
+  const newScore = Number(Math.min(5.0, Math.max(1.0, currentVal + deltaGain)).toFixed(2));
+  const updatedComps = await pgDb.updateUserCompetency(req.user.id, competencyId, newScore);
 
   const attemptRecord = {
     id: `qa_${Date.now().toString().slice(-6)}`,

@@ -348,7 +348,8 @@ export class DatabaseState {
   }
 
   getUserByEmail(email) {
-    return this.users.find((u) => u.email.toLowerCase() === email.toLowerCase());
+    if (!email || typeof email !== 'string') return null;
+    return this.users.find((u) => u.email && u.email.toLowerCase() === email.toLowerCase());
   }
 
   getUserById(id) {
@@ -358,19 +359,32 @@ export class DatabaseState {
   getUserCompetencies(userId) {
     if (!this.user_competencies[userId]) {
       const user = this.getUserById(userId);
-      const isJSO = (user?.designation || '').toLowerCase().includes('junior');
-      const isFOD = (user?.department || '').toLowerCase().includes('field');
+      const isDemo = userId === 'usr_sso_01' || userId === 'usr_trainer_01' || userId === 'usr_admin_01';
       
-      // Dynamic baseline initialized per user role/department
-      this.user_competencies[userId] = {
-        'comp_sna_accounts': isFOD ? 1.5 : (isJSO ? 1.8 : 2.2),
-        'comp_index_numbers': isJSO ? 2.0 : 2.6,
-        'comp_sampling': isFOD ? 2.8 : 2.1,
-        'comp_python_r_stats': 1.6,
-        'comp_ai_microdata': 1.2,
-        'comp_dpdpa_gov': 2.5,
-        'comp_policy_advisory': isJSO ? 1.4 : 2.0
-      };
+      if (isDemo) {
+        const isJSO = (user?.designation || '').toLowerCase().includes('junior');
+        const isFOD = (user?.department || '').toLowerCase().includes('field');
+        this.user_competencies[userId] = {
+          'comp_sna_accounts': isFOD ? 1.5 : (isJSO ? 1.8 : 2.2),
+          'comp_index_numbers': isJSO ? 2.0 : 2.6,
+          'comp_sampling': isFOD ? 2.8 : 2.1,
+          'comp_python_r_stats': 1.6,
+          'comp_ai_microdata': 1.2,
+          'comp_dpdpa_gov': 2.5,
+          'comp_policy_advisory': isJSO ? 1.4 : 2.0
+        };
+      } else {
+        // Newly created accounts start with unassessed entry-level baseline
+        this.user_competencies[userId] = {
+          'comp_sna_accounts': 1.0,
+          'comp_index_numbers': 1.0,
+          'comp_sampling': 1.0,
+          'comp_python_r_stats': 1.0,
+          'comp_ai_microdata': 1.0,
+          'comp_dpdpa_gov': 1.0,
+          'comp_policy_advisory': 1.0
+        };
+      }
     }
     return this.user_competencies[userId];
   }
@@ -379,23 +393,57 @@ export class DatabaseState {
     if (!this.user_competencies[userId]) {
       this.getUserCompetencies(userId);
     }
-    const current = this.user_competencies[userId][compId] || 2.0;
+    const current = this.user_competencies[userId][compId] || 1.0;
     const updated = Math.min(5.0, Math.max(1.0, current + delta));
     this.user_competencies[userId][compId] = Number(updated.toFixed(2));
     return this.user_competencies[userId];
   }
 
   getUserCertificates(userId) {
-    const user = this.getUserById(userId) || { full_name: 'Statistical Officer', designation: 'Senior Statistical Officer (SSO)' };
+    const isDemo = userId === 'usr_sso_01';
+    const user = this.getUserById(userId) || { full_name: 'Statistical Officer', designation: 'Statistical Officer' };
     const passedAttempts = this.attempts.filter((a) => a.user_id === userId && a.passed);
 
+    // If it is the demo account and no attempts logged yet, provide demo preview certificates
+    if (isDemo && passedAttempts.length === 0) {
+      return [
+        {
+          id: 'cert_sso_01',
+          title: 'Gross Value Added (GVA) Compilation in SNA 2008',
+          issuer: 'National Statistical Systems Training Academy (NSSTA)',
+          issue_date: '15 Aug 2026',
+          score_percentage: 92.0,
+          credential_id: 'SAKSHAM-NAD-SNA001-101',
+          recipient_name: user.full_name,
+          recipient_designation: user.designation,
+          department: user.department,
+          skills_covered: ['National Accounts', 'SNA 2008', 'GVA Compilation'],
+          status: 'Verified & Active'
+        },
+        {
+          id: 'cert_sso_02',
+          title: 'Multi-Stage Stratified Sampling & Survey Multipliers',
+          issuer: 'Survey Design & Research Division (SDRD / MoSPI)',
+          issue_date: '28 Jul 2026',
+          score_percentage: 88.0,
+          credential_id: 'SAKSHAM-SDRD-SMP004-102',
+          recipient_name: user.full_name,
+          recipient_designation: user.designation,
+          department: user.department,
+          skills_covered: ['Survey Sampling', 'Multi-Stage Stratification', 'PSU Weighting'],
+          status: 'Verified & Active'
+        }
+      ];
+    }
+
+    // Newly registered accounts or accounts with attempts only get genuine passed certificates
     return passedAttempts.map((att, idx) => ({
       id: `cert_${att.id}`,
       title: att.quiz_title || 'Certificate of Statistical Competency',
       issuer: 'Ministry of Statistics & Programme Implementation & NSSTA',
       issue_date: att.attempted_at ? new Date(att.attempted_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
       score_percentage: att.score_percentage || 75.0,
-      credential_id: `SAKSHAM-${userId.slice(-6).toUpperCase()}-${att.quiz_id.slice(-6).toUpperCase()}-${idx + 101}`,
+      credential_id: `SAKSHAM-${userId.slice(-6).toUpperCase()}-${(att.quiz_id || 'QZ').slice(-6).toUpperCase()}-${idx + 101}`,
       recipient_name: user.full_name,
       recipient_designation: user.designation,
       department: user.department,
@@ -405,15 +453,27 @@ export class DatabaseState {
   }
 
   getUserStats(userId) {
+    const isDemo = userId === 'usr_sso_01';
     const userAttempts = this.attempts.filter((a) => a.user_id === userId);
     const passedAttempts = userAttempts.filter((a) => a.passed);
     const certs = this.getUserCertificates(userId);
     
     const learningHours = passedAttempts.reduce((acc, a) => acc + Math.round((a.time_spent_seconds || 180) / 60) + 4, 0);
 
+    if (isDemo && userAttempts.length === 0) {
+      return {
+        courses_completed: 4,
+        learning_hours: 38,
+        assessments_passed: 6,
+        certificates_earned: 2,
+        total_attempts: 6
+      };
+    }
+
+    // Newly registered users have 0 stats until they complete actions
     return {
-      courses_completed: passedAttempts.length > 0 ? passedAttempts.length + 1 : 0,
-      learning_hours: learningHours > 0 ? learningHours : 0,
+      courses_completed: passedAttempts.length,
+      learning_hours: learningHours,
       assessments_passed: passedAttempts.length,
       certificates_earned: certs.length,
       total_attempts: userAttempts.length
@@ -421,28 +481,37 @@ export class DatabaseState {
   }
 
   getUserTrajectory(userId) {
+    const isDemo = userId === 'usr_sso_01';
     const comps = this.getUserCompetencies(userId);
     const avgScore = Object.values(comps).reduce((a, b) => a + b, 0) / (Object.values(comps).length || 1);
-    const currentReadiness = Math.min(100, Math.round((avgScore / 4.0) * 100));
+    const currentReadiness = isDemo ? 74.9 : Math.round((avgScore / 5.0) * 100);
 
     const userAttempts = this.attempts.filter((a) => a.user_id === userId);
     const passedAttempts = userAttempts.filter((a) => a.passed);
     const currentHours = passedAttempts.reduce((acc, a) => acc + Math.round((a.time_spent_seconds || 180) / 60) + 4, 0);
 
-    const isExistingUser = userId === 'usr_sso_01';
-
     return {
-      competency_trajectory: [
-        { month: 'Month 1', score: isExistingUser ? 52 : Math.max(10, currentReadiness - 15), target: 60 },
-        { month: 'Month 2', score: isExistingUser ? 63 : Math.max(20, currentReadiness - 10), target: 70 },
-        { month: 'Month 3', score: isExistingUser ? 75 : Math.max(30, currentReadiness - 5), target: 75 },
+      competency_trajectory: isDemo ? [
+        { month: 'Month 1', score: 52, target: 60 },
+        { month: 'Month 2', score: 63, target: 70 },
+        { month: 'Month 3', score: 75, target: 75 },
+        { month: 'Current', score: 74.9, target: 85 }
+      ] : [
+        { month: 'Month 1', score: 0, target: 60 },
+        { month: 'Month 2', score: 0, target: 70 },
+        { month: 'Month 3', score: 0, target: 75 },
         { month: 'Current', score: currentReadiness, target: 85 }
       ],
-      monthly_hours: [
-        { month: 'Jun', hours: isExistingUser ? 4 : 0 },
-        { month: 'Jul', hours: isExistingUser ? 8 : 0 },
-        { month: 'Aug', hours: isExistingUser ? 14 : 0 },
-        { month: 'Sep (Current)', hours: isExistingUser ? 6 : currentHours }
+      monthly_hours: isDemo ? [
+        { month: 'Jun', hours: 4 },
+        { month: 'Jul', hours: 8 },
+        { month: 'Aug', hours: 14 },
+        { month: 'Sep (Current)', hours: 6 }
+      ] : [
+        { month: 'Jun', hours: 0 },
+        { month: 'Jul', hours: 0 },
+        { month: 'Aug', hours: 0 },
+        { month: 'Sep (Current)', hours: currentHours }
       ]
     };
   }

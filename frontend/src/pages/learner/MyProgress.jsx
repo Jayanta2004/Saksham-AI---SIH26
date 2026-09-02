@@ -17,24 +17,24 @@ import { skillService } from '../../services/skillService';
 export default function MyProgress() {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
-  const [readiness, setReadiness] = useState(74.9);
+  const [readiness, setReadiness] = useState(0);
   const [userStats, setUserStats] = useState({
-    courses_completed: 4,
-    learning_hours: 38,
-    assessments_passed: 6,
-    certificates_earned: 3
+    courses_completed: 0,
+    learning_hours: 0,
+    assessments_passed: 0,
+    certificates_earned: 0
   });
   const [trajectoryData, setTrajectoryData] = useState([
-    { month: 'Month 1', score: 50 },
-    { month: 'Month 2', score: 62 },
-    { month: 'Month 3', score: 70 },
-    { month: 'Current', score: 74.9 }
+    { month: 'Month 1', score: 0 },
+    { month: 'Month 2', score: 0 },
+    { month: 'Month 3', score: 0 },
+    { month: 'Current', score: 0 }
   ]);
   const [hoursData, setHoursData] = useState([
-    { month: 'Jun', hours: 4 },
-    { month: 'Jul', hours: 8 },
-    { month: 'Aug', hours: 14 },
-    { month: 'Sep', hours: 12 }
+    { month: 'Jun', hours: 0 },
+    { month: 'Jul', hours: 0 },
+    { month: 'Aug', hours: 0 },
+    { month: 'Sep', hours: 0 }
   ]);
 
   useEffect(() => {
@@ -50,7 +50,7 @@ export default function MyProgress() {
 
         if (isMounted) {
           if (compData) {
-            setReadiness(compData.readiness_percentage || 74.9);
+            setReadiness(compData.readiness_percentage || 0);
           }
           if (statsData) {
             setUserStats(statsData);
@@ -73,9 +73,9 @@ export default function MyProgress() {
 
   const summaryMetrics = [
     { label: 'Overall Readiness', value: `${readiness}%`, note: 'Current benchmark readiness' },
-    { label: 'Total Learning Hours', value: `${userStats.learning_hours || 38} hrs`, note: 'Official hours tracked' },
-    { label: 'Completed Modules', value: `${userStats.courses_completed || 4} Modules`, note: 'Verified completions' },
-    { label: 'Assessments Passed', value: `${userStats.assessments_passed || 6} Passed`, note: 'Diagnostic evaluations' }
+    { label: 'Total Learning Hours', value: `${userStats.learning_hours || 0} hrs`, note: 'Official hours tracked' },
+    { label: 'Completed Modules', value: `${userStats.courses_completed || 0} Modules`, note: 'Verified completions' },
+    { label: 'Assessments Passed', value: `${userStats.assessments_passed || 0} Passed`, note: 'Diagnostic evaluations' }
   ];
 
   if (loading) {

@@ -20,7 +20,10 @@ export default function PersonalizedLearningPath() {
         ]);
 
         if (isMounted) {
-          const completedCount = statsData?.assessments_passed || 1;
+          const isDemo = user?.id === 'usr_sso_01';
+          const completedCount = typeof statsData?.assessments_passed === 'number' 
+            ? statsData.assessments_passed 
+            : (isDemo ? 1 : 0);
           const pathway = compData?.recommended_pathway || [];
 
           if (pathway.length > 0) {
@@ -33,7 +36,7 @@ export default function PersonalizedLearningPath() {
                 progress = 100;
               } else if (idx === completedCount) {
                 status = 'current';
-                progress = 30;
+                progress = isDemo ? 30 : 0;
               }
 
               return {
@@ -53,27 +56,27 @@ export default function PersonalizedLearningPath() {
             setSteps([
               {
                 step: 1,
-                status: 'completed',
+                status: completedCount > 0 ? 'completed' : 'current',
                 title: 'Official Microdata Cleaning in Python & Pandas for Surveys',
                 provider: 'iGOT Karmayogi',
                 duration: '16 Hours',
                 skill: 'Python Microdata Analytics',
                 difficulty: 'Intermediate',
-                progress: 100
+                progress: completedCount > 0 ? 100 : 0
               },
               {
                 step: 2,
-                status: 'current',
+                status: completedCount > 1 ? 'completed' : (completedCount === 1 ? 'current' : 'upcoming'),
                 title: 'SNA 2008: Gross Value Added & Sectoral Compilation',
                 provider: 'iGOT Karmayogi / NSSTA',
                 duration: '24 Hours',
                 skill: 'National Accounts',
                 difficulty: 'Intermediate',
-                progress: 30
+                progress: completedCount > 1 ? 100 : (completedCount === 1 ? (isDemo ? 30 : 0) : 0)
               },
               {
                 step: 3,
-                status: 'upcoming',
+                status: completedCount > 2 ? 'completed' : (completedCount === 2 ? 'current' : 'upcoming'),
                 title: 'Multi-Stage Stratified Sampling & Survey Multipliers',
                 provider: 'NSSTA Residential Workshop (Greater Noida)',
                 duration: '30 Hours',

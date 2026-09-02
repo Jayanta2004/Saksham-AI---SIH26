@@ -26,29 +26,29 @@ import { useTheme } from '../../context/ThemeContext';
 import { skillService } from '../../services/skillService';
 
 const DEFAULT_MOSPI_RADAR = [
-  { domain: 'Survey Sampling', current: 2.2, benchmark: 3.5, fullMark: 5 },
-  { domain: 'National Accounts', current: 2.8, benchmark: 4.0, fullMark: 5 },
-  { domain: 'Price Indices', current: 3.5, benchmark: 4.0, fullMark: 5 },
-  { domain: 'Python/R Stats', current: 2.4, benchmark: 4.0, fullMark: 5 },
-  { domain: 'AI in Microdata', current: 1.6, benchmark: 3.0, fullMark: 5 },
-  { domain: 'DPDPA Governance', current: 3.8, benchmark: 4.0, fullMark: 5 },
-  { domain: 'Policy Advisory', current: 2.9, benchmark: 3.0, fullMark: 5 }
+  { domain: 'Survey Sampling', current: 1.0, benchmark: 3.5, fullMark: 5 },
+  { domain: 'National Accounts', current: 1.0, benchmark: 4.0, fullMark: 5 },
+  { domain: 'Price Indices', current: 1.0, benchmark: 4.0, fullMark: 5 },
+  { domain: 'Python/R Stats', current: 1.0, benchmark: 4.0, fullMark: 5 },
+  { domain: 'AI in Microdata', current: 1.0, benchmark: 3.0, fullMark: 5 },
+  { domain: 'DPDPA Governance', current: 1.0, benchmark: 4.0, fullMark: 5 },
+  { domain: 'Policy Advisory', current: 1.0, benchmark: 3.0, fullMark: 5 }
 ];
 
 export default function LearnerDashboard() {
   const { user } = useAuth();
   const { theme } = useTheme();
   const [loading, setLoading] = useState(true);
-  const [readiness, setReadiness] = useState(74.9);
-  const [readinessLabel, setReadinessLabel] = useState('Moderate Gap - Upskilling Recommended');
+  const [readiness, setReadiness] = useState(0);
+  const [readinessLabel, setReadinessLabel] = useState('Initial Baseline - Diagnostic Assessments Recommended');
   const [radarData, setRadarData] = useState(DEFAULT_MOSPI_RADAR);
   const [skillGaps, setSkillGaps] = useState([]);
   const [recommendedCourses, setRecommendedCourses] = useState([]);
   const [userStats, setUserStats] = useState({
-    courses_completed: 4,
-    learning_hours: 38,
-    assessments_passed: 6,
-    certificates_earned: 3
+    courses_completed: 0,
+    learning_hours: 0,
+    assessments_passed: 0,
+    certificates_earned: 0
   });
 
   useEffect(() => {

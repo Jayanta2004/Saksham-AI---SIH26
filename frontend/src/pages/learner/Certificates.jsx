@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Award, Download, Calendar, CheckCircle, X, Printer, Shield, Loader2, ArrowRight } from 'lucide-react';
+import { Award, Download, Calendar, CheckCircle, X, Shield, Loader2, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { skillService } from '../../services/skillService';
@@ -35,47 +35,143 @@ export default function Certificates() {
   }, [user]);
 
   const handleDownload = (cert) => {
-    const certHtml = `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <title>${cert.title} - Verified Certificate</title>
-        <style>
-          body { font-family: 'Times New Roman', serif; padding: 40px; text-align: center; border: 12px double #1e3a8a; margin: 20px; background: #fff; }
-          h1 { color: #1e3a8a; font-size: 26px; text-transform: uppercase; margin-bottom: 5px; }
-          h3 { color: #475569; font-weight: normal; margin-top: 0; font-size: 16px; }
-          .recipient { font-size: 28px; font-weight: bold; color: #0f172a; margin: 25px 0; border-bottom: 2px solid #cbd5e1; display: inline-block; padding-bottom: 5px; }
-          .body-text { font-size: 15px; color: #334155; line-height: 1.6; max-width: 650px; margin: 0 auto 20px; }
-          .meta { font-size: 13px; color: #64748b; margin-top: 40px; display: flex; justify-content: space-around; border-top: 1px solid #e2e8f0; padding-top: 20px; }
-          .badge { font-weight: bold; color: #047857; margin-top: 15px; font-size: 14px; }
-        </style>
-      </head>
-      <body>
-        <h1>Ministry of Statistics & Programme Implementation</h1>
-        <h3>Government of India • National Statistical Systems Training Academy (NSSTA)</h3>
-        <p class="body-text">This is to certify that</p>
-        <div class="recipient">${cert.recipient_name || learnerName}</div>
-        <p class="body-text">(${cert.recipient_designation || designation}) has successfully demonstrated statistical competency and satisfied all evaluation benchmarks for</p>
-        <h2>${cert.title}</h2>
-        <div class="badge">Verified Score: ${cert.score_percentage || cert.score || 75}% • Status: Verified & Active</div>
-        <div class="meta">
-          <div><strong>Issuer:</strong> ${cert.issuer}</div>
-          <div><strong>Issue Date:</strong> ${cert.issue_date || cert.issueDate}</div>
-          <div><strong>Credential ID:</strong> ${cert.credential_id || cert.credentialId}</div>
-        </div>
-      </body>
-      </html>
-    `;
-    const blob = new Blob([certHtml], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${cert.credential_id || cert.credentialId || 'Certificate'}.html`;
-    a.click();
-    URL.revokeObjectURL(url);
+    const canvas = document.createElement('canvas');
+    canvas.width = 1200;
+    canvas.height = 850;
+    const ctx = canvas.getContext('2d');
 
-    setShowToast(`Downloaded Certificate for ${cert.title}`);
-    setTimeout(() => setShowToast(null), 4000);
+    // Background fill
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, 1200, 850);
+
+    // Inner paper fill
+    ctx.fillStyle = '#fafbfd';
+    ctx.fillRect(30, 30, 1140, 790);
+
+    // Double borders
+    ctx.strokeStyle = '#1e3a8a';
+    ctx.lineWidth = 8;
+    ctx.strokeRect(40, 40, 1120, 770);
+
+    ctx.strokeStyle = '#d97706';
+    ctx.lineWidth = 3;
+    ctx.strokeRect(52, 52, 1096, 746);
+
+    // Corner flourishes
+    const drawFlourish = (x, y) => {
+      ctx.fillStyle = '#1e3a8a';
+      ctx.beginPath();
+      ctx.arc(x, y, 10, 0, Math.PI * 2);
+      ctx.fill();
+    };
+    drawFlourish(65, 65);
+    drawFlourish(1135, 65);
+    drawFlourish(65, 785);
+    drawFlourish(1135, 785);
+
+    // Government Header
+    ctx.fillStyle = '#1e3a8a';
+    ctx.font = 'bold 24px "Outfit", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('MINISTRY OF STATISTICS & PROGRAMME IMPLEMENTATION', 600, 135);
+
+    ctx.fillStyle = '#475569';
+    ctx.font = '600 15px "Inter", sans-serif';
+    ctx.fillText('GOVERNMENT OF INDIA • NATIONAL STATISTICAL SYSTEMS TRAINING ACADEMY (NSSTA)', 600, 165);
+
+    // Title Accent
+    ctx.fillStyle = '#d97706';
+    ctx.font = 'bold 18px "Outfit", sans-serif';
+    ctx.fillText('OFFICIAL COMPETENCY CERTIFICATE', 600, 215);
+
+    // Certification Body
+    ctx.fillStyle = '#64748b';
+    ctx.font = '16px "Inter", sans-serif';
+    ctx.fillText('This is to certify that', 600, 265);
+
+    // Recipient Name
+    const name = cert.recipient_name || learnerName;
+    ctx.fillStyle = '#0f172a';
+    ctx.font = 'bold 34px "Outfit", sans-serif';
+    ctx.fillText(name, 600, 315);
+
+    // Name Underline
+    ctx.strokeStyle = '#cbd5e1';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(350, 330);
+    ctx.lineTo(850, 330);
+    ctx.stroke();
+
+    // Designation
+    const desig = cert.recipient_designation || designation;
+    ctx.fillStyle = '#475569';
+    ctx.font = '500 16px "Inter", sans-serif';
+    ctx.fillText(`(${desig})`, 600, 360);
+
+    // Statement
+    ctx.fillStyle = '#334155';
+    ctx.font = '15px "Inter", sans-serif';
+    ctx.fillText('has successfully satisfied all evaluation benchmarks and demonstrated verified competency in', 600, 410);
+
+    // Course Title
+    ctx.fillStyle = '#1e3a8a';
+    ctx.font = 'bold 26px "Outfit", sans-serif';
+    ctx.fillText(cert.title, 600, 460);
+
+    // Score Badge Box
+    const score = cert.score_percentage || cert.score || 85;
+    ctx.fillStyle = '#ecfdf5';
+    ctx.fillRect(400, 500, 400, 45);
+    ctx.strokeStyle = '#a7f3d0';
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(400, 500, 400, 45);
+
+    ctx.fillStyle = '#047857';
+    ctx.font = 'bold 16px "Inter", sans-serif';
+    ctx.fillText(`VERIFIED SCORE: ${score}% • STATUS: ACTIVE & AUTHENTICATED`, 600, 528);
+
+    // Footer Divider
+    ctx.strokeStyle = '#cbd5e1';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(100, 680);
+    ctx.lineTo(1100, 680);
+    ctx.stroke();
+
+    // Issuer, Date, Credential ID
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#475569';
+    ctx.font = '14px "Inter", sans-serif';
+
+    ctx.fillText(`Issuer: ${cert.issuer || 'NSSTA Academy'}`, 120, 720);
+
+    ctx.textAlign = 'center';
+    ctx.fillText(`Issue Date: ${cert.issue_date || cert.issueDate || '2026-09-01'}`, 600, 720);
+
+    ctx.textAlign = 'right';
+    ctx.fillText(`Credential ID: ${cert.credential_id || cert.credentialId}`, 1080, 720);
+
+    // Digital Seal Watermark
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = 'bold 12px "Inter", sans-serif';
+    ctx.fillText('DIGITALLY SIGNED & VERIFIED BY SAKSHAM AI GOVERNANCE PLATFORM', 600, 765);
+
+    // Convert Canvas to PNG image blob & trigger download
+    canvas.toBlob((blob) => {
+      if (!blob) return;
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      const fileName = `${(cert.credential_id || cert.credentialId || 'Certificate').replace(/[^a-zA-Z0-9_-]/g, '_')}_Certificate.png`;
+      a.download = fileName;
+      a.click();
+      URL.revokeObjectURL(url);
+
+      setShowToast(`Downloaded Image Certificate (.png)`);
+      setTimeout(() => setShowToast(null), 4000);
+    }, 'image/png');
   };
 
   if (loading) {
@@ -165,7 +261,7 @@ export default function Certificates() {
                   className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition shadow-sm"
                 >
                   <Download className="w-3.5 h-3.5" />
-                  <span>Download</span>
+                  <span>Download Image (PNG)</span>
                 </button>
               </div>
             </div>
@@ -250,7 +346,7 @@ export default function Certificates() {
                 className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm"
               >
                 <Download className="w-3.5 h-3.5" />
-                <span>Download HTML Certificate</span>
+                <span>Download Image (PNG)</span>
               </button>
             </div>
           </div>
