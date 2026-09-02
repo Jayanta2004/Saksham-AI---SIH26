@@ -54,9 +54,9 @@ const Assessments = () => {
   return (
     <div className="space-y-6 pb-12">
       {/* Page Header */}
-      <div className="bg-white dark:bg-[#0F172A] p-6 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm">
-        <h1 className="font-headline text-xl font-bold text-slate-900 dark:text-white">Diagnostic AI Assessments</h1>
-        <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
+      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <h1 className="font-headline text-xl font-bold text-slate-900">Diagnostic AI Assessments</h1>
+        <p className="text-xs sm:text-sm text-slate-600 mt-1">
           Role-aware competency evaluations grounded in official MoSPI statistical manuals to test knowledge and verify skill progression.
         </p>
       </div>
@@ -66,33 +66,33 @@ const Assessments = () => {
         {quizzes.map((quiz) => (
           <div
             key={quiz.id}
-            className="bg-white dark:bg-[#0F172A] rounded-2xl border border-slate-200 dark:border-white/10 p-6 flex flex-col justify-between space-y-4 hover:border-blue-500/40 dark:hover:border-ai-cyan/40 transition-all shadow-sm"
+            className="bg-white rounded-2xl border border-slate-200 p-6 flex flex-col justify-between space-y-4 hover:border-blue-500/40 transition-all shadow-sm"
           >
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-[11px] font-bold text-blue-700 dark:text-ai-cyan bg-blue-50 dark:bg-cyan-500/10 border border-blue-200 dark:border-cyan-500/20 px-2.5 py-1 rounded-full font-mono">
+                <span className="text-[11px] font-bold text-blue-700 bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-full font-mono">
                   {quiz.competency_tag}
                 </span>
-                <span className="text-xs font-semibold text-slate-600 dark:text-slate-300">
+                <span className="text-xs font-semibold text-slate-600">
                   {quiz.difficulty_level}
                 </span>
               </div>
 
-              <h2 className="font-headline text-base font-bold text-slate-900 dark:text-white leading-snug">
+              <h2 className="font-headline text-base font-bold text-slate-900 leading-snug">
                 {quiz.title}
               </h2>
 
-              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                 {quiz.description}
               </p>
 
-              <div className="flex items-center space-x-4 text-xs text-slate-600 dark:text-slate-400 font-mono pt-2 border-t border-slate-100 dark:border-white/5">
+              <div className="flex items-center space-x-4 text-xs text-slate-600 font-mono pt-2 border-t border-slate-100">
                 <span className="flex items-center">
-                  <FileText className="w-3.5 h-3.5 mr-1 text-slate-400 dark:text-slate-500" />
+                  <FileText className="w-3.5 h-3.5 mr-1 text-slate-400" />
                   {quiz.total_questions} Questions
                 </span>
                 <span className="flex items-center">
-                  <Clock className="w-3.5 h-3.5 mr-1 text-slate-400 dark:text-slate-500" />
+                  <Clock className="w-3.5 h-3.5 mr-1 text-slate-400" />
                   {quiz.time_limit_minutes} mins
                 </span>
               </div>
@@ -100,7 +100,7 @@ const Assessments = () => {
 
             <button
               onClick={() => navigate(`/quiz/${quiz.id}`)}
-              className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 dark:bg-gradient-to-r dark:from-blue-600 dark:to-cyan-600 text-white font-semibold rounded-xl text-xs sm:text-sm transition-all shadow-sm flex items-center justify-center gap-2"
+              className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl text-xs sm:text-sm transition-all shadow-sm flex items-center justify-center gap-2"
             >
               <span>Start Assessment</span>
               <ArrowRight className="w-4 h-4" />

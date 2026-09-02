@@ -100,56 +100,56 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col justify-center items-center px-4 py-8 transition-colors duration-200">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col justify-center items-center px-4 py-8 transition-colors duration-200">
       <div className="w-full max-w-md mb-4 flex justify-between items-center text-xs">
-        <Link to="/" className="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1 font-medium">
+        <Link to="/" className="text-blue-600 hover:underline flex items-center gap-1 font-medium">
           ← Back to Saksham AI Home
         </Link>
         <div className="flex items-center gap-3">
           <ThemeToggle size="sm" />
-          <span className="text-slate-400 dark:text-slate-500 font-medium">MoSPI Official</span>
+          <span className="text-slate-400 font-medium">MoSPI Official</span>
         </div>
       </div>
 
-      <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl shadow-sm dark:shadow-2xl border border-slate-200 dark:border-slate-800 p-7 transition-colors duration-200">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-sm border border-slate-200 p-7 transition-colors duration-200">
         
         {/* State 1: Success Submitted & Account Active */}
         {isSubmitted ? (
           <div className="text-center space-y-4 py-3">
-            <div className="w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto border border-emerald-200 dark:border-emerald-800">
-              <CheckCircle2 className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
+            <div className="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto border border-emerald-200">
+              <CheckCircle2 className="w-6 h-6 text-emerald-600" />
             </div>
 
             <div>
-              <h2 className="text-lg font-bold text-slate-900 dark:text-white">Account Created Successfully</h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+              <h2 className="text-lg font-bold text-slate-900">Account Created Successfully</h2>
+              <p className="text-xs text-slate-500 mt-1">
                 Your account is active and ready to use
               </p>
             </div>
 
-            <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-4 text-left space-y-2 text-xs">
-              <div className="flex justify-between border-b border-slate-200 dark:border-slate-800 pb-1.5">
-                <span className="text-slate-500 dark:text-slate-400">Officer Name:</span>
-                <span className="font-semibold text-slate-900 dark:text-white">{submittedData?.name}</span>
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 text-left space-y-2 text-xs">
+              <div className="flex justify-between border-b border-slate-200 pb-1.5">
+                <span className="text-slate-500">Officer Name:</span>
+                <span className="font-semibold text-slate-900">{submittedData?.name}</span>
               </div>
-              <div className="flex justify-between border-b border-slate-200 dark:border-slate-800 pb-1.5">
-                <span className="text-slate-500 dark:text-slate-400">Official Email:</span>
-                <span className="font-mono text-slate-800 dark:text-slate-200">{submittedData?.email}</span>
+              <div className="flex justify-between border-b border-slate-200 pb-1.5">
+                <span className="text-slate-500">Official Email:</span>
+                <span className="font-mono text-slate-800">{submittedData?.email}</span>
               </div>
-              <div className="flex justify-between border-b border-slate-200 dark:border-slate-800 pb-1.5">
-                <span className="text-slate-500 dark:text-slate-400">Designation:</span>
-                <span className="text-slate-800 dark:text-slate-200">{submittedData?.designation}</span>
+              <div className="flex justify-between border-b border-slate-200 pb-1.5">
+                <span className="text-slate-500">Designation:</span>
+                <span className="text-slate-800">{submittedData?.designation}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500 dark:text-slate-400">Status:</span>
-                <span className="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 font-semibold border border-emerald-200 dark:border-emerald-800 text-[10px]">
+                <span className="text-slate-500">Status:</span>
+                <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-semibold border border-emerald-200 text-[10px]">
                   Active &amp; Verified
                 </span>
               </div>
             </div>
 
-            <div className="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 rounded-lg p-3 text-[11px] text-emerald-800 dark:text-emerald-300 text-left">
-              <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400 inline mr-1.5 mb-0.5" />
+            <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 text-[11px] text-emerald-800 text-left">
+              <ShieldCheck className="w-4 h-4 text-emerald-600 inline mr-1.5 mb-0.5" />
               You can now sign in immediately to explore your competency radar and courses.
             </div>
 
@@ -168,19 +168,19 @@ export default function Register() {
               <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold text-base mx-auto mb-2.5 shadow-md shadow-blue-600/30">
                 S
               </div>
-              <h1 className="text-xl font-bold text-slate-900 dark:text-white">Create an Account</h1>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Skill Intelligence &amp; Learning Platform</p>
+              <h1 className="text-xl font-bold text-slate-900">Create an Account</h1>
+              <p className="text-xs text-slate-500 mt-0.5">Skill Intelligence &amp; Learning Platform</p>
             </div>
 
             {error && (
-              <p className="text-xs text-red-600 dark:text-red-400 mb-3.5 text-center bg-red-50 dark:bg-red-950/50 py-2 px-3 rounded-lg border border-red-200 dark:border-red-900/50">
+              <p className="text-xs text-red-600 mb-3.5 text-center bg-red-50 py-2 px-3 rounded-lg border border-red-200">
                 {error}
               </p>
             )}
 
             {/* Account Role Selector: Learner vs Trainer */}
             <div className="mb-4">
-              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                 Select Account Role
               </label>
               <div className="grid grid-cols-2 gap-2.5">
@@ -194,25 +194,25 @@ export default function Register() {
                       onClick={() => handleRoleSelect(role.id)}
                       className={`flex flex-col items-center justify-center p-2.5 rounded-xl border text-center transition ${
                         isSelected
-                          ? 'border-blue-600 dark:border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-semibold shadow-xs'
-                          : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-950'
+                          ? 'border-blue-600 bg-blue-50/80 text-blue-700 font-semibold shadow-xs'
+                          : 'border-slate-200 hover:border-slate-300 text-slate-600 bg-white'
                       }`}
                     >
-                      <Icon className={`w-4 h-4 mb-1 ${isSelected ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400'}`} />
+                      <Icon className={`w-4 h-4 mb-1 ${isSelected ? 'text-blue-600' : 'text-slate-400'}`} />
                       <span className="text-xs font-semibold">{role.label}</span>
-                      <span className="text-[10px] text-slate-400 dark:text-slate-500 leading-tight mt-0.5">{role.desc}</span>
+                      <span className="text-[10px] text-slate-400 leading-tight mt-0.5">{role.desc}</span>
                     </button>
                   );
                 })}
               </div>
-              <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1 text-center">
+              <p className="text-[10px] text-slate-400 mt-1 text-center">
                 * Administrator accounts are pre-authorized government credentials.
               </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-3">
               <div>
-                <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1" htmlFor="full_name">
+                <label className="block text-xs font-medium text-slate-700 mb-1" htmlFor="full_name">
                   Full Name
                 </label>
                 <input
@@ -222,13 +222,13 @@ export default function Register() {
                   required
                   value={formData.full_name}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-colors"
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-colors"
                   placeholder="e.g. Shri Vikram Malhotra"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1" htmlFor="email">
+                <label className="block text-xs font-medium text-slate-700 mb-1" htmlFor="email">
                   Official Email address
                 </label>
                 <input
@@ -238,14 +238,14 @@ export default function Register() {
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-colors"
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-colors"
                   placeholder="name@mospi.gov.in"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-2.5">
                 <div>
-                  <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1" htmlFor="designation">
+                  <label className="block text-xs font-medium text-slate-700 mb-1" htmlFor="designation">
                     Designation
                   </label>
                   <select
@@ -253,7 +253,7 @@ export default function Register() {
                     name="designation"
                     value={formData.designation}
                     onChange={handleChange}
-                    className="w-full px-2.5 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-blue-600 bg-white dark:bg-slate-950 text-slate-900 dark:text-white"
+                    className="w-full px-2.5 py-2 border border-slate-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-blue-600 bg-white text-slate-900"
                   >
                     {DESIGNATIONS.map((d) => (
                       <option key={d} value={d}>{d}</option>
@@ -262,7 +262,7 @@ export default function Register() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1" htmlFor="cadre">
+                  <label className="block text-xs font-medium text-slate-700 mb-1" htmlFor="cadre">
                     Cadre
                   </label>
                   <select
@@ -270,7 +270,7 @@ export default function Register() {
                     name="cadre"
                     value={formData.cadre}
                     onChange={handleChange}
-                    className="w-full px-2.5 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-blue-600 bg-white dark:bg-slate-950 text-slate-900 dark:text-white"
+                    className="w-full px-2.5 py-2 border border-slate-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-blue-600 bg-white text-slate-900"
                   >
                     <option value="ISS">ISS (Indian Statistical Service)</option>
                     <option value="SSS">SSS (Subordinate Statistical Service)</option>
@@ -280,7 +280,7 @@ export default function Register() {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1" htmlFor="department">
+                <label className="block text-xs font-medium text-slate-700 mb-1" htmlFor="department">
                   Department / Division
                 </label>
                 <select
@@ -288,7 +288,7 @@ export default function Register() {
                   name="department"
                   value={formData.department}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-blue-600 bg-white dark:bg-slate-950 text-slate-900 dark:text-white"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-blue-600 bg-white text-slate-900"
                 >
                   {DEPARTMENTS.map((dept) => (
                     <option key={dept} value={dept}>{dept}</option>
@@ -298,7 +298,7 @@ export default function Register() {
 
               <div className="grid grid-cols-2 gap-2.5">
                 <div>
-                  <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1" htmlFor="password">
+                  <label className="block text-xs font-medium text-slate-700 mb-1" htmlFor="password">
                     Password
                   </label>
                   <div className="relative">
@@ -309,13 +309,13 @@ export default function Register() {
                       required
                       value={formData.password}
                       onChange={handleChange}
-                      className="w-full px-3 py-2 pr-8 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-600"
+                      className="w-full px-3 py-2 pr-8 bg-white border border-slate-300 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600"
                       placeholder="••••••••"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                      className="absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-400 hover:text-slate-600"
                       tabIndex="-1"
                     >
                       {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
@@ -324,7 +324,7 @@ export default function Register() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1" htmlFor="confirm_password">
+                  <label className="block text-xs font-medium text-slate-700 mb-1" htmlFor="confirm_password">
                     Confirm Password
                   </label>
                   <div className="relative">
@@ -335,13 +335,13 @@ export default function Register() {
                       required
                       value={formData.confirm_password}
                       onChange={handleChange}
-                      className="w-full px-3 py-2 pr-8 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-600"
+                      className="w-full px-3 py-2 pr-8 bg-white border border-slate-300 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600"
                       placeholder="••••••••"
                     />
                     <button
                       type="button"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                      className="absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-400 hover:text-slate-600"
                       tabIndex="-1"
                     >
                       {showConfirmPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
@@ -360,9 +360,9 @@ export default function Register() {
             </form>
 
             <div className="mt-4 text-center">
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-xs text-slate-500">
                 Already have an account?{' '}
-                <Link to="/login" className="text-blue-600 dark:text-blue-400 font-medium hover:underline">
+                <Link to="/login" className="text-blue-600 font-medium hover:underline">
                   Sign in
                 </Link>
               </p>
@@ -371,7 +371,7 @@ export default function Register() {
         )}
       </div>
 
-      <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-5 text-center">
+      <p className="text-[11px] text-slate-400 mt-5 text-center">
         Ministry of Statistics &amp; Programme Implementation (MoSPI) • Government of India
       </p>
     </div>

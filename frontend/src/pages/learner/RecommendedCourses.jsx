@@ -55,9 +55,9 @@ export default function RecommendedCourses() {
   return (
     <div className="space-y-6 pb-12">
       {/* Header */}
-      <div className="bg-white dark:bg-[#0F172A] p-6 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm">
-        <h1 className="font-headline text-xl font-bold text-slate-900 dark:text-white">Recommended iGOT &amp; NSSTA Courses</h1>
-        <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
+      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <h1 className="font-headline text-xl font-bold text-slate-900">Recommended iGOT &amp; NSSTA Courses</h1>
+        <p className="text-xs sm:text-sm text-slate-600 mt-1">
           AI-curated learning programmes personalized to bridge your specific competency gaps in the official statistical cadre.
         </p>
       </div>
@@ -67,32 +67,32 @@ export default function RecommendedCourses() {
         {courses.map((course) => (
           <div
             key={course.id}
-            className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-white/10 rounded-2xl p-6 shadow-sm flex flex-col justify-between space-y-5 hover:border-blue-500/40 dark:hover:border-ai-cyan/40 transition-all"
+            className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col justify-between space-y-5 hover:border-blue-500/40 transition-all"
           >
             <div className="space-y-3">
               {/* Header tags */}
               <div className="flex items-center justify-between gap-2">
-                <span className="text-[11px] font-bold text-blue-700 dark:text-ai-cyan bg-blue-50 dark:bg-cyan-500/10 border border-blue-200 dark:border-cyan-500/20 px-2.5 py-1 rounded-full font-mono">
+                <span className="text-[11px] font-bold text-blue-700 bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-full font-mono">
                   {course.provider}
                 </span>
-                <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 dark:text-success-emerald bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/30 px-2.5 py-1 rounded-full">
-                  <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-success-emerald" />
+                <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full">
+                  <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
                   {course.matchPercentage}% Match
                 </span>
               </div>
 
               {/* Title & Description */}
               <div>
-                <h3 className="font-headline text-base font-bold text-slate-900 dark:text-white leading-snug">
+                <h3 className="font-headline text-base font-bold text-slate-900 leading-snug">
                   {course.title}
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1.5 leading-relaxed">
+                <p className="text-xs sm:text-sm text-slate-600 mt-1.5 leading-relaxed">
                   {course.description}
                 </p>
               </div>
 
               {/* Metadata */}
-              <div className="flex flex-wrap items-center gap-4 text-xs text-slate-600 dark:text-slate-400 font-mono pt-1">
+              <div className="flex flex-wrap items-center gap-4 text-xs text-slate-600 font-mono pt-1">
                 <div className="flex items-center gap-1.5">
                   <Clock className="w-4 h-4 text-slate-400" />
                   <span>{course.duration}</span>
@@ -108,19 +108,19 @@ export default function RecommendedCourses() {
               </div>
 
               {/* AI Reason */}
-              <div className="bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl p-3.5">
-                <p className="text-xs text-slate-700 dark:text-slate-300 italic">
-                  <strong className="text-slate-900 dark:text-white not-italic">Why recommended: </strong>
+              <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5">
+                <p className="text-xs text-slate-700 italic">
+                  <strong className="text-slate-900 not-italic">Why recommended: </strong>
                   {course.aiReason}
                 </p>
               </div>
             </div>
 
             {/* Action */}
-            <div className="pt-2 border-t border-slate-100 dark:border-white/5 flex justify-end">
+            <div className="pt-2 border-t border-slate-100 flex justify-end">
               <button
                 onClick={() => navigate(`/courses/${course.id}`)}
-                className="w-full sm:w-auto px-5 py-2.5 bg-blue-600 hover:bg-blue-700 dark:bg-gradient-to-r dark:from-blue-600 dark:to-cyan-600 text-white rounded-xl text-xs font-semibold shadow-sm flex items-center justify-center gap-2 transition"
+                className="w-full sm:w-auto px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-sm flex items-center justify-center gap-2 transition"
               >
                 <span>View Course Details</span>
                 <ArrowRight className="w-4 h-4" />

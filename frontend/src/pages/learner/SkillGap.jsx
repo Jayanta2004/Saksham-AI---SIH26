@@ -56,12 +56,12 @@ export default function SkillGap() {
   const getPriorityBadge = (priority) => {
     switch (priority?.toLowerCase()) {
       case 'high':
-        return 'bg-red-50 dark:bg-red-500/20 text-red-700 dark:text-red-300 border-red-200 dark:border-red-500/40';
+        return 'bg-red-50 text-red-700 border-red-200';
       case 'medium':
-        return 'bg-amber-50 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-500/40';
+        return 'bg-amber-50 text-amber-700 border-amber-200';
       case 'low':
       default:
-        return 'bg-emerald-50 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-500/40';
+        return 'bg-emerald-50 text-emerald-700 border-emerald-200';
     }
   };
 
@@ -71,8 +71,8 @@ export default function SkillGap() {
     return (
       <div className="min-h-[50vh] flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <Loader2 className="w-8 h-8 animate-spin text-blue-600 dark:text-ai-cyan" />
-          <p className="text-sm text-slate-600 dark:text-slate-400">Calculating dynamic skill gap matrix...</p>
+          <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+          <p className="text-sm text-slate-600">Calculating dynamic skill gap matrix...</p>
         </div>
       </div>
     );
@@ -81,30 +81,30 @@ export default function SkillGap() {
   return (
     <div className="space-y-6 pb-12">
       {/* Header */}
-      <div className="bg-white dark:bg-[#0F172A] p-6 rounded-2xl border border-slate-200 dark:border-white/10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 shadow-sm">
+      <div className="bg-white p-6 rounded-2xl border border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 shadow-sm">
         <div>
-          <h1 className="font-headline text-xl font-bold text-slate-900 dark:text-white">Skill Gap Analysis</h1>
-          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
+          <h1 className="font-headline text-xl font-bold text-slate-900">Skill Gap Analysis</h1>
+          <p className="text-xs sm:text-sm text-slate-600 mt-1">
             Mathematical competency deficit evaluation vs {user?.designation || 'Role'} target benchmarks
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-warning-amber border border-amber-200 dark:border-amber-500/30">
+          <span className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-amber-50 text-amber-700 border border-amber-200">
             Overall Deficit: {overallScore}%
           </span>
         </div>
       </div>
 
       {/* Main Table */}
-      <div className="bg-white dark:bg-[#0F172A] rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-200 dark:border-white/10 flex items-center justify-between">
-          <h2 className="font-headline text-base font-bold text-slate-900 dark:text-white">Competency Deficit Matrix</h2>
-          <span className="text-xs text-slate-600 dark:text-slate-400 font-mono">{gaps.length} Competencies Assessed</span>
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+          <h2 className="font-headline text-base font-bold text-slate-900">Competency Deficit Matrix</h2>
+          <span className="text-xs text-slate-600 font-mono">{gaps.length} Competencies Assessed</span>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs sm:text-sm">
-            <thead className="bg-slate-50 dark:bg-white/5 text-slate-700 dark:text-slate-300 text-xs font-semibold uppercase tracking-wider border-b border-slate-200 dark:border-white/10">
+            <thead className="bg-slate-50 text-slate-700 text-xs font-semibold uppercase tracking-wider border-b border-slate-200">
               <tr>
                 <th className="px-6 py-3.5">Competency Domain</th>
                 <th className="px-6 py-3.5 text-center">Current Score</th>
@@ -114,23 +114,23 @@ export default function SkillGap() {
                 <th className="px-6 py-3.5 text-right">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200 dark:divide-white/10">
+            <tbody className="divide-y divide-slate-200">
               {gaps.map((item) => {
                 const isTargetMet = item.gap === 0;
 
                 return (
-                  <tr key={item.id} className="hover:bg-slate-50/70 dark:hover:bg-white/5 transition">
-                    <td className="px-6 py-4 font-bold text-slate-900 dark:text-white">
+                  <tr key={item.id} className="hover:bg-slate-50/70 transition">
+                    <td className="px-6 py-4 font-bold text-slate-900">
                       {item.skill}
                     </td>
-                    <td className="px-6 py-4 text-center font-mono text-slate-700 dark:text-slate-300">
+                    <td className="px-6 py-4 text-center font-mono text-slate-700">
                       {item.current} / 5.0
                     </td>
-                    <td className="px-6 py-4 text-center font-mono text-slate-700 dark:text-slate-300">
+                    <td className="px-6 py-4 text-center font-mono text-slate-700">
                       {item.required} / 5.0
                     </td>
                     <td className="px-6 py-4 text-center font-mono">
-                      <span className={`font-bold ${isTargetMet ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
+                      <span className={`font-bold ${isTargetMet ? 'text-emerald-600' : 'text-red-600'}`}>
                         {isTargetMet ? '0.0 (Target Met)' : `-${item.gap}`}
                       </span>
                     </td>
@@ -146,7 +146,7 @@ export default function SkillGap() {
                     <td className="px-6 py-4 text-right">
                       <Link
                         to="/courses"
-                        className="inline-flex items-center text-xs font-bold text-blue-600 dark:text-ai-cyan hover:underline transition"
+                        className="inline-flex items-center text-xs font-bold text-blue-600 hover:underline transition"
                       >
                         <span>View Courses</span>
                         <ArrowRight className="w-3.5 h-3.5 ml-1" />
@@ -164,8 +164,8 @@ export default function SkillGap() {
       {highPriorityGaps.length > 0 && (
         <div className="space-y-4">
           <div className="flex items-center space-x-2">
-            <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
-            <h2 className="font-headline text-base font-bold text-slate-900 dark:text-white">
+            <AlertCircle className="w-5 h-5 text-red-600" />
+            <h2 className="font-headline text-base font-bold text-slate-900">
               High Priority Recommended Actions
             </h2>
           </div>
@@ -174,19 +174,19 @@ export default function SkillGap() {
             {highPriorityGaps.map((item) => (
               <div
                 key={item.id}
-                className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-white/10 rounded-2xl p-5 shadow-sm space-y-3"
+                className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-3"
               >
                 <div className="flex justify-between items-start">
-                  <h3 className="text-sm font-bold text-slate-900 dark:text-white">{item.skill}</h3>
-                  <span className="text-[10px] px-2.5 py-0.5 rounded-full font-bold bg-red-50 dark:bg-red-500/20 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-500/40 font-mono">
+                  <h3 className="text-sm font-bold text-slate-900">{item.skill}</h3>
+                  <span className="text-[10px] px-2.5 py-0.5 rounded-full font-bold bg-red-50 text-red-700 border border-red-200 font-mono">
                     Deficit: -{item.gap}
                   </span>
                 </div>
 
-                <div className="space-y-2 pt-1 text-xs text-slate-700 dark:text-slate-300">
+                <div className="space-y-2 pt-1 text-xs text-slate-700">
                   {item.actions.map((act, aIdx) => (
                     <div key={aIdx} className="flex items-start gap-2">
-                      <span className="w-4 h-4 rounded-full bg-blue-50 dark:bg-cyan-500/10 text-blue-700 dark:text-ai-cyan flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">
+                      <span className="w-4 h-4 rounded-full bg-blue-50 text-blue-700 flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">
                         {aIdx + 1}
                       </span>
                       <span className="flex-1 leading-relaxed">{act}</span>
@@ -194,10 +194,10 @@ export default function SkillGap() {
                   ))}
                 </div>
 
-                <div className="pt-3 border-t border-slate-200 dark:border-white/10 flex justify-end">
+                <div className="pt-3 border-t border-slate-200 flex justify-end">
                   <Link
                     to="/assessments"
-                    className="inline-flex items-center gap-1 text-xs font-bold text-blue-600 dark:text-ai-cyan hover:underline"
+                    className="inline-flex items-center gap-1 text-xs font-bold text-blue-600 hover:underline"
                   >
                     <span>Take Assessment</span>
                     <ArrowRight className="w-3.5 h-3.5" />

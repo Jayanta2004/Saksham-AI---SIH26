@@ -3,13 +3,13 @@
 @tailwind utilities;
 
 /* ============================================================================
-   Root Theme Variables & Contrast System
+   Saksham AI — Premium Government White Theme Design System
    ============================================================================ */
 
 :root {
   --bg-main: #f8fafc;
   --bg-card: #ffffff;
-  --bg-panel: rgba(255, 255, 255, 0.9);
+  --bg-panel: rgba(255, 255, 255, 0.95);
   --text-primary: #0f172a;
   --text-secondary: #334155;
   --text-muted: #64748b;
@@ -17,49 +17,31 @@
   --border-glass: rgba(0, 0, 0, 0.08);
 }
 
-.dark {
-  --bg-main: #090D16;
-  --bg-card: #0F172A;
-  --bg-panel: rgba(15, 23, 42, 0.85);
-  --text-primary: #f8fafc;
-  --text-secondary: #c2c6d6;
-  --text-muted: #8c909f;
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-glass: rgba(255, 255, 255, 0.08);
-}
-
 @layer base {
+  html {
+    background-color: #f8fafc;
+    color: #0f172a;
+  }
+
   body {
-    background-color: var(--bg-main);
-    color: var(--text-primary);
+    background-color: #f8fafc;
+    color: #0f172a;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     overflow-x: hidden;
-    transition: background-color 0.2s ease, color 0.2s ease;
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Outfit', sans-serif;
-    color: var(--text-primary);
+    color: #0f172a;
   }
 }
 
-/* ============================================================================
-   Stitch Glassmorphism Utilities (Adaptive Light & Dark)
-   ============================================================================ */
-
+/* Card & Surface Classes */
 .glass-card {
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
   transition: all 0.2s ease;
-}
-
-.dark .glass-card {
-  background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
 
 .glass-panel {
@@ -67,36 +49,17 @@
   border: 1px solid #e2e8f0;
 }
 
-.dark .glass-panel {
-  background: rgba(15, 23, 42, 0.75);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
 .glass-nav {
-  background-color: rgba(255, 255, 255, 0.92);
+  background-color: rgba(255, 255, 255, 0.96);
   border: 1px solid #e2e8f0;
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.06);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
 }
 
-.dark .glass-nav {
-  background-color: rgba(9, 13, 22, 0.92) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4) !important;
-}
-
 /* Text Gradient Accents */
 .text-gradient {
-  background: linear-gradient(135deg, #0284c7 0%, #2563eb 50%, #7c3aed 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.dark .text-gradient {
-  background: linear-gradient(135deg, #06B6D4 0%, #3B82F6 50%, #A855F7 100%);
+  background: linear-gradient(135deg, #0284c7 0%, #1d4ed8 50%, #6d28d9 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -109,60 +72,32 @@
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.dark .gradient-button {
-  background: linear-gradient(135deg, #2563eb 0%, #06b6d4 100%);
-}
-
 .gradient-button:hover {
   transform: translateY(-1px);
-  box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
 }
 
-/* Pulsing Status Rings & Nodes */
+/* Status Rings & Nodes */
 .pulse-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
   background-color: #10B981;
-  box-shadow: 0 0 12px 2px rgba(16, 185, 129, 0.6);
+  box-shadow: 0 0 12px 2px rgba(16, 185, 129, 0.5);
   animation: pulse-emerald 2s infinite;
 }
 
 @keyframes pulse-emerald {
-  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6); }
   70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
   100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
 }
 
-.glow-node-active {
-  box-shadow: 0 0 15px 5px rgba(6, 182, 212, 0.4);
-  animation: pulse-cyan 2s infinite;
-}
-
-@keyframes pulse-cyan {
-  0% { box-shadow: 0 0 12px 3px rgba(6, 182, 212, 0.3); }
-  50% { box-shadow: 0 0 22px 6px rgba(6, 182, 212, 0.5); }
-  100% { box-shadow: 0 0 12px 3px rgba(6, 182, 212, 0.3); }
-}
-
-.glow-node-complete {
-  box-shadow: 0 0 15px 2px rgba(16, 185, 129, 0.3);
-}
-
 .chart-glow {
-  filter: drop-shadow(0 0 8px rgba(6, 182, 212, 0.3));
+  filter: drop-shadow(0 2px 8px rgba(37, 99, 235, 0.15));
 }
 
-.pulse-ring {
-  animation: pulse-ring-anim 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-@keyframes pulse-ring-anim {
-  0% { transform: scale(1); opacity: 0.8; }
-  50% { transform: scale(1.08); opacity: 0.4; }
-  100% { transform: scale(1); opacity: 0.8; }
-}
-
-/* Custom Scrollbars */
+/* Scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -170,77 +105,15 @@
 ::-webkit-scrollbar-track {
   background: #f1f5f9;
 }
-.dark ::-webkit-scrollbar-track {
-  background: #090D16;
-}
 ::-webkit-scrollbar-thumb {
   background: #cbd5e1;
-  border-radius: 3px;
-}
-.dark ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.25);
-}
 
-/* ============================================================================
-   Universal Adaptive Text & Surface Overrides for Stitch Token Classes
-   ============================================================================ */
-
-/* Text colors in Light Mode */
-.text-on-surface {
-  color: #0f172a;
-}
-.text-on-surface-variant {
-  color: #475569;
-}
-
-/* Text colors in Dark Mode */
-.dark .text-on-surface {
-  color: #f8fafc !important;
-}
-.dark .text-on-surface-variant {
-  color: #c2c6d6 !important;
-}
-
-/* Surface backgrounds in Light Mode */
-.bg-surface-obsidian {
-  background-color: #f8fafc;
-}
-.bg-surface-slate {
-  background-color: #ffffff;
-}
-.bg-surface {
-  background-color: #ffffff;
-}
-.border-glass-border {
-  border-color: #e2e8f0;
-}
-
-/* Surface backgrounds in Dark Mode */
-.dark .bg-surface-obsidian {
-  background-color: #090D16 !important;
-}
-.dark .bg-surface-slate {
-  background-color: #0F172A !important;
-}
-.dark .bg-surface {
-  background-color: #10131a !important;
-}
-.dark .border-glass-border {
-  border-color: rgba(255, 255, 255, 0.08) !important;
-}
-
-/* ============================================================================
-   Fallback Compatibility Overrides for Legacy Classes
-   ============================================================================ */
-
-/* Light Mode Input, Select, Textarea */
+/* Inputs & Form Controls */
 input:not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]),
 select,
 textarea {
@@ -252,114 +125,4 @@ textarea {
 input::placeholder,
 textarea::placeholder {
   color: #94a3b8;
-}
-
-/* Dark Mode Input, Select, Textarea */
-.dark input:not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]),
-.dark select,
-.dark textarea {
-  background-color: rgba(255, 255, 255, 0.04) !important;
-  color: #f8fafc !important;
-  border-color: rgba(255, 255, 255, 0.12) !important;
-}
-
-.dark input::placeholder,
-.dark textarea::placeholder {
-  color: #64748b !important;
-}
-
-.dark select option {
-  background-color: #0F172A !important;
-  color: #f8fafc !important;
-}
-
-/* Fallbacks for Dark Theme Classes */
-.dark .bg-white {
-  background-color: #0F172A !important;
-}
-
-.dark .bg-gray-50,
-.dark .bg-slate-50 {
-  background-color: #090D16 !important;
-}
-
-.dark .bg-gray-100,
-.dark .bg-slate-100 {
-  background-color: #191B23 !important;
-}
-
-.dark .border-gray-200,
-.dark .border-gray-300,
-.dark .border-slate-200 {
-  border-color: rgba(255, 255, 255, 0.08) !important;
-}
-
-.dark .border-gray-100,
-.dark .border-slate-100 {
-  border-color: rgba(255, 255, 255, 0.05) !important;
-}
-
-.dark .text-gray-900,
-.dark .text-slate-900,
-.dark .text-slate-800 {
-  color: #f8fafc !important;
-}
-
-.dark .text-gray-700,
-.dark .text-slate-700 {
-  color: #c2c6d6 !important;
-}
-
-.dark .text-gray-600,
-.dark .text-slate-600 {
-  color: #94a3b8 !important;
-}
-
-.dark .text-gray-500,
-.dark .text-slate-500 {
-  color: #8c909f !important;
-}
-
-/* Badges & Accents in Light Mode */
-.bg-cyan-500\/10 {
-  background-color: rgba(6, 182, 212, 0.1);
-  color: #0891b2;
-}
-.bg-purple-500\/10 {
-  background-color: rgba(168, 85, 247, 0.1);
-  color: #7e22ce;
-}
-.bg-emerald-500\/10 {
-  background-color: rgba(16, 185, 129, 0.1);
-  color: #047857;
-}
-.bg-amber-500\/10 {
-  background-color: rgba(245, 158, 11, 0.1);
-  color: #b45309;
-}
-.bg-red-500\/10 {
-  background-color: rgba(239, 68, 68, 0.1);
-  color: #b91c1c;
-}
-
-/* Badges & Accents in Dark Mode */
-.dark .bg-cyan-500\/10 {
-  background-color: rgba(6, 182, 212, 0.12) !important;
-  color: #67e8f9 !important;
-}
-.dark .bg-purple-500\/10 {
-  background-color: rgba(168, 85, 247, 0.12) !important;
-  color: #d8b4fe !important;
-}
-.dark .bg-emerald-500\/10 {
-  background-color: rgba(16, 185, 129, 0.12) !important;
-  color: #6ee7b7 !important;
-}
-.dark .bg-amber-500\/10 {
-  background-color: rgba(245, 158, 11, 0.12) !important;
-  color: #fcd34d !important;
-}
-.dark .bg-red-500\/10 {
-  background-color: rgba(239, 68, 68, 0.12) !important;
-  color: #fca5a5 !important;
 }

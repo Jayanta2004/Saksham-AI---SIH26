@@ -123,7 +123,7 @@ export default function PersonalizedLearningPath() {
       default:
         return (
           <div className="w-10 h-10 rounded-full glass-card text-on-surface-variant flex items-center justify-center border border-glass-border shrink-0">
-            <Lock className="w-4 h-4 text-slate-400 dark:text-slate-500" />
+            <Lock className="w-4 h-4 text-slate-400" />
           </div>
         );
     }
@@ -137,7 +137,7 @@ export default function PersonalizedLearningPath() {
         return 'text-ai-cyan bg-cyan-500/10 border border-ai-cyan/30 font-semibold';
       case 'upcoming':
       default:
-        return 'text-slate-500 dark:text-on-surface-variant bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-glass-border font-medium';
+        return 'text-slate-500 bg-slate-100 border border-slate-200 font-medium';
     }
   };
 
@@ -168,21 +168,21 @@ export default function PersonalizedLearningPath() {
                 Official MoSPI Competency Roadmap
               </span>
             </div>
-            <h1 className="font-headline text-2xl font-bold text-slate-900 dark:text-white">
+            <h1 className="font-headline text-2xl font-bold text-slate-900">
               Personalized Competency Remediation Path
             </h1>
-            <p className="text-xs text-slate-500 dark:text-on-surface-variant mt-1">
+            <p className="text-xs text-slate-500 mt-1">
               Curated AI learning journey tailored to your {user?.designation || 'Senior Statistical Officer'} cadre benchmarks
             </p>
           </div>
 
           {/* Overall Progress Meter */}
-          <div className="glass-panel px-5 py-3.5 rounded-2xl flex items-center gap-4 border border-slate-200 dark:border-glass-border shadow-sm">
+          <div className="glass-panel px-5 py-3.5 rounded-2xl flex items-center gap-4 border border-slate-200 shadow-sm">
             <div className="text-right">
               <div className="text-2xl font-extrabold font-mono text-ai-cyan chart-glow leading-none">
                 {progressPercent}%
               </div>
-              <div className="text-[10px] text-slate-500 dark:text-on-surface-variant font-medium mt-1">
+              <div className="text-[10px] text-slate-500 font-medium mt-1">
                 {completedCount} of {steps.length} Milestones Done
               </div>
             </div>
@@ -213,7 +213,7 @@ export default function PersonalizedLearningPath() {
                   isCurrent ? 'border-ai-cyan shadow-lg shadow-cyan-500/10' : 'hover:border-ai-cyan/30'
                 }`}
               >
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-200 dark:border-glass-border">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-200">
                   <div className="flex items-center gap-2.5">
                     <span className="text-xs font-mono font-bold text-ai-cyan">
                       PHASE 0{step.step}
@@ -222,21 +222,21 @@ export default function PersonalizedLearningPath() {
                       {step.status === 'completed' ? 'Completed' : step.status === 'current' ? 'In Progress' : 'Upcoming'}
                     </span>
                   </div>
-                  <span className="text-[11px] font-mono text-slate-500 dark:text-on-surface-variant">
+                  <span className="text-[11px] font-mono text-slate-500">
                     {step.duration}
                   </span>
                 </div>
 
                 <div className="mt-3 space-y-2">
-                  <h3 className="font-headline text-base font-bold text-slate-900 dark:text-white leading-snug">
+                  <h3 className="font-headline text-base font-bold text-slate-900 leading-snug">
                     {step.title}
                   </h3>
 
-                  <div className="flex flex-wrap items-center gap-3 text-xs text-slate-600 dark:text-on-surface-variant">
+                  <div className="flex flex-wrap items-center gap-3 text-xs text-slate-600">
                     <span className="px-2 py-0.5 rounded glass-panel font-mono text-[11px] text-ai-cyan">
                       {step.provider}
                     </span>
-                    <span>Target Competency: <strong className="text-slate-800 dark:text-white">{step.skill}</strong></span>
+                    <span>Target Competency: <strong className="text-slate-800">{step.skill}</strong></span>
                     <span>•</span>
                     <span>Level: <strong>{step.difficulty}</strong></span>
                   </div>
@@ -248,7 +248,7 @@ export default function PersonalizedLearningPath() {
                         <span>Module Progress</span>
                         <span>{step.progress}%</span>
                       </div>
-                      <div className="w-full bg-slate-200 dark:bg-white/5 rounded-full h-2 overflow-hidden">
+                      <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
                         <div
                           className="bg-gradient-to-r from-ai-cyan to-ai-purple h-2 rounded-full transition-all duration-500"
                           style={{ width: `${step.progress}%` }}
@@ -259,7 +259,7 @@ export default function PersonalizedLearningPath() {
                 </div>
 
                 {/* Actions */}
-                <div className="mt-4 pt-3 border-t border-slate-200 dark:border-glass-border flex items-center justify-between">
+                <div className="mt-4 pt-3 border-t border-slate-200 flex items-center justify-between">
                   {isCompleted ? (
                     <span className="text-xs text-success-emerald font-semibold flex items-center gap-1">
                       <Check className="w-3.5 h-3.5" /> Competency Target Verified (+0.4 Delta Score)
@@ -273,14 +273,14 @@ export default function PersonalizedLearningPath() {
                       <ArrowRight className="w-3.5 h-3.5" />
                     </Link>
                   ) : (
-                    <span className="text-xs text-slate-400 dark:text-on-surface-variant flex items-center gap-1">
+                    <span className="text-xs text-slate-400 flex items-center gap-1">
                       <Lock className="w-3.5 h-3.5" /> Unlocks upon completing Phase 02
                     </span>
                   )}
 
                   <Link
                     to="/assessments"
-                    className="text-xs text-blue-600 dark:text-ai-cyan font-semibold hover:underline"
+                    className="text-xs text-blue-600 font-semibold hover:underline"
                   >
                     Take Quiz →
                   </Link>

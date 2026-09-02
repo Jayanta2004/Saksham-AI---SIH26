@@ -67,8 +67,8 @@ export default function AdminDashboard() {
     return (
       <div className="min-h-[50vh] flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <Loader2 className="w-8 h-8 animate-spin text-blue-600 dark:text-ai-cyan" />
-          <p className="text-sm text-slate-600 dark:text-slate-400">Aggregating live workforce intelligence...</p>
+          <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+          <p className="text-sm text-slate-600">Aggregating live workforce intelligence...</p>
         </div>
       </div>
     );
@@ -77,53 +77,53 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-6 pb-12">
       {/* Page Header */}
-      <div className="bg-white dark:bg-[#0F172A] p-6 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm">
-        <h1 className="font-headline text-xl font-bold text-slate-900 dark:text-white">Workforce Analytics</h1>
-        <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
+      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <h1 className="font-headline text-xl font-bold text-slate-900">Workforce Analytics</h1>
+        <p className="text-xs sm:text-sm text-slate-600 mt-1">
           Overview of organization-wide competency benchmarks, training progress, and skill gap metrics across official MoSPI cadres.
         </p>
       </div>
 
       {/* 6 Stat Cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-        <div className="bg-white dark:bg-[#0F172A] p-5 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm">
-          <div className="text-xs font-semibold text-slate-600 dark:text-slate-400">Total Officers</div>
-          <div className="text-2xl font-bold font-mono text-slate-900 dark:text-white mt-1.5">
+        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <div className="text-xs font-semibold text-slate-600">Total Officers</div>
+          <div className="text-2xl font-bold font-mono text-slate-900 mt-1.5">
             {analytics?.summary?.total_employees || 5}
           </div>
         </div>
 
-        <div className="bg-white dark:bg-[#0F172A] p-5 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm">
-          <div className="text-xs font-semibold text-slate-600 dark:text-slate-400">Active Learners</div>
-          <div className="text-2xl font-bold font-mono text-blue-600 dark:text-ai-cyan mt-1.5">
+        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <div className="text-xs font-semibold text-slate-600">Active Learners</div>
+          <div className="text-2xl font-bold font-mono text-blue-600 mt-1.5">
             {analytics?.summary?.active_learners || 5}
           </div>
         </div>
 
-        <div className="bg-white dark:bg-[#0F172A] p-5 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm">
-          <div className="text-xs font-semibold text-slate-600 dark:text-slate-400">Avg Competency</div>
-          <div className="text-2xl font-bold font-mono text-slate-900 dark:text-white mt-1.5">
+        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <div className="text-xs font-semibold text-slate-600">Avg Competency</div>
+          <div className="text-2xl font-bold font-mono text-slate-900 mt-1.5">
             {analytics?.summary?.avg_competency || 68.5}%
           </div>
         </div>
 
-        <div className="bg-white dark:bg-[#0F172A] p-5 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm">
-          <div className="text-xs font-semibold text-slate-600 dark:text-slate-400">Courses Enrolled</div>
-          <div className="text-2xl font-bold font-mono text-slate-900 dark:text-white mt-1.5">
+        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <div className="text-xs font-semibold text-slate-600">Courses Enrolled</div>
+          <div className="text-2xl font-bold font-mono text-slate-900 mt-1.5">
             {analytics?.summary?.courses_completed || 6}
           </div>
         </div>
 
-        <div className="bg-white dark:bg-[#0F172A] p-5 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm">
-          <div className="text-xs font-semibold text-slate-600 dark:text-slate-400">Training Hours</div>
-          <div className="text-2xl font-bold font-mono text-slate-900 dark:text-white mt-1.5">
+        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <div className="text-xs font-semibold text-slate-600">Training Hours</div>
+          <div className="text-2xl font-bold font-mono text-slate-900 mt-1.5">
             {analytics?.summary?.training_hours || 24}
           </div>
         </div>
 
-        <div className="bg-white dark:bg-[#0F172A] p-5 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm">
-          <div className="text-xs font-semibold text-slate-600 dark:text-slate-400">Tracked Gaps</div>
-          <div className="text-2xl font-bold font-mono text-slate-900 dark:text-white mt-1.5">
+        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <div className="text-xs font-semibold text-slate-600">Tracked Gaps</div>
+          <div className="text-2xl font-bold font-mono text-slate-900 mt-1.5">
             {analytics?.summary?.skill_gaps || 34}
           </div>
         </div>
@@ -132,10 +132,10 @@ export default function AdminDashboard() {
       {/* Main Charts & AI Insights Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Recharts BarChart (7 Cols) */}
-        <div className="lg:col-span-7 bg-white dark:bg-[#0F172A] p-6 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm space-y-4">
+        <div className="lg:col-span-7 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
           <div>
-            <h2 className="font-headline text-base font-bold text-slate-900 dark:text-white">Workforce Competency by Domain</h2>
-            <p className="text-xs text-slate-600 dark:text-slate-400">Live average readiness vs cadre benchmark standards</p>
+            <h2 className="font-headline text-base font-bold text-slate-900">Workforce Competency by Domain</h2>
+            <p className="text-xs text-slate-600">Live average readiness vs cadre benchmark standards</p>
           </div>
 
           <div className="h-64 w-full pt-2">
@@ -156,18 +156,18 @@ export default function AdminDashboard() {
         </div>
 
         {/* AI Insights (5 Cols) */}
-        <div className="lg:col-span-5 bg-white dark:bg-[#0F172A] p-6 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm space-y-4 flex flex-col justify-between">
+        <div className="lg:col-span-5 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4 flex flex-col justify-between">
           <div className="space-y-4">
             <div>
-              <h2 className="font-headline text-base font-bold text-slate-900 dark:text-white">AI Workforce Insights</h2>
-              <p className="text-xs text-slate-600 dark:text-slate-400">Automated findings aggregated across divisions</p>
+              <h2 className="font-headline text-base font-bold text-slate-900">AI Workforce Insights</h2>
+              <p className="text-xs text-slate-600">Automated findings aggregated across divisions</p>
             </div>
 
             <div className="space-y-3">
               {insights.map((ins, idx) => (
-                <div key={idx} className="p-4 bg-slate-50 dark:bg-white/5 rounded-xl border border-slate-200 dark:border-white/10 space-y-1">
-                  <div className="text-xs font-bold text-slate-900 dark:text-white">{ins.title}</div>
-                  <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                <div key={idx} className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+                  <div className="text-xs font-bold text-slate-900">{ins.title}</div>
+                  <p className="text-xs text-slate-600 leading-relaxed">
                     {ins.desc}
                   </p>
                 </div>
@@ -175,7 +175,7 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          <div className="pt-3 border-t border-slate-200 dark:border-white/10 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 font-mono">
+          <div className="pt-3 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500 font-mono">
             <span>Confidence: 94.2%</span>
             <span>Live Database Aggregation</span>
           </div>
@@ -183,29 +183,29 @@ export default function AdminDashboard() {
       </div>
 
       {/* Skill Gaps Table */}
-      <div className="bg-white dark:bg-[#0F172A] p-6 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm space-y-4">
+      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
         <div>
-          <h2 className="font-headline text-base font-bold text-slate-900 dark:text-white">Top Systemic Skill Shortfalls</h2>
-          <p className="text-xs text-slate-600 dark:text-slate-400">Highest priority competency gaps identified across divisions</p>
+          <h2 className="font-headline text-base font-bold text-slate-900">Top Systemic Skill Shortfalls</h2>
+          <p className="text-xs text-slate-600">Highest priority competency gaps identified across divisions</p>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs sm:text-sm border-collapse">
             <thead>
-              <tr className="border-b border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 text-xs font-semibold uppercase tracking-wider bg-slate-50 dark:bg-white/5">
+              <tr className="border-b border-slate-200 text-slate-700 text-xs font-semibold uppercase tracking-wider bg-slate-50">
                 <th className="py-3 px-3">Rank</th>
                 <th className="py-3 px-3">Competency Domain</th>
                 <th className="py-3 px-3">Category</th>
                 <th className="py-3 px-3">Deficit Score</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200 dark:divide-white/10 text-xs">
+            <tbody className="divide-y divide-slate-200 text-xs">
               {skillGaps.map((item, idx) => (
-                <tr key={idx} className="hover:bg-slate-50/70 dark:hover:bg-white/5 transition">
-                  <td className="py-3 px-3 font-mono font-bold text-slate-900 dark:text-white">{item.rank}</td>
-                  <td className="py-3 px-3 font-bold text-slate-900 dark:text-white">{item.skill}</td>
-                  <td className="py-3 px-3 text-slate-600 dark:text-slate-300">{item.category}</td>
-                  <td className="py-3 px-3 text-red-600 dark:text-red-400 font-bold">{item.deficit}</td>
+                <tr key={idx} className="hover:bg-slate-50/70 transition">
+                  <td className="py-3 px-3 font-mono font-bold text-slate-900">{item.rank}</td>
+                  <td className="py-3 px-3 font-bold text-slate-900">{item.skill}</td>
+                  <td className="py-3 px-3 text-slate-600">{item.category}</td>
+                  <td className="py-3 px-3 text-red-600 font-bold">{item.deficit}</td>
                 </tr>
               ))}
             </tbody>

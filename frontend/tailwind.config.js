@@ -1,6 +1,5 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  darkMode: 'class',
   content: [
     "./index.html",
     "./src/**/*.{js,jsx}",
@@ -26,10 +25,10 @@ export default {
         "ai-purple": "#A855F7",
         "success-emerald": "#10B981",
         "warning-amber": "#F59E0B",
-        "primary": "#adc6ff",
-        "primary-container": "#4d8eff",
-        "secondary": "#c0c1ff",
-        "secondary-container": "#3131c0",
+        "primary": "#2563EB",
+        "primary-container": "#3B82F6",
+        "secondary": "#7C3AED",
+        "secondary-container": "#8B5CF6",
         govblue: {
           950: '#050B18',
           900: '#0A1329',

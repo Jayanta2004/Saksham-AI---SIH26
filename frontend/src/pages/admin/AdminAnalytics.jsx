@@ -79,10 +79,10 @@ export default function AdminAnalytics() {
               MoSPI Official Cadres • Live System Data
             </span>
           </div>
-          <h1 className="font-headline text-2xl font-bold text-slate-900 dark:text-white">
+          <h1 className="font-headline text-2xl font-bold text-slate-900">
             National Workforce Competency Intelligence
           </h1>
-          <p className="text-xs text-slate-500 dark:text-on-surface-variant mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             Director General Executive Command Center • Multi-Divisional Readiness Matrix
           </p>
         </div>
@@ -101,8 +101,8 @@ export default function AdminAnalytics() {
         {/* Card 1: Total Officers Monitored */}
         <div className="glass-card p-5 rounded-2xl flex items-center justify-between hover:border-ai-cyan/30 transition-all shadow-sm">
           <div>
-            <p className="text-xs text-slate-500 dark:text-on-surface-variant font-medium">Total Officers Monitored</p>
-            <div className="text-2xl font-bold font-mono text-slate-900 dark:text-white mt-1.5">10,420</div>
+            <p className="text-xs text-slate-500 font-medium">Total Officers Monitored</p>
+            <div className="text-2xl font-bold font-mono text-slate-900 mt-1.5">10,420</div>
             <div className="flex items-center gap-1.5 mt-1 text-[11px] text-success-emerald">
               <span className="w-1.5 h-1.5 rounded-full bg-success-emerald"></span>
               <span>Active Duty (ISS &amp; SSS)</span>
@@ -116,7 +116,7 @@ export default function AdminAnalytics() {
         {/* Card 2: Average Cadre Readiness */}
         <div className="glass-card p-5 rounded-2xl flex items-center justify-between hover:border-ai-cyan/30 transition-all shadow-sm">
           <div>
-            <p className="text-xs text-slate-500 dark:text-on-surface-variant font-medium">Average Cadre Readiness</p>
+            <p className="text-xs text-slate-500 font-medium">Average Cadre Readiness</p>
             <div className="text-2xl font-bold font-mono text-ai-cyan chart-glow mt-1.5">68.4%</div>
             <div className="flex items-center gap-1.5 mt-1 text-[11px] text-success-emerald">
               <TrendingUp className="w-3.5 h-3.5" />
@@ -131,7 +131,7 @@ export default function AdminAnalytics() {
         {/* Card 3: Critical Deficit Clusters */}
         <div className="glass-card p-5 rounded-2xl flex items-center justify-between hover:border-warning-amber/30 transition-all shadow-sm">
           <div>
-            <p className="text-xs text-slate-500 dark:text-on-surface-variant font-medium">Critical Deficit Clusters</p>
+            <p className="text-xs text-slate-500 font-medium">Critical Deficit Clusters</p>
             <div className="text-sm font-bold text-warning-amber mt-1.5">SNA 2008 &amp; Microdata</div>
             <div className="flex items-center gap-1.5 mt-1 text-[11px] text-warning-amber">
               <AlertTriangle className="w-3.5 h-3.5" />
@@ -146,7 +146,7 @@ export default function AdminAnalytics() {
         {/* Card 4: iGOT Sync Health */}
         <div className="glass-card p-5 rounded-2xl flex items-center justify-between hover:border-ai-cyan/30 transition-all shadow-sm">
           <div>
-            <p className="text-xs text-slate-500 dark:text-on-surface-variant font-medium">iGOT Sync Health</p>
+            <p className="text-xs text-slate-500 font-medium">iGOT Sync Health</p>
             <div className="text-2xl font-bold font-mono text-success-emerald mt-1.5">99.8%</div>
             <div className="flex items-center gap-1.5 mt-1 text-[11px] text-ai-cyan">
               <RefreshCw className="w-3.5 h-3.5" />
@@ -164,12 +164,12 @@ export default function AdminAnalytics() {
         
         {/* Heatmap Matrix Table (col-span-8) */}
         <div className="lg:col-span-8 glass-card p-6 rounded-2xl space-y-4 shadow-sm">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-200 dark:border-glass-border gap-2">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-200 gap-2">
             <div>
-              <h2 className="font-headline text-base font-bold text-slate-900 dark:text-white">
+              <h2 className="font-headline text-base font-bold text-slate-900">
                 Competency Gap Matrix
               </h2>
-              <p className="text-xs text-slate-500 dark:text-on-surface-variant">
+              <p className="text-xs text-slate-500">
                 Cross-divisional analysis of critical functional skills
               </p>
             </div>
@@ -186,7 +186,7 @@ export default function AdminAnalytics() {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
-                <tr className="border-b border-slate-200 dark:border-glass-border text-slate-500 dark:text-on-surface-variant uppercase font-mono font-semibold">
+                <tr className="border-b border-slate-200 text-slate-500 uppercase font-mono font-semibold">
                   <th className="py-3 px-3">Division</th>
                   <th className="py-3 px-3 text-center">Survey Sampling</th>
                   <th className="py-3 px-3 text-center">SNA 2008</th>
@@ -195,10 +195,10 @@ export default function AdminAnalytics() {
                   <th className="py-3 px-3 text-center">Data Governance</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200 dark:divide-glass-border">
+              <tbody className="divide-y divide-slate-200">
                 {MATRIX_DATA.map((row) => (
                   <tr key={row.division} className="hover:bg-white/5 transition">
-                    <td className="py-3.5 px-3 font-semibold text-slate-900 dark:text-white">{row.division}</td>
+                    <td className="py-3.5 px-3 font-semibold text-slate-900">{row.division}</td>
                     <td className="py-3.5 px-3 text-center">
                       <span className={`px-2.5 py-1 rounded-lg border font-mono font-bold text-xs inline-block ${getHeatmapColor(row.sampling)}`}>
                         {row.sampling}%
@@ -234,11 +234,11 @@ export default function AdminAnalytics() {
         {/* 12-Month Predictive Growth Chart (col-span-4) */}
         <div className="lg:col-span-4 glass-card p-6 rounded-2xl flex flex-col justify-between shadow-sm">
           <div>
-            <div className="pb-3 border-b border-slate-200 dark:border-glass-border">
-              <h2 className="font-headline text-base font-bold text-slate-900 dark:text-white">
+            <div className="pb-3 border-b border-slate-200">
+              <h2 className="font-headline text-base font-bold text-slate-900">
                 Predictive Growth
               </h2>
-              <p className="text-xs text-slate-500 dark:text-on-surface-variant">
+              <p className="text-xs text-slate-500">
                 12-Month Competency Projection
               </p>
             </div>
@@ -272,8 +272,8 @@ export default function AdminAnalytics() {
             </div>
           </div>
 
-          <div className="pt-3 border-t border-slate-200 dark:border-glass-border">
-            <p className="text-[11px] text-slate-500 dark:text-on-surface-variant leading-relaxed">
+          <div className="pt-3 border-t border-slate-200">
+            <p className="text-[11px] text-slate-500 leading-relaxed">
               AI predicts <strong className="text-ai-cyan">+14% improvement</strong> in overall readiness if recommended NSSTA courses are completed.
             </p>
           </div>

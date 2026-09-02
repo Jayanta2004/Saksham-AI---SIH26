@@ -68,12 +68,12 @@ export default function MySkills() {
   const getPriorityStyle = (priority) => {
     switch (priority?.toLowerCase()) {
       case 'high':
-        return 'text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-500/20 border border-red-200 dark:border-red-500/40';
+        return 'text-red-700 bg-red-50 border border-red-200';
       case 'medium':
-        return 'text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-500/20 border border-amber-200 dark:border-amber-500/40';
+        return 'text-amber-700 bg-amber-50 border border-amber-200';
       case 'low':
       default:
-        return 'text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-500/20 border border-emerald-200 dark:border-emerald-500/40';
+        return 'text-emerald-700 bg-emerald-50 border border-emerald-200';
     }
   };
 
@@ -85,8 +85,8 @@ export default function MySkills() {
     return (
       <div className="min-h-[50vh] flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <Loader2 className="w-8 h-8 animate-spin text-blue-600 dark:text-ai-cyan" />
-          <p className="text-sm text-slate-600 dark:text-slate-400">Loading competency profile...</p>
+          <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+          <p className="text-sm text-slate-600">Loading competency profile...</p>
         </div>
       </div>
     );
@@ -95,25 +95,25 @@ export default function MySkills() {
   return (
     <div className="space-y-6 pb-12">
       {/* Header */}
-      <div className="bg-white dark:bg-[#0F172A] p-6 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm">
-        <h1 className="font-headline text-xl font-bold text-slate-900 dark:text-white">
+      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <h1 className="font-headline text-xl font-bold text-slate-900">
           My Statistical &amp; Technical Skills
         </h1>
-        <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
+        <p className="text-xs sm:text-sm text-slate-600 mt-1">
           Proficiency evaluation and benchmark gaps across official MoSPI competency frameworks
         </p>
       </div>
 
       {/* Category Filter Tabs */}
-      <div className="flex flex-wrap gap-2 border-b border-slate-200 dark:border-white/10 pb-3">
+      <div className="flex flex-wrap gap-2 border-b border-slate-200 pb-3">
         {categories.map((cat) => (
           <button
             key={cat}
             onClick={() => setActiveCategory(cat)}
             className={`px-4 py-2 rounded-xl text-xs font-semibold transition ${
               activeCategory === cat
-                ? 'bg-blue-600 dark:bg-gradient-to-r dark:from-blue-600 dark:to-cyan-600 text-white shadow-sm'
-                : 'bg-white dark:bg-white/5 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-white/10'
+                ? 'bg-blue-600 text-white shadow-sm'
+                : 'bg-white text-slate-700 hover:text-slate-900 border border-slate-200'
             }`}
           >
             {cat}
@@ -132,10 +132,10 @@ export default function MySkills() {
           return (
             <div key={cat} className="space-y-4">
               <div className="flex items-center justify-between">
-                <h2 className="font-headline text-base font-bold text-slate-900 dark:text-white">
+                <h2 className="font-headline text-base font-bold text-slate-900">
                   {cat} Competencies
                 </h2>
-                <span className="text-xs font-semibold text-blue-700 dark:text-ai-cyan bg-blue-50 dark:bg-cyan-500/10 border border-blue-200 dark:border-cyan-500/20 px-3 py-1 rounded-full">
+                <span className="text-xs font-semibold text-blue-700 bg-blue-50 border border-blue-200 px-3 py-1 rounded-full">
                   Average Readiness: {avgScore}%
                 </span>
               </div>
@@ -147,11 +147,11 @@ export default function MySkills() {
                   return (
                     <div
                       key={skill.id}
-                      className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-white/10 rounded-2xl p-5 shadow-sm space-y-3 flex flex-col justify-between hover:border-blue-500/40 dark:hover:border-ai-cyan/40 transition-all"
+                      className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-3 flex flex-col justify-between hover:border-blue-500/40 transition-all"
                     >
                       <div className="space-y-2">
                         <div className="flex items-start justify-between gap-2">
-                          <h3 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white leading-snug">
+                          <h3 className="text-xs sm:text-sm font-bold text-slate-900 leading-snug">
                             {skill.name}
                           </h3>
                           <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase shrink-0 ${getPriorityStyle(skill.priority)}`}>
@@ -159,22 +159,22 @@ export default function MySkills() {
                           </span>
                         </div>
 
-                        <div className="flex justify-between items-center text-xs text-slate-600 dark:text-slate-300 font-mono pt-1">
-                          <span>Current: <strong className="text-slate-900 dark:text-white">{skill.currentLevel} / 5.0</strong></span>
-                          <span>Target: <strong className="text-slate-900 dark:text-white">{skill.requiredLevel} / 5.0</strong></span>
+                        <div className="flex justify-between items-center text-xs text-slate-600 font-mono pt-1">
+                          <span>Current: <strong className="text-slate-900">{skill.currentLevel} / 5.0</strong></span>
+                          <span>Target: <strong className="text-slate-900">{skill.requiredLevel} / 5.0</strong></span>
                         </div>
 
-                        <div className="w-full bg-slate-200 dark:bg-white/10 rounded-full h-2 overflow-hidden">
+                        <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
                           <div
-                            className="bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-ai-cyan dark:to-ai-purple h-2 rounded-full transition-all duration-300"
+                            className="bg-gradient-to-r from-blue-600 to-cyan-500 h-2 rounded-full transition-all duration-300"
                             style={{ width: `${percent}%` }}
                           />
                         </div>
                       </div>
 
-                      <div className="pt-2 border-t border-slate-200 dark:border-white/10 flex justify-between items-center text-[11px] text-slate-600 dark:text-slate-300 font-mono">
+                      <div className="pt-2 border-t border-slate-200 flex justify-between items-center text-[11px] text-slate-600 font-mono">
                         <span>Deficit: {skill.gap > 0 ? `-${skill.gap}` : 'Target Met'}</span>
-                        <span className="font-bold text-blue-600 dark:text-ai-cyan">{percent}% Ready</span>
+                        <span className="font-bold text-blue-600">{percent}% Ready</span>
                       </div>
                     </div>
                   );

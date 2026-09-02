@@ -82,8 +82,8 @@ export default function MyProgress() {
     return (
       <div className="min-h-[50vh] flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <Loader2 className="w-8 h-8 animate-spin text-blue-600 dark:text-ai-cyan" />
-          <p className="text-sm text-slate-600 dark:text-slate-400">Loading progress trajectory...</p>
+          <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+          <p className="text-sm text-slate-600">Loading progress trajectory...</p>
         </div>
       </div>
     );
@@ -92,9 +92,9 @@ export default function MyProgress() {
   return (
     <div className="space-y-6 pb-12">
       {/* Header */}
-      <div className="bg-white dark:bg-[#0F172A] p-6 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm">
-        <h1 className="font-headline text-xl font-bold text-slate-900 dark:text-white">Capability Growth &amp; Progress</h1>
-        <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
+      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <h1 className="font-headline text-xl font-bold text-slate-900">Capability Growth &amp; Progress</h1>
+        <p className="text-xs sm:text-sm text-slate-600 mt-1">
           Track your monthly learning hours, overall skill growth, and competency progress trajectory.
         </p>
       </div>
@@ -104,11 +104,11 @@ export default function MyProgress() {
         {summaryMetrics.map((item, idx) => (
           <div
             key={idx}
-            className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-white/10 rounded-2xl p-5 shadow-sm space-y-1 hover:border-blue-500/40 dark:hover:border-ai-cyan/40 transition-all"
+            className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-1 hover:border-blue-500/40 transition-all"
           >
-            <p className="text-xs font-semibold text-slate-600 dark:text-slate-400">{item.label}</p>
-            <p className="text-2xl font-bold font-mono text-slate-900 dark:text-white">{item.value}</p>
-            <p className="text-xs text-slate-500 dark:text-slate-400">{item.note}</p>
+            <p className="text-xs font-semibold text-slate-600">{item.label}</p>
+            <p className="text-2xl font-bold font-mono text-slate-900">{item.value}</p>
+            <p className="text-xs text-slate-500">{item.note}</p>
           </div>
         ))}
       </div>
@@ -116,12 +116,12 @@ export default function MyProgress() {
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Competency Trajectory (Area Chart) */}
-        <div className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-white/10 rounded-2xl p-6 shadow-sm space-y-4">
+        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
           <div>
-            <h2 className="font-headline text-base font-bold text-slate-900 dark:text-white">
+            <h2 className="font-headline text-base font-bold text-slate-900">
               Competency Growth Trajectory
             </h2>
-            <p className="text-xs text-slate-600 dark:text-slate-400">
+            <p className="text-xs text-slate-600">
               Evolution of overall readiness percentage over assessment cycles
             </p>
           </div>
@@ -174,10 +174,10 @@ export default function MyProgress() {
         </div>
 
         {/* Monthly Learning Hours (Bar Chart) */}
-        <div className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-white/10 rounded-2xl p-6 shadow-sm space-y-4">
+        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
           <div>
-            <h2 className="font-headline text-base font-bold text-slate-900 dark:text-white">Monthly Learning Hours</h2>
-            <p className="text-xs text-slate-600 dark:text-slate-400">
+            <h2 className="font-headline text-base font-bold text-slate-900">Monthly Learning Hours</h2>
+            <p className="text-xs text-slate-600">
               Time invested in e-learning courses &amp; diagnostic assessment exercises
             </p>
           </div>

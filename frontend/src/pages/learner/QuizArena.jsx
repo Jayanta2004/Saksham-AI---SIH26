@@ -147,7 +147,7 @@ export default function QuizArena() {
               {quiz?.competency_tag || 'Official Statistics Assessment'}
             </span>
           </div>
-          <h1 className="font-headline text-lg font-bold text-slate-900 dark:text-white">
+          <h1 className="font-headline text-lg font-bold text-slate-900">
             {quiz?.title || 'Diagnostic Evaluation'}
           </h1>
         </div>
@@ -156,7 +156,7 @@ export default function QuizArena() {
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 glass-panel px-3.5 py-1.5 rounded-xl border border-glass-border">
             <Clock className="w-4 h-4 text-warning-amber animate-pulse" />
-            <span className="font-mono text-xs font-bold text-slate-900 dark:text-white">
+            <span className="font-mono text-xs font-bold text-slate-900">
               {formatTime(timeLeft)}
             </span>
           </div>
@@ -188,8 +188,8 @@ export default function QuizArena() {
 
       {/* Main Question Card */}
       {!isSubmitted && currentQ && (
-        <div className="glass-card p-6 sm:p-8 rounded-2xl space-y-6 shadow-2xl border-slate-200 dark:border-glass-border">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-glass-border">
+        <div className="glass-card p-6 sm:p-8 rounded-2xl space-y-6 shadow-2xl border-slate-200">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-200">
             <span className="text-xs font-mono font-bold text-ai-cyan">
               QUESTION {currentIndex + 1} OF {questions.length}
             </span>
@@ -198,7 +198,7 @@ export default function QuizArena() {
             </span>
           </div>
 
-          <h2 className="font-headline text-base sm:text-lg font-semibold text-slate-900 dark:text-white leading-relaxed">
+          <h2 className="font-headline text-base sm:text-lg font-semibold text-slate-900 leading-relaxed">
             {currentQ.question_text}
           </h2>
 
@@ -219,14 +219,14 @@ export default function QuizArena() {
                   className={`w-full p-4 rounded-xl text-left border transition-all text-xs sm:text-sm font-medium flex items-start gap-3.5 ${
                     isSelected
                       ? 'bg-cyan-500/10 border-ai-cyan text-ai-cyan shadow-md shadow-cyan-500/10'
-                      : 'glass-card hover:border-ai-cyan/40 text-slate-800 dark:text-on-surface'
+                      : 'glass-card hover:border-ai-cyan/40 text-slate-800'
                   }`}
                 >
                   <span
                     className={`w-6 h-6 rounded-lg font-mono text-xs flex items-center justify-center shrink-0 mt-0.5 transition-colors ${
                       isSelected
                         ? 'bg-ai-cyan text-slate-950 font-bold'
-                        : 'bg-slate-200 dark:bg-white/5 text-slate-700 dark:text-on-surface-variant'
+                        : 'bg-slate-200 text-slate-700'
                     }`}
                   >
                     {String.fromCharCode(65 + i)}
@@ -238,7 +238,7 @@ export default function QuizArena() {
           </div>
 
           {/* Navigation Controls */}
-          <div className="pt-4 border-t border-slate-200 dark:border-glass-border flex items-center justify-between">
+          <div className="pt-4 border-t border-slate-200 flex items-center justify-between">
             <button
               onClick={() => setCurrentIndex((prev) => Math.max(0, prev - 1))}
               disabled={currentIndex === 0}
@@ -271,16 +271,16 @@ export default function QuizArena() {
 
       {/* Results & Explanatory Feedback */}
       {isSubmitted && result && (
-        <div className="glass-card p-6 sm:p-8 rounded-2xl space-y-6 shadow-2xl border-slate-200 dark:border-glass-border">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-200 dark:border-glass-border gap-4">
+        <div className="glass-card p-6 sm:p-8 rounded-2xl space-y-6 shadow-2xl border-slate-200">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-200 gap-4">
             <div>
               <span className="text-xs font-mono font-bold text-success-emerald uppercase">
                 Assessment Complete
               </span>
-              <h2 className="font-headline text-2xl font-bold text-slate-900 dark:text-white">
+              <h2 className="font-headline text-2xl font-bold text-slate-900">
                 Score: {result.score_percentage}%
               </h2>
-              <p className="text-xs text-slate-500 dark:text-on-surface-variant mt-0.5">
+              <p className="text-xs text-slate-500 mt-0.5">
                 {result.total_correct} of {result.total_questions} questions answered correctly
               </p>
             </div>
@@ -296,7 +296,7 @@ export default function QuizArena() {
 
           {/* Itemized Explanations */}
           <div className="space-y-4">
-            <h3 className="font-headline text-base font-bold text-slate-900 dark:text-white">
+            <h3 className="font-headline text-base font-bold text-slate-900">
               Itemized Methodological Explanations
             </h3>
             {result.detailed_feedback?.map((fb, idx) => (
@@ -311,8 +311,8 @@ export default function QuizArena() {
                     Question {idx + 1}: {fb.is_correct ? 'Correct' : 'Incorrect'}
                   </span>
                 </div>
-                <p className="text-xs text-slate-800 dark:text-white font-medium mb-2">{fb.question_text}</p>
-                <div className="p-3 rounded-lg glass-panel text-[11px] text-slate-600 dark:text-on-surface-variant leading-relaxed">
+                <p className="text-xs text-slate-800 font-medium mb-2">{fb.question_text}</p>
+                <div className="p-3 rounded-lg glass-panel text-[11px] text-slate-600 leading-relaxed">
                   <strong>MoSPI Methodological Rationale:</strong> {fb.explanation}
                 </div>
               </div>

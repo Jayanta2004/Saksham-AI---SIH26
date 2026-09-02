@@ -118,32 +118,32 @@ export default function LearnerDashboard() {
       value: userStats.courses_completed ?? 4,
       unit: 'modules active',
       icon: BookOpen,
-      iconBg: 'bg-cyan-500/10 text-cyan-700 dark:text-ai-cyan border-cyan-500/30',
-      color: 'text-cyan-700 dark:text-ai-cyan'
+      iconBg: 'bg-cyan-500/10 text-cyan-700 border-cyan-500/30',
+      color: 'text-cyan-700'
     },
     {
       label: 'Learning Hours',
       value: userStats.learning_hours ?? 38,
       unit: 'hrs logged',
       icon: Clock,
-      iconBg: 'bg-emerald-500/10 text-emerald-700 dark:text-success-emerald border-emerald-500/30',
-      color: 'text-emerald-700 dark:text-success-emerald'
+      iconBg: 'bg-emerald-500/10 text-emerald-700 border-emerald-500/30',
+      color: 'text-emerald-700'
     },
     {
       label: 'Assessments Passed',
       value: userStats.assessments_passed ?? 6,
       unit: 'evaluations',
       icon: CheckCircle2,
-      iconBg: 'bg-purple-500/10 text-purple-700 dark:text-ai-purple border-purple-500/30',
-      color: 'text-purple-700 dark:text-ai-purple'
+      iconBg: 'bg-purple-500/10 text-purple-700 border-purple-500/30',
+      color: 'text-purple-700'
     },
     {
       label: 'Verified Badges',
       value: userStats.certificates_earned ?? 3,
       unit: 'credentials',
       icon: Award,
-      iconBg: 'bg-amber-500/10 text-amber-700 dark:text-warning-amber border-amber-500/30',
-      color: 'text-amber-700 dark:text-warning-amber'
+      iconBg: 'bg-amber-500/10 text-amber-700 border-amber-500/30',
+      color: 'text-amber-700'
     }
   ];
 
@@ -155,8 +155,8 @@ export default function LearnerDashboard() {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <Loader2 className="w-8 h-8 animate-spin text-blue-600 dark:text-ai-cyan" />
-          <p className="text-sm text-slate-600 dark:text-slate-400">Loading your statistical competency profile...</p>
+          <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+          <p className="text-sm text-slate-600">Loading your statistical competency profile...</p>
         </div>
       </div>
     );
@@ -166,36 +166,36 @@ export default function LearnerDashboard() {
     <div className="space-y-6 pb-12">
       
       {/* 1. Welcome Banner Card */}
-      <div className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-white/10 p-6 rounded-2xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 relative overflow-hidden shadow-sm">
+      <div className="bg-white border border-slate-200 p-6 rounded-2xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 relative overflow-hidden shadow-sm">
         <div className="absolute top-0 right-0 w-64 h-64 bg-ai-cyan/10 rounded-full blur-3xl pointer-events-none -z-10" />
         
         <div>
           <div className="flex items-center gap-2 mb-1.5">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span>
-            <span className="text-[11px] font-mono font-bold uppercase text-blue-700 dark:text-ai-cyan tracking-wider">
+            <span className="text-[11px] font-mono font-bold uppercase text-blue-700 tracking-wider">
               {user?.department || 'National Accounts Division (NAD)'}
             </span>
           </div>
-          <h1 className="font-headline text-2xl font-bold text-slate-900 dark:text-white">
+          <h1 className="font-headline text-2xl font-bold text-slate-900">
             Welcome back, {firstName}
           </h1>
-          <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
+          <p className="text-xs text-slate-600 mt-1">
             {user?.designation || 'Senior Statistical Officer'} • Official Cadre Competency Dashboard
           </p>
         </div>
 
         {/* Cadre Readiness Score Meter */}
-        <div className="bg-slate-50 dark:bg-white/5 px-5 py-3 rounded-2xl flex items-center gap-4 shadow-sm border border-slate-200 dark:border-white/10">
+        <div className="bg-slate-50 px-5 py-3 rounded-2xl flex items-center gap-4 shadow-sm border border-slate-200">
           <div className="text-right">
-            <div className="text-3xl font-extrabold text-blue-600 dark:text-ai-cyan font-mono chart-glow leading-none">
+            <div className="text-3xl font-extrabold text-blue-600 font-mono chart-glow leading-none">
               {readiness}%
             </div>
-            <div className="text-[11px] text-slate-600 dark:text-slate-400 font-medium mt-1">
+            <div className="text-[11px] text-slate-600 font-medium mt-1">
               Role Readiness
             </div>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-cyan-500/10 border border-blue-200 dark:border-cyan-500/30 flex items-center justify-center">
-            <Activity className="w-5 h-5 text-blue-600 dark:text-ai-cyan" />
+          <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center">
+            <Activity className="w-5 h-5 text-blue-600" />
           </div>
         </div>
       </div>
@@ -207,13 +207,13 @@ export default function LearnerDashboard() {
           return (
             <div
               key={idx}
-              className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-white/10 p-5 rounded-2xl flex items-center justify-between hover:border-blue-500/40 dark:hover:border-ai-cyan/40 transition-all shadow-sm"
+              className="bg-white border border-slate-200 p-5 rounded-2xl flex items-center justify-between hover:border-blue-500/40 transition-all shadow-sm"
             >
               <div>
-                <p className="text-xs text-slate-600 dark:text-slate-400 font-semibold">{stat.label}</p>
+                <p className="text-xs text-slate-600 font-semibold">{stat.label}</p>
                 <div className="flex items-baseline gap-1.5 mt-2">
-                  <span className="text-2xl font-bold font-mono text-slate-900 dark:text-white">{stat.value}</span>
-                  <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">{stat.unit}</span>
+                  <span className="text-2xl font-bold font-mono text-slate-900">{stat.value}</span>
+                  <span className="text-xs text-slate-500 font-medium">{stat.unit}</span>
                 </div>
               </div>
               <div className={`w-11 h-11 rounded-xl flex items-center justify-center border ${stat.iconBg}`}>
@@ -228,18 +228,18 @@ export default function LearnerDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* Radar Chart (col-span-7) */}
-        <div className="lg:col-span-7 bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-white/10 p-6 rounded-2xl flex flex-col justify-between shadow-sm">
+        <div className="lg:col-span-7 bg-white border border-slate-200 p-6 rounded-2xl flex flex-col justify-between shadow-sm">
           <div>
-            <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-white/10">
+            <div className="flex items-center justify-between pb-4 border-b border-slate-200">
               <div>
-                <h2 className="font-headline text-base font-bold text-slate-900 dark:text-white">
+                <h2 className="font-headline text-base font-bold text-slate-900">
                   7-Axis Competency Radar
                 </h2>
-                <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
+                <p className="text-xs text-slate-600 mt-0.5">
                   Observed proficiency vs MoSPI official benchmark targets
                 </p>
               </div>
-              <Link to="/skills" className="text-xs text-blue-600 dark:text-ai-cyan font-semibold hover:underline flex items-center gap-1">
+              <Link to="/skills" className="text-xs text-blue-600 font-semibold hover:underline flex items-center gap-1">
                 <span>Full Matrix</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
@@ -278,47 +278,47 @@ export default function LearnerDashboard() {
             </div>
           </div>
 
-          <div className="flex items-center justify-center gap-6 pt-3 border-t border-slate-200 dark:border-white/10 text-xs text-slate-700 dark:text-slate-300 font-medium">
+          <div className="flex items-center justify-center gap-6 pt-3 border-t border-slate-200 text-xs text-slate-700 font-medium">
             <div className="flex items-center gap-2">
-              <span className="w-3 h-3 rounded-full bg-cyan-600 dark:bg-ai-cyan inline-block shadow-[0_0_8px_rgba(6,182,212,0.6)]" />
+              <span className="w-3 h-3 rounded-full bg-cyan-600 inline-block shadow-[0_0_8px_rgba(6,182,212,0.6)]" />
               <span>Current Score (Scale: 5.0)</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="w-3 h-1 border-t-2 border-dashed border-amber-600 dark:border-warning-amber inline-block" />
+              <span className="w-3 h-1 border-t-2 border-dashed border-amber-600 inline-block" />
               <span>Target Benchmark Target</span>
             </div>
           </div>
         </div>
 
         {/* Top Skill Gaps (col-span-5) */}
-        <div className="lg:col-span-5 bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-white/10 p-6 rounded-2xl flex flex-col justify-between shadow-sm">
+        <div className="lg:col-span-5 bg-white border border-slate-200 p-6 rounded-2xl flex flex-col justify-between shadow-sm">
           <div>
-            <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-white/10">
+            <div className="flex items-center justify-between pb-4 border-b border-slate-200">
               <div>
-                <h2 className="font-headline text-base font-bold text-slate-900 dark:text-white">
+                <h2 className="font-headline text-base font-bold text-slate-900">
                   Priority Skill Gaps
                 </h2>
-                <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Calculated by Deficit Score</p>
+                <p className="text-xs text-slate-600 mt-0.5">Calculated by Deficit Score</p>
               </div>
-              <Link to="/skill-gap" className="text-xs text-blue-600 dark:text-ai-cyan font-semibold hover:underline">
+              <Link to="/skill-gap" className="text-xs text-blue-600 font-semibold hover:underline">
                 View all →
               </Link>
             </div>
 
-            <div className="divide-y divide-slate-200 dark:divide-white/10 mt-4 space-y-3">
+            <div className="divide-y divide-slate-200 mt-4 space-y-3">
               {skillGaps.length > 0 ? (
                 skillGaps.map((gap, idx) => {
                   const percent = Math.min(100, Math.round((gap.current / (gap.required || 4.0)) * 100));
                   const badgeColors = {
-                    High: 'bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/30',
-                    Medium: 'bg-amber-500/10 text-amber-700 dark:text-warning-amber border-amber-500/30',
-                    Low: 'bg-emerald-500/10 text-emerald-700 dark:text-success-emerald border-emerald-500/30'
+                    High: 'bg-red-500/10 text-red-700 border-red-500/30',
+                    Medium: 'bg-amber-500/10 text-amber-700 border-amber-500/30',
+                    Low: 'bg-emerald-500/10 text-emerald-700 border-emerald-500/30'
                   };
 
                   return (
                     <div key={idx} className="pt-3 first:pt-0 space-y-2">
                       <div className="flex items-center justify-between gap-2">
-                        <span className="text-xs font-bold text-slate-900 dark:text-white truncate">{gap.skill}</span>
+                        <span className="text-xs font-bold text-slate-900 truncate">{gap.skill}</span>
                         <span
                           className={`text-[10px] px-2 py-0.5 rounded-full font-semibold border shrink-0 ${
                             badgeColors[gap.priority] || badgeColors.Medium
@@ -327,13 +327,13 @@ export default function LearnerDashboard() {
                           {gap.priority} Priority
                         </span>
                       </div>
-                      <div className="flex items-center justify-between text-[11px] text-slate-600 dark:text-slate-300 font-mono">
+                      <div className="flex items-center justify-between text-[11px] text-slate-600 font-mono">
                         <span>Current: {gap.current} / {gap.required}</span>
                         <span>{percent}% Ready</span>
                       </div>
-                      <div className="w-full bg-slate-200 dark:bg-white/10 rounded-full h-2 overflow-hidden">
+                      <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
                         <div
-                          className="bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-ai-cyan dark:to-ai-purple h-2 rounded-full transition-all duration-500"
+                          className="bg-gradient-to-r from-blue-600 to-cyan-500 h-2 rounded-full transition-all duration-500"
                           style={{ width: `${percent}%` }}
                         />
                       </div>
@@ -341,14 +341,14 @@ export default function LearnerDashboard() {
                   );
                 })
               ) : (
-                <div className="text-center py-8 text-slate-500 dark:text-slate-400 text-xs font-medium">
+                <div className="text-center py-8 text-slate-500 text-xs font-medium">
                   All statistical competencies are currently on target!
                 </div>
               )}
             </div>
           </div>
 
-          <div className="pt-4 mt-4 border-t border-slate-200 dark:border-white/10">
+          <div className="pt-4 mt-4 border-t border-slate-200">
             <Link
               to="/assessments"
               className="w-full py-2.5 gradient-button text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 shadow-md"
@@ -361,19 +361,19 @@ export default function LearnerDashboard() {
       </div>
 
       {/* 4. Recommended Courses Section */}
-      <div className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-white/10 p-6 rounded-2xl space-y-4 shadow-sm">
-        <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-white/10">
+      <div className="bg-white border border-slate-200 p-6 rounded-2xl space-y-4 shadow-sm">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-200">
           <div>
-            <h2 className="font-headline text-base font-bold text-slate-900 dark:text-white">
+            <h2 className="font-headline text-base font-bold text-slate-900">
               Recommended Learning Pathways
             </h2>
-            <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
+            <p className="text-xs text-slate-600 mt-0.5">
               Personalized modules from iGOT Karmayogi &amp; NSSTA mapped to your skill gaps
             </p>
           </div>
           <Link
             to="/courses"
-            className="text-xs text-blue-600 dark:text-ai-cyan font-semibold hover:underline flex items-center gap-1"
+            className="text-xs text-blue-600 font-semibold hover:underline flex items-center gap-1"
           >
             <span>Browse All Courses</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -384,28 +384,28 @@ export default function LearnerDashboard() {
           {recommendedCourses.slice(0, 3).map((course, idx) => (
             <div
               key={idx}
-              className="bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl p-4 flex flex-col justify-between hover:border-blue-500/40 dark:hover:border-ai-cyan/40 transition space-y-3"
+              className="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col justify-between hover:border-blue-500/40 transition space-y-3"
             >
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-semibold text-blue-700 dark:text-ai-cyan bg-blue-50 dark:bg-cyan-500/10 border border-blue-200 dark:border-cyan-500/20 px-2 py-0.5 rounded-full font-mono">
+                  <span className="text-[10px] font-semibold text-blue-700 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-full font-mono">
                     {course.provider || 'iGOT Karmayogi'}
                   </span>
-                  <span className="text-[11px] text-slate-600 dark:text-slate-400 font-mono">
+                  <span className="text-[11px] text-slate-600 font-mono">
                     {course.duration_hours ? `${course.duration_hours} hrs` : 'Self-paced'}
                   </span>
                 </div>
 
-                <h3 className="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white leading-snug">
+                <h3 className="text-xs sm:text-sm font-semibold text-slate-900 leading-snug">
                   {course.title}
                 </h3>
 
-                <p className="text-xs text-slate-600 dark:text-slate-400 italic">
-                  Target: <strong className="text-slate-900 dark:text-white">{course.target_competency}</strong>
+                <p className="text-xs text-slate-600 italic">
+                  Target: <strong className="text-slate-900">{course.target_competency}</strong>
                 </p>
               </div>
 
-              <div className="pt-3 border-t border-slate-200 dark:border-white/10">
+              <div className="pt-3 border-t border-slate-200">
                 <Link
                   to="/courses/crs_igot_01"
                   className="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-semibold flex items-center justify-center transition shadow-sm"
