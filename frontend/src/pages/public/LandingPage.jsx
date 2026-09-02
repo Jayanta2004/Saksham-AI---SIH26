@@ -329,7 +329,6 @@ export default function LandingPage() {
             <a href="#competency-demo" className="hover:text-blue-600 transition-colors">Skill Radar</a>
             <a href="#quiz-simulator" className="hover:text-blue-600 transition-colors">AI Quiz Studio</a>
             <a href="#divisions" className="hover:text-blue-600 transition-colors">Cadres &amp; Divisions</a>
-            <a href="#features" className="hover:text-blue-600 transition-colors">Architecture</a>
           </div>
 
           {/* Actions */}
