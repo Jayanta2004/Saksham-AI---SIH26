@@ -399,4 +399,9 @@ python -m uvicorn main:app --host 127.0.0.1 --port 8000 --reload
 ## 14. License & Institutional Attribution
 Developed for the **Ministry of Statistics & Programme Implementation (MoSPI)**, Government of India.
 
-All rights reserved (c) 2026 SAKSHAM AI. Official Statistics Skill Intelligence Platform.
+---
+<p align="center">
+  © 2026 <strong>SAKSHAM AI</strong>. All Rights Reserved.<br>
+  <em>Official Statistics Skill Intelligence Platform</em>
+</p>
+
