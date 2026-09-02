@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FileText, Download, Check, Table, Users, Calendar } from 'lucide-react';
+import { FileText, Download, Check, Table, Users, Calendar, CheckCircle2 } from 'lucide-react';
 import { mockUsers } from '../../data/mockUsers';
 
 export default function AdminReports() {
@@ -93,18 +93,18 @@ export default function AdminReports() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-12">
       {/* Page Header */}
-      <div>
-        <h1 className="text-xl font-semibold text-gray-900">Workforce Reports & Exports</h1>
-        <p className="text-sm text-gray-500 mt-1">
-          Generate, preview, and download competency matrices, skill audits, and training compliance records.
+      <div className="bg-white dark:bg-[#0F172A] p-6 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm">
+        <h1 className="font-headline text-xl font-bold text-slate-900 dark:text-white">Workforce Reports &amp; Exports</h1>
+        <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
+          Generate, preview, and download competency matrices, skill audits, and training compliance records for official MoSPI cadres.
         </p>
       </div>
 
       {downloadMsg && (
-        <div className="p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-sm flex items-center space-x-2 shadow-sm animate-fadeIn">
-          <Check className="w-4 h-4 text-emerald-600 shrink-0" />
+        <div className="p-4 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/30 text-emerald-800 dark:text-emerald-300 rounded-xl text-xs sm:text-sm flex items-center space-x-2 shadow-sm animate-fadeIn font-semibold">
+          <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
           <span><strong>{reportName}</strong> generated successfully and downloaded to your computer.</span>
         </div>
       )}
@@ -114,20 +114,20 @@ export default function AdminReports() {
         {reports.map((r) => {
           const Icon = r.icon;
           return (
-            <div key={r.id} className="bg-white p-6 rounded-xl border border-gray-200 space-y-5 flex flex-col justify-between shadow-sm hover:border-gray-300 transition">
+            <div key={r.id} className="bg-white dark:bg-[#0F172A] p-6 rounded-2xl border border-slate-200 dark:border-white/10 space-y-5 flex flex-col justify-between shadow-sm hover:border-blue-500/40 dark:hover:border-ai-cyan/40 transition-all">
               <div className="space-y-3">
-                <div className="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-cyan-500/10 text-blue-700 dark:text-ai-cyan border border-blue-200 dark:border-cyan-500/20 flex items-center justify-center">
                   <Icon className="w-5 h-5" />
                 </div>
                 <div>
-                  <h2 className="text-base font-semibold text-gray-900">{r.title}</h2>
-                  <p className="text-xs text-gray-500 mt-1.5 leading-relaxed">{r.description}</p>
+                  <h2 className="font-headline text-base font-bold text-slate-900 dark:text-white">{r.title}</h2>
+                  <p className="text-xs text-slate-600 dark:text-slate-300 mt-1.5 leading-relaxed">{r.description}</p>
                 </div>
               </div>
 
               <button
                 onClick={() => handleExport(r.type, r.title)}
-                className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-xs transition flex items-center justify-center space-x-2 shadow-sm"
+                className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 dark:bg-gradient-to-r dark:from-blue-600 dark:to-cyan-600 text-white font-semibold rounded-xl text-xs transition flex items-center justify-center space-x-2 shadow-sm"
               >
                 <Download className="w-3.5 h-3.5" />
                 <span>{r.buttonText}</span>

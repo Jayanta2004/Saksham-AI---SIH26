@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Check, Play, Circle, Clock, BookOpen, BarChart2, Loader2, ArrowRight } from 'lucide-react';
+import { Check, Play, Circle, Clock, BookOpen, BarChart2, Loader2, ArrowRight, Sparkles, Award, Lock } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { skillService } from '../../services/skillService';
@@ -20,7 +20,7 @@ export default function PersonalizedLearningPath() {
         ]);
 
         if (isMounted) {
-          const completedCount = statsData?.assessments_passed || 0;
+          const completedCount = statsData?.assessments_passed || 1;
           const pathway = compData?.recommended_pathway || [];
 
           if (pathway.length > 0) {
@@ -33,7 +33,7 @@ export default function PersonalizedLearningPath() {
                 progress = 100;
               } else if (idx === completedCount) {
                 status = 'current';
-                progress = 25;
+                progress = 30;
               }
 
               return {
@@ -50,35 +50,34 @@ export default function PersonalizedLearningPath() {
             });
             setSteps(mappedSteps);
           } else {
-            // Default dynamic baseline steps
             setSteps([
               {
                 step: 1,
-                status: completedCount > 0 ? 'completed' : 'current',
-                title: 'Foundations of National Statistical Frameworks & NSS Sampling',
+                status: 'completed',
+                title: 'Official Microdata Cleaning in Python & Pandas for Surveys',
                 provider: 'iGOT Karmayogi',
-                duration: '18 Hours',
-                skill: 'Survey Methodology',
+                duration: '16 Hours',
+                skill: 'Python Microdata Analytics',
                 difficulty: 'Intermediate',
-                progress: completedCount > 0 ? 100 : 35
+                progress: 100
               },
               {
                 step: 2,
-                status: completedCount > 1 ? 'completed' : (completedCount === 1 ? 'current' : 'upcoming'),
-                title: 'System of National Accounts (SNA 2008) GDP & GVA Compilation',
+                status: 'current',
+                title: 'SNA 2008: Gross Value Added & Sectoral Compilation',
                 provider: 'iGOT Karmayogi / NSSTA',
                 duration: '24 Hours',
                 skill: 'National Accounts',
                 difficulty: 'Intermediate',
-                progress: completedCount > 1 ? 100 : 0
+                progress: 30
               },
               {
                 step: 3,
-                status: completedCount > 2 ? 'completed' : (completedCount === 2 ? 'current' : 'upcoming'),
-                title: 'Data Processing in Python & R for Official Surveys',
-                provider: 'iGOT Karmayogi / NSSTA',
+                status: 'upcoming',
+                title: 'Multi-Stage Stratified Sampling & Survey Multipliers',
+                provider: 'NSSTA Residential Workshop (Greater Noida)',
                 duration: '30 Hours',
-                skill: 'Python & R Data Analytics',
+                skill: 'Survey Methodology & Sampling',
                 difficulty: 'Advanced',
                 progress: 0
               },
@@ -88,7 +87,7 @@ export default function PersonalizedLearningPath() {
                 title: 'Digital Personal Data Protection (DPDPA 2023) & Statistical Confidentiality',
                 provider: 'NeGD & MoSPI',
                 duration: '12 Hours',
-                skill: 'Digital Governance',
+                skill: 'Digital Governance & Security',
                 difficulty: 'Intermediate',
                 progress: 0
               }
@@ -110,21 +109,21 @@ export default function PersonalizedLearningPath() {
     switch (status) {
       case 'completed':
         return (
-          <div className="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center shadow-sm">
-            <Check className="w-4 h-4 stroke-[3]" />
+          <div className="w-10 h-10 rounded-full bg-emerald-500 text-white flex items-center justify-center glow-node-complete shadow-md shrink-0">
+            <Check className="w-5 h-5 stroke-[3]" />
           </div>
         );
       case 'current':
         return (
-          <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center ring-4 ring-blue-100 shadow-sm">
-            <Play className="w-3.5 h-3.5 fill-current ml-0.5" />
+          <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white flex items-center justify-center glow-node-active shadow-lg shrink-0">
+            <Play className="w-4 h-4 fill-current ml-0.5" />
           </div>
         );
       case 'upcoming':
       default:
         return (
-          <div className="w-8 h-8 rounded-full bg-white border-2 border-gray-300 text-gray-400 flex items-center justify-center">
-            <Circle className="w-3 h-3 fill-current text-gray-300" />
+          <div className="w-10 h-10 rounded-full glass-card text-on-surface-variant flex items-center justify-center border border-glass-border shrink-0">
+            <Lock className="w-4 h-4 text-slate-400 dark:text-slate-500" />
           </div>
         );
     }
@@ -133,138 +132,163 @@ export default function PersonalizedLearningPath() {
   const getStatusBadge = (status) => {
     switch (status) {
       case 'completed':
-        return 'text-emerald-700 bg-emerald-50 border border-emerald-200 font-semibold';
+        return 'text-success-emerald bg-emerald-500/10 border border-success-emerald/30 font-semibold';
       case 'current':
-        return 'text-blue-700 bg-blue-50 border border-blue-200 font-semibold';
+        return 'text-ai-cyan bg-cyan-500/10 border border-ai-cyan/30 font-semibold';
       case 'upcoming':
       default:
-        return 'text-gray-500 bg-gray-100 border border-gray-200';
-    }
-  };
-
-  const formatStatusLabel = (status) => {
-    switch (status) {
-      case 'completed':
-        return 'Completed';
-      case 'current':
-        return 'In Progress';
-      case 'upcoming':
-      default:
-        return 'Upcoming Milestone';
+        return 'text-slate-500 dark:text-on-surface-variant bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-glass-border font-medium';
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-[50vh] flex items-center justify-center">
+      <div className="min-h-[60vh] flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
-          <p className="text-sm text-gray-500">Generating personalized learning pathway...</p>
+          <Loader2 className="w-8 h-8 animate-spin text-ai-cyan" />
+          <p className="text-sm text-on-surface-variant">Synthesizing personalized competency roadmap...</p>
         </div>
       </div>
     );
   }
 
+  const completedCount = steps.filter((s) => s.status === 'completed').length;
+  const progressPercent = Math.round((completedCount / (steps.length || 1)) * 100);
+
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="bg-white p-6 rounded-xl border border-gray-200">
-        <h1 className="text-xl font-bold text-gray-900">Personalized Learning Roadmap</h1>
-        <p className="text-sm text-gray-500 mt-1">
-          Curated training milestones dynamically sequenced by AI to close your specific competency gaps
-        </p>
-      </div>
-
-      {/* Timeline Steps */}
-      <div className="relative pl-6 sm:pl-8 space-y-8 before:absolute before:left-[19px] sm:before:left-[23px] before:top-4 before:bottom-4 before:w-0.5 before:bg-gray-200">
-        {steps.map((item) => (
-          <div key={item.step} className="relative flex items-start gap-4 sm:gap-6 group">
-            {/* Timeline Icon Marker */}
-            <div className="relative z-10 shrink-0 mt-1">
-              {getStatusIcon(item.status)}
+    <div className="space-y-6 pb-12">
+      
+      {/* Header Banner */}
+      <div className="glass-card p-6 rounded-2xl relative overflow-hidden shadow-sm">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="w-2 h-2 rounded-full bg-ai-cyan animate-pulse"></span>
+              <span className="text-[11px] font-mono font-bold uppercase text-ai-cyan tracking-wider">
+                Official MoSPI Competency Roadmap
+              </span>
             </div>
+            <h1 className="font-headline text-2xl font-bold text-slate-900 dark:text-white">
+              Personalized Competency Remediation Path
+            </h1>
+            <p className="text-xs text-slate-500 dark:text-on-surface-variant mt-1">
+              Curated AI learning journey tailored to your {user?.designation || 'Senior Statistical Officer'} cadre benchmarks
+            </p>
+          </div>
 
-            {/* Card Body */}
-            <div
-              className={`flex-1 bg-white border rounded-xl p-5 shadow-sm transition-all duration-200 ${
-                item.status === 'current'
-                  ? 'border-blue-500 ring-2 ring-blue-50'
-                  : 'border-gray-200 hover:border-gray-300'
-              }`}
-            >
-              {/* Header Info */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">
-                    Step {item.step}
-                  </span>
-                  <span className="text-gray-300">•</span>
-                  <span className="text-xs font-semibold text-blue-700">{item.provider}</span>
-                </div>
-                <span
-                  className={`text-[11px] px-2.5 py-0.5 rounded-full border self-start sm:self-auto ${getStatusBadge(
-                    item.status
-                  )}`}
-                >
-                  {formatStatusLabel(item.status)}
-                </span>
+          {/* Overall Progress Meter */}
+          <div className="glass-panel px-5 py-3.5 rounded-2xl flex items-center gap-4 border border-slate-200 dark:border-glass-border shadow-sm">
+            <div className="text-right">
+              <div className="text-2xl font-extrabold font-mono text-ai-cyan chart-glow leading-none">
+                {progressPercent}%
               </div>
-
-              {/* Title */}
-              <h3 className="text-base font-bold text-gray-900 mb-3">{item.title}</h3>
-
-              {/* Metadata Tags */}
-              <div className="flex flex-wrap items-center gap-4 text-xs text-gray-500 mb-4">
-                <div className="flex items-center gap-1.5">
-                  <Clock className="w-4 h-4 text-gray-400" />
-                  <span>{item.duration}</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <BookOpen className="w-4 h-4 text-gray-400" />
-                  <span>{item.skill}</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <BarChart2 className="w-4 h-4 text-gray-400" />
-                  <span>{item.difficulty}</span>
-                </div>
+              <div className="text-[10px] text-slate-500 dark:text-on-surface-variant font-medium mt-1">
+                {completedCount} of {steps.length} Milestones Done
               </div>
-
-              {/* Progress Bar for Current Step */}
-              {item.status === 'current' && (
-                <div className="mt-4 pt-4 border-t border-gray-100 space-y-3">
-                  <div className="flex justify-between items-center text-xs">
-                    <span className="font-medium text-gray-700">Active Module Progress</span>
-                    <span className="font-bold text-blue-600">{item.progress}%</span>
-                  </div>
-                  <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
-                    <div
-                      className="bg-blue-600 h-2 rounded-full transition-all duration-500"
-                      style={{ width: `${item.progress}%` }}
-                    />
-                  </div>
-                  <div className="flex justify-end pt-1">
-                    <Link
-                      to="/courses/crs_igot_01"
-                      className="inline-flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow-sm transition"
-                    >
-                      <span>Continue Learning</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </Link>
-                  </div>
-                </div>
-              )}
-
-              {item.status === 'upcoming' && (
-                <div className="mt-3 pt-3 border-t border-gray-100 flex justify-between items-center text-xs text-gray-400">
-                  <span>Prerequisite: Complete preceding step</span>
-                  <Link to="/courses" className="text-blue-600 hover:underline font-medium">
-                    Preview Course
-                  </Link>
-                </div>
-              )}
+            </div>
+            <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center">
+              <Sparkles className="w-5 h-5 text-ai-cyan" />
             </div>
           </div>
-        ))}
+        </div>
+      </div>
+
+      {/* Vertical Interactive Stepper with Stitch Glass Cards */}
+      <div className="relative pl-6 sm:pl-8 space-y-6 before:absolute before:left-11 before:top-6 before:bottom-6 before:w-0.5 before:bg-gradient-to-b before:from-success-emerald before:via-ai-cyan before:to-slate-700">
+        {steps.map((step) => {
+          const isCurrent = step.status === 'current';
+          const isCompleted = step.status === 'completed';
+
+          return (
+            <div key={step.step} className="relative flex items-start gap-4 sm:gap-6 group">
+              
+              {/* Connected Step Node Icon */}
+              <div className="relative z-10">
+                {getStatusIcon(step.status)}
+              </div>
+
+              {/* Step Detail Card */}
+              <div
+                className={`flex-1 glass-card p-5 sm:p-6 rounded-2xl transition-all shadow-sm ${
+                  isCurrent ? 'border-ai-cyan shadow-lg shadow-cyan-500/10' : 'hover:border-ai-cyan/30'
+                }`}
+              >
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-200 dark:border-glass-border">
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-xs font-mono font-bold text-ai-cyan">
+                      PHASE 0{step.step}
+                    </span>
+                    <span className={`text-[10px] px-2.5 py-0.5 rounded-full uppercase tracking-wider ${getStatusBadge(step.status)}`}>
+                      {step.status === 'completed' ? 'Completed' : step.status === 'current' ? 'In Progress' : 'Upcoming'}
+                    </span>
+                  </div>
+                  <span className="text-[11px] font-mono text-slate-500 dark:text-on-surface-variant">
+                    {step.duration}
+                  </span>
+                </div>
+
+                <div className="mt-3 space-y-2">
+                  <h3 className="font-headline text-base font-bold text-slate-900 dark:text-white leading-snug">
+                    {step.title}
+                  </h3>
+
+                  <div className="flex flex-wrap items-center gap-3 text-xs text-slate-600 dark:text-on-surface-variant">
+                    <span className="px-2 py-0.5 rounded glass-panel font-mono text-[11px] text-ai-cyan">
+                      {step.provider}
+                    </span>
+                    <span>Target Competency: <strong className="text-slate-800 dark:text-white">{step.skill}</strong></span>
+                    <span>•</span>
+                    <span>Level: <strong>{step.difficulty}</strong></span>
+                  </div>
+
+                  {/* Progress Bar for Current Step */}
+                  {isCurrent && (
+                    <div className="pt-2">
+                      <div className="flex justify-between text-[11px] text-on-surface-variant font-mono mb-1">
+                        <span>Module Progress</span>
+                        <span>{step.progress}%</span>
+                      </div>
+                      <div className="w-full bg-slate-200 dark:bg-white/5 rounded-full h-2 overflow-hidden">
+                        <div
+                          className="bg-gradient-to-r from-ai-cyan to-ai-purple h-2 rounded-full transition-all duration-500"
+                          style={{ width: `${step.progress}%` }}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Actions */}
+                <div className="mt-4 pt-3 border-t border-slate-200 dark:border-glass-border flex items-center justify-between">
+                  {isCompleted ? (
+                    <span className="text-xs text-success-emerald font-semibold flex items-center gap-1">
+                      <Check className="w-3.5 h-3.5" /> Competency Target Verified (+0.4 Delta Score)
+                    </span>
+                  ) : isCurrent ? (
+                    <Link
+                      to="/courses/crs_igot_01"
+                      className="inline-flex items-center gap-2 gradient-button text-white text-xs font-semibold px-4 py-2 rounded-lg shadow-md"
+                    >
+                      <span>Resume Module</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
+                  ) : (
+                    <span className="text-xs text-slate-400 dark:text-on-surface-variant flex items-center gap-1">
+                      <Lock className="w-3.5 h-3.5" /> Unlocks upon completing Phase 02
+                    </span>
+                  )}
+
+                  <Link
+                    to="/assessments"
+                    className="text-xs text-blue-600 dark:text-ai-cyan font-semibold hover:underline"
+                  >
+                    Take Quiz →
+                  </Link>
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

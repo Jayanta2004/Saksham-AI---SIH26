@@ -1,10 +1,10 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Clock, BarChart2, BookOpen, Sparkles } from 'lucide-react';
+import { Clock, BarChart2, BookOpen, Sparkles, ArrowRight } from 'lucide-react';
 
 const courses = [
   {
-    id: 101,
+    id: 'crs_igot_01',
     title: 'Data Science & Statistical Machine Learning for Civil Servants',
     provider: 'iGOT Karmayogi',
     description: 'Practical training on applying modern analytics, machine learning algorithms, and data modeling to national survey pipelines.',
@@ -15,9 +15,9 @@ const courses = [
     aiReason: 'Directly addresses your high-priority gap in automated survey data analytics and Python workflows.'
   },
   {
-    id: 102,
+    id: 'crs_dpdpa_02',
     title: 'Digital Personal Data Protection (DPDP) Act Compliance',
-    provider: 'NeGD & MeitY',
+    provider: 'NeGD & MoSPI',
     description: 'Comprehensive curriculum on citizen data rights, statutory obligations, data fiduciary duties, and governance frameworks.',
     duration: '4 Weeks',
     skill: 'Digital Governance',
@@ -26,20 +26,20 @@ const courses = [
     aiReason: 'Matches mandatory compliance training identified for officers managing citizen-facing statistical datasets.'
   },
   {
-    id: 103,
-    title: 'Advanced Stratified Sampling & Variance Estimation',
-    provider: 'Indian Statistical Institute',
-    description: 'In-depth coverage of multi-stage cluster sampling, variance estimation techniques, and non-sampling error handling.',
+    id: 'crs_sna_03',
+    title: 'SNA 2008 Gross Value Added & Sectoral Compilation',
+    provider: 'NSSTA Residential (Greater Noida)',
+    description: 'In-depth coverage of multi-stage cluster sampling, GVA estimation techniques, and non-sampling error handling.',
     duration: '8 Weeks',
-    skill: 'Survey Sampling',
+    skill: 'National Accounts',
     difficulty: 'Advanced',
     matchPercentage: 89,
     aiReason: 'Targets your core competency requirement for upcoming national sample survey rounds.'
   },
   {
-    id: 104,
+    id: 'crs_policy_04',
     title: 'Executive Communication & Evidence-Based Policy Briefing',
-    provider: 'LBSNAA Mussoorie',
+    provider: 'iGOT Karmayogi / NSSTA',
     description: 'Techniques for distilling statistical findings into crisp, actionable executive briefs for ministry decision-makers.',
     duration: '3 Weeks',
     skill: 'Policy Communication',
@@ -53,12 +53,12 @@ export default function RecommendedCourses() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gray-50/50 p-6 space-y-6">
+    <div className="space-y-6 pb-12">
       {/* Header */}
-      <div>
-        <h1 className="text-xl font-semibold text-gray-900">Recommended Courses</h1>
-        <p className="text-sm text-gray-500 mt-1">
-          AI-curated learning programmes personalized to bridge your specific competency gaps.
+      <div className="bg-white dark:bg-[#0F172A] p-6 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm">
+        <h1 className="font-headline text-xl font-bold text-slate-900 dark:text-white">Recommended iGOT &amp; NSSTA Courses</h1>
+        <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
+          AI-curated learning programmes personalized to bridge your specific competency gaps in the official statistical cadre.
         </p>
       </div>
 
@@ -67,62 +67,63 @@ export default function RecommendedCourses() {
         {courses.map((course) => (
           <div
             key={course.id}
-            className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm flex flex-col justify-between space-y-5"
+            className="bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-white/10 rounded-2xl p-6 shadow-sm flex flex-col justify-between space-y-5 hover:border-blue-500/40 dark:hover:border-ai-cyan/40 transition-all"
           >
             <div className="space-y-3">
               {/* Header tags */}
               <div className="flex items-center justify-between gap-2">
-                <span className="text-xs font-medium text-blue-700 bg-blue-50 px-2.5 py-1 rounded-md">
+                <span className="text-[11px] font-bold text-blue-700 dark:text-ai-cyan bg-blue-50 dark:bg-cyan-500/10 border border-blue-200 dark:border-cyan-500/20 px-2.5 py-1 rounded-full font-mono">
                   {course.provider}
                 </span>
-                <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md">
-                  <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+                <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 dark:text-success-emerald bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/30 px-2.5 py-1 rounded-full">
+                  <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-success-emerald" />
                   {course.matchPercentage}% Match
                 </span>
               </div>
 
               {/* Title & Description */}
               <div>
-                <h3 className="text-base font-semibold text-gray-900 leading-snug">
+                <h3 className="font-headline text-base font-bold text-slate-900 dark:text-white leading-snug">
                   {course.title}
                 </h3>
-                <p className="text-sm text-gray-600 mt-1.5 leading-relaxed">
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1.5 leading-relaxed">
                   {course.description}
                 </p>
               </div>
 
               {/* Metadata */}
-              <div className="flex flex-wrap items-center gap-4 text-xs text-gray-500 pt-1">
+              <div className="flex flex-wrap items-center gap-4 text-xs text-slate-600 dark:text-slate-400 font-mono pt-1">
                 <div className="flex items-center gap-1.5">
-                  <Clock className="w-4 h-4 text-gray-400" />
+                  <Clock className="w-4 h-4 text-slate-400" />
                   <span>{course.duration}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <BookOpen className="w-4 h-4 text-gray-400" />
+                  <BookOpen className="w-4 h-4 text-slate-400" />
                   <span>{course.skill}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <BarChart2 className="w-4 h-4 text-gray-400" />
+                  <BarChart2 className="w-4 h-4 text-slate-400" />
                   <span>{course.difficulty}</span>
                 </div>
               </div>
 
               {/* AI Reason */}
-              <div className="bg-gray-50 border border-gray-100 rounded-lg p-3">
-                <p className="text-xs text-gray-600 italic">
-                  <span className="font-medium text-gray-700 not-italic">Why recommended: </span>
+              <div className="bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl p-3.5">
+                <p className="text-xs text-slate-700 dark:text-slate-300 italic">
+                  <strong className="text-slate-900 dark:text-white not-italic">Why recommended: </strong>
                   {course.aiReason}
                 </p>
               </div>
             </div>
 
             {/* Action */}
-            <div className="pt-2">
+            <div className="pt-2 border-t border-slate-100 dark:border-white/5 flex justify-end">
               <button
                 onClick={() => navigate(`/courses/${course.id}`)}
-                className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition text-center"
+                className="w-full sm:w-auto px-5 py-2.5 bg-blue-600 hover:bg-blue-700 dark:bg-gradient-to-r dark:from-blue-600 dark:to-cyan-600 text-white rounded-xl text-xs font-semibold shadow-sm flex items-center justify-center gap-2 transition"
               >
-                View Course
+                <span>View Course Details</span>
+                <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           </div>

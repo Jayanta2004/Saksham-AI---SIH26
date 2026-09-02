@@ -89,25 +89,25 @@ export default function TrainingProgrammes() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-12">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-lg border border-slate-700 flex items-center gap-2 text-xs font-medium">
-          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+        <div className="fixed bottom-6 right-6 z-50 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-4 py-3 rounded-xl shadow-2xl border border-slate-700 dark:border-slate-200 flex items-center gap-2 text-xs font-semibold">
+          <CheckCircle2 className="w-4 h-4 text-emerald-400 dark:text-emerald-600 shrink-0" />
           <span>{toastMessage}</span>
         </div>
       )}
 
       {/* Header */}
-      <div className="bg-white p-6 rounded-xl border border-gray-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="bg-white dark:bg-[#0F172A] p-6 rounded-2xl border border-slate-200 dark:border-white/10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 shadow-sm">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">Institutional Training Programmes</h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <h1 className="font-headline text-xl font-bold text-slate-900 dark:text-white">Institutional Training Programmes</h1>
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
             Residential workshops and specialized blended academy programmes curated for your cadre
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-xs bg-blue-50 text-blue-700 border border-blue-200 px-3 py-1.5 rounded-lg font-semibold">
+          <span className="text-xs bg-blue-50 dark:bg-cyan-500/10 text-blue-700 dark:text-ai-cyan border border-blue-200 dark:border-cyan-500/20 px-3 py-1.5 rounded-xl font-mono font-semibold">
             {nominatedIds.length} Active Nomination{nominatedIds.length === 1 ? '' : 's'}
           </span>
         </div>
@@ -121,47 +121,49 @@ export default function TrainingProgrammes() {
           return (
             <div
               key={prog.id}
-              className={`bg-white border rounded-xl p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6 transition ${
-                isNominated ? 'border-emerald-300 ring-2 ring-emerald-50' : 'border-gray-200 hover:border-gray-300'
+              className={`bg-white dark:bg-[#0F172A] border rounded-2xl p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6 transition-all ${
+                isNominated
+                  ? 'border-emerald-500 ring-2 ring-emerald-500/20'
+                  : 'border-slate-200 dark:border-white/10 hover:border-blue-500/40 dark:hover:border-ai-cyan/40'
               }`}
             >
               <div className="space-y-3 flex-1">
                 {/* Top Row: Provider & Match */}
                 <div className="flex flex-wrap items-center gap-2.5">
-                  <span className="text-xs font-semibold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-md">
+                  <span className="text-xs font-bold text-blue-700 dark:text-ai-cyan bg-blue-50 dark:bg-cyan-500/10 border border-blue-200 dark:border-cyan-500/20 px-2.5 py-1 rounded-full font-mono">
                     {prog.provider}
                   </span>
-                  <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md">
-                    <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+                  <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 dark:text-success-emerald bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/30 px-2.5 py-1 rounded-full">
+                    <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-success-emerald" />
                     {prog.matchPercentage}% AI Match
                   </span>
-                  <span className="text-[11px] text-gray-400 font-medium">
+                  <span className="text-xs text-slate-500 dark:text-slate-400 font-medium font-mono">
                     {prog.capacity}
                   </span>
                 </div>
 
                 {/* Title & Description */}
                 <div>
-                  <h2 className="text-base font-bold text-gray-900 leading-snug">
+                  <h2 className="font-headline text-base font-bold text-slate-900 dark:text-white leading-snug">
                     {prog.title}
                   </h2>
-                  <p className="text-xs text-gray-500 mt-1 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
                     {prog.curriculum}
                   </p>
                 </div>
 
                 {/* Metadata Details */}
-                <div className="flex flex-wrap items-center gap-y-2 gap-x-5 text-xs text-gray-500 pt-1">
+                <div className="flex flex-wrap items-center gap-y-2 gap-x-5 text-xs text-slate-600 dark:text-slate-400 font-mono pt-1">
                   <div className="flex items-center gap-1.5">
-                    <MapPin className="w-4 h-4 text-gray-400" />
+                    <MapPin className="w-4 h-4 text-slate-400" />
                     <span>{prog.location}</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <Calendar className="w-4 h-4 text-gray-400" />
+                    <Calendar className="w-4 h-4 text-slate-400" />
                     <span>{prog.dates}</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <Clock className="w-4 h-4 text-gray-400" />
+                    <Clock className="w-4 h-4 text-slate-400" />
                     <span>{prog.duration}</span>
                   </div>
                 </div>
@@ -171,7 +173,7 @@ export default function TrainingProgrammes() {
                   {prog.skills.map((skill, sIdx) => (
                     <span
                       key={sIdx}
-                      className="text-[11px] font-medium bg-gray-50 text-gray-600 border border-gray-200 px-2 py-0.5 rounded"
+                      className="text-[11px] font-medium bg-slate-50 dark:bg-white/5 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/10 px-2 py-0.5 rounded-lg"
                     >
                       {skill}
                     </span>
@@ -183,10 +185,10 @@ export default function TrainingProgrammes() {
               <div className="shrink-0 flex md:flex-col items-center justify-end">
                 <button
                   onClick={() => handleNominate(prog)}
-                  className={`w-full md:w-40 py-2.5 px-4 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 shadow-sm transition ${
+                  className={`w-full md:w-40 py-2.5 px-4 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 shadow-sm transition-all ${
                     isNominated
-                      ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
-                      : 'bg-blue-600 hover:bg-blue-700 text-white'
+                      ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-500/20'
+                      : 'bg-blue-600 hover:bg-blue-700 dark:bg-gradient-to-r dark:from-blue-600 dark:to-cyan-600 text-white'
                   }`}
                 >
                   {isNominated ? (

@@ -11,7 +11,7 @@ export default function Certificates() {
   const [selectedCert, setSelectedCert] = useState(null);
   const [showToast, setShowToast] = useState(null);
 
-  const learnerName = user?.full_name || user?.name || 'Statistical Officer';
+  const learnerName = user?.full_name || user?.name || 'Arjun Sharma';
   const designation = user?.designation || 'Senior Statistical Officer';
 
   useEffect(() => {
@@ -82,33 +82,33 @@ export default function Certificates() {
     return (
       <div className="min-h-[50vh] flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
-          <p className="text-sm text-gray-500">Loading verified certificates...</p>
+          <Loader2 className="w-8 h-8 animate-spin text-blue-600 dark:text-ai-cyan" />
+          <p className="text-sm text-slate-600 dark:text-slate-400">Loading verified certificates...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-12">
       {/* Toast Notification */}
       {showToast && (
-        <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-lg border border-slate-700 flex items-center gap-2 text-sm">
-          <CheckCircle className="w-4 h-4 text-emerald-400" />
+        <div className="fixed bottom-6 right-6 z-50 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-4 py-3 rounded-xl shadow-2xl border border-slate-700 dark:border-slate-200 flex items-center gap-2 text-xs font-semibold">
+          <CheckCircle className="w-4 h-4 text-emerald-400 dark:text-emerald-600" />
           <span>{showToast}</span>
         </div>
       )}
 
       {/* Header */}
-      <div className="bg-white p-6 rounded-xl border border-gray-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="bg-white dark:bg-[#0F172A] p-6 rounded-2xl border border-slate-200 dark:border-white/10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 shadow-sm">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">Verified Competency Credentials</h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <h1 className="font-headline text-xl font-bold text-slate-900 dark:text-white">Verified Competency Credentials</h1>
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
             Official government certificates earned through passed assessments and completed courses
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1.5 rounded-lg font-medium">
+          <span className="text-xs bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-success-emerald border border-emerald-200 dark:border-emerald-500/30 px-3 py-1.5 rounded-xl font-mono font-semibold">
             {certificates.length} Verified Credential{certificates.length === 1 ? '' : 's'}
           </span>
         </div>
@@ -120,49 +120,49 @@ export default function Certificates() {
           {certificates.map((cert, idx) => (
             <div
               key={idx}
-              className="bg-white rounded-xl border border-gray-200 p-6 flex flex-col justify-between hover:shadow-sm transition space-y-4"
+              className="bg-white dark:bg-[#0F172A] rounded-2xl border border-slate-200 dark:border-white/10 p-6 flex flex-col justify-between hover:border-blue-500/40 dark:hover:border-ai-cyan/40 transition-all shadow-sm space-y-4"
             >
               <div className="space-y-3">
                 <div className="flex items-start justify-between gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                  <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-cyan-500/10 text-blue-600 dark:text-ai-cyan border border-blue-200 dark:border-cyan-500/30 flex items-center justify-center shrink-0">
                     <Award className="w-5 h-5" />
                   </div>
-                  <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
+                  <span className="text-xs font-bold text-emerald-700 dark:text-success-emerald bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/30 px-2.5 py-1 rounded-full font-mono">
                     Score: {cert.score_percentage || cert.score || 75}%
                   </span>
                 </div>
 
                 <div>
-                  <h3 className="text-base font-semibold text-gray-900 leading-snug">{cert.title}</h3>
-                  <p className="text-xs text-gray-500 mt-1">{cert.issuer}</p>
+                  <h3 className="font-headline text-base font-bold text-slate-900 dark:text-white leading-snug">{cert.title}</h3>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">{cert.issuer}</p>
                 </div>
 
-                <div className="pt-2 border-t border-gray-100 space-y-1 text-xs text-gray-600">
+                <div className="pt-2 border-t border-slate-100 dark:border-white/5 space-y-1.5 text-xs text-slate-600 dark:text-slate-300">
                   <div className="flex justify-between">
-                    <span className="text-gray-400">Issued To:</span>
-                    <span className="font-medium text-gray-800">{cert.recipient_name || learnerName}</span>
+                    <span className="text-slate-500 dark:text-slate-400">Issued To:</span>
+                    <span className="font-bold text-slate-900 dark:text-white">{cert.recipient_name || learnerName}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-400">Issue Date:</span>
-                    <span>{cert.issue_date || cert.issueDate}</span>
+                    <span className="text-slate-500 dark:text-slate-400">Issue Date:</span>
+                    <span className="font-mono">{cert.issue_date || cert.issueDate}</span>
                   </div>
                   <div className="flex justify-between font-mono text-[11px]">
-                    <span className="text-gray-400">Credential ID:</span>
-                    <span className="text-blue-700">{cert.credential_id || cert.credentialId}</span>
+                    <span className="text-slate-500 dark:text-slate-400">Credential ID:</span>
+                    <span className="text-blue-600 dark:text-ai-cyan font-bold">{cert.credential_id || cert.credentialId}</span>
                   </div>
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-gray-100 flex items-center gap-3">
+              <div className="pt-3 border-t border-slate-100 dark:border-white/5 flex items-center gap-3">
                 <button
                   onClick={() => setSelectedCert(cert)}
-                  className="flex-1 py-2 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-lg text-xs font-medium border border-gray-200 transition"
+                  className="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-semibold border border-slate-200 dark:border-white/10 transition"
                 >
                   View Credential
                 </button>
                 <button
                   onClick={() => handleDownload(cert)}
-                  className="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-medium flex items-center gap-1.5 transition"
+                  className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 dark:bg-gradient-to-r dark:from-blue-600 dark:to-cyan-600 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition shadow-sm"
                 >
                   <Download className="w-3.5 h-3.5" />
                   <span>Download</span>
@@ -172,19 +172,19 @@ export default function Certificates() {
           ))}
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center space-y-4">
-          <div className="w-14 h-14 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mx-auto">
+        <div className="bg-white dark:bg-[#0F172A] rounded-2xl border border-slate-200 dark:border-white/10 p-12 text-center space-y-4">
+          <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-cyan-500/10 text-blue-600 dark:text-ai-cyan flex items-center justify-center mx-auto">
             <Award className="w-7 h-7" />
           </div>
           <div className="max-w-md mx-auto space-y-1">
-            <h2 className="text-base font-semibold text-gray-900">No Certificates Earned Yet</h2>
-            <p className="text-xs text-gray-500 leading-relaxed">
+            <h2 className="font-headline text-base font-bold text-slate-900 dark:text-white">No Certificates Earned Yet</h2>
+            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
               Complete diagnostic assessments in the Assessment Arena with a score of 70% or higher to earn your verified MoSPI statistical competency certificates.
             </p>
           </div>
           <Link
             to="/assessments"
-            className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg shadow-sm transition"
+            className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 dark:bg-gradient-to-r dark:from-blue-600 dark:to-cyan-600 text-white text-xs font-semibold rounded-xl shadow-sm transition"
           >
             <span>Take First Assessment</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -194,46 +194,46 @@ export default function Certificates() {
 
       {/* Modal: View Full Certificate */}
       {selectedCert && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-gray-200 space-y-5">
-            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 backdrop-blur-sm">
+          <div className="bg-white dark:bg-[#090D16] rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-slate-200 dark:border-white/10 space-y-5">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 pb-3">
               <div className="flex items-center gap-2">
-                <Shield className="w-5 h-5 text-blue-600" />
-                <span className="font-semibold text-gray-900 text-sm">Official MoSPI Verified Credential</span>
+                <Shield className="w-5 h-5 text-blue-600 dark:text-ai-cyan" />
+                <span className="font-headline font-bold text-slate-900 dark:text-white text-sm">Official MoSPI Verified Credential</span>
               </div>
               <button
                 onClick={() => setSelectedCert(null)}
-                className="p-1 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100"
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="p-8 border-4 border-double border-blue-900 rounded-xl text-center space-y-4 bg-slate-50/50">
-              <h2 className="text-lg font-bold text-blue-900 uppercase tracking-wide">
-                Ministry of Statistics & Programme Implementation
+            <div className="p-8 border-4 border-double border-blue-600/60 dark:border-ai-cyan/60 rounded-xl text-center space-y-4 bg-slate-50 dark:bg-white/[0.02]">
+              <h2 className="font-headline text-lg font-bold text-blue-900 dark:text-ai-cyan uppercase tracking-wide">
+                Ministry of Statistics &amp; Programme Implementation
               </h2>
-              <p className="text-xs text-gray-500">Government of India • NSSTA Academy</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Government of India • NSSTA Academy</p>
 
               <div className="py-2">
-                <p className="text-xs text-gray-500">This credential certifies that</p>
-                <h3 className="text-2xl font-bold text-gray-900 mt-1">{selectedCert.recipient_name || learnerName}</h3>
-                <p className="text-xs text-gray-600 mt-0.5">({selectedCert.recipient_designation || designation})</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">This credential certifies that</p>
+                <h3 className="text-2xl font-bold text-slate-900 dark:text-white mt-1">{selectedCert.recipient_name || learnerName}</h3>
+                <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5">({selectedCert.recipient_designation || designation})</p>
               </div>
 
-              <p className="text-xs text-gray-600 max-w-md mx-auto">
+              <p className="text-xs text-slate-600 dark:text-slate-300 max-w-md mx-auto">
                 has satisfied all official competency benchmarks and demonstrated certified proficiency in
               </p>
-              <h4 className="text-base font-bold text-gray-900">{selectedCert.title}</h4>
+              <h4 className="font-headline text-base font-bold text-slate-900 dark:text-white">{selectedCert.title}</h4>
 
-              <div className="pt-4 border-t border-gray-200 grid grid-cols-2 text-xs text-gray-500 text-left">
+              <div className="pt-4 border-t border-slate-200 dark:border-white/10 grid grid-cols-2 text-xs text-slate-500 dark:text-slate-400 text-left">
                 <div>
-                  <span className="block font-medium text-gray-700">Credential ID:</span>
-                  <span className="font-mono text-[11px] text-blue-700">{selectedCert.credential_id || selectedCert.credentialId}</span>
+                  <span className="block font-medium text-slate-700 dark:text-slate-300">Credential ID:</span>
+                  <span className="font-mono text-[11px] text-blue-600 dark:text-ai-cyan">{selectedCert.credential_id || selectedCert.credentialId}</span>
                 </div>
                 <div className="text-right">
-                  <span className="block font-medium text-gray-700">Issue Date:</span>
-                  <span>{selectedCert.issue_date || selectedCert.issueDate}</span>
+                  <span className="block font-medium text-slate-700 dark:text-slate-300">Issue Date:</span>
+                  <span className="font-mono">{selectedCert.issue_date || selectedCert.issueDate}</span>
                 </div>
               </div>
             </div>
@@ -241,13 +241,13 @@ export default function Certificates() {
             <div className="flex justify-end gap-3 pt-2">
               <button
                 onClick={() => setSelectedCert(null)}
-                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-xs font-medium"
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/15 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-semibold"
               >
                 Close
               </button>
               <button
                 onClick={() => handleDownload(selectedCert)}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-medium flex items-center gap-1.5"
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-gradient-to-r dark:from-blue-600 dark:to-cyan-600 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm"
               >
                 <Download className="w-3.5 h-3.5" />
                 <span>Download HTML Certificate</span>

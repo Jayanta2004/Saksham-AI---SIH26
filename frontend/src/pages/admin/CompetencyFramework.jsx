@@ -41,23 +41,23 @@ const CompetencyFramework = () => {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-12">
       {/* Page Header */}
-      <div>
-        <h1 className="text-xl font-semibold text-gray-900">Competency Framework</h1>
-        <p className="text-sm text-gray-500 mt-1">
-          Defined competency standards and role benchmark requirements across organizational cadres.
+      <div className="bg-white dark:bg-[#0F172A] p-6 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm">
+        <h1 className="font-headline text-xl font-bold text-slate-900 dark:text-white">Competency Framework</h1>
+        <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
+          Defined competency standards and role benchmark requirements across official MoSPI cadres.
         </p>
       </div>
 
       {/* Role Benchmark Card */}
-      <div className="bg-white p-6 rounded-xl border border-gray-200 space-y-5">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-100 pb-4">
+      <div className="bg-white dark:bg-[#0F172A] p-6 rounded-2xl border border-slate-200 dark:border-white/10 space-y-5 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 dark:border-white/10 pb-4">
           <div>
-            <h2 className="text-base font-semibold text-gray-900">Senior Statistical Officer (SSO)</h2>
-            <p className="text-sm text-gray-500">Benchmark skill levels required for current cadre role</p>
+            <h2 className="font-headline text-base font-bold text-slate-900 dark:text-white">Senior Statistical Officer (SSO)</h2>
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Benchmark skill levels required for current cadre role</p>
           </div>
-          <span className="text-xs font-medium text-gray-500 bg-gray-100 px-2.5 py-1 rounded-md w-fit">
+          <span className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-white/10 px-3 py-1 rounded-full w-fit">
             6 Required Competencies
           </span>
         </div>
@@ -65,16 +65,16 @@ const CompetencyFramework = () => {
         {/* Grid of skill/level pairs */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {benchmarks.map((b) => (
-            <div key={b.skill} className="p-5 bg-gray-50 rounded-xl border border-gray-200 space-y-2">
+            <div key={b.skill} className="p-5 bg-slate-50 dark:bg-white/5 rounded-xl border border-slate-200 dark:border-white/10 space-y-2 hover:border-blue-500/40 dark:hover:border-ai-cyan/40 transition-all">
               <div className="flex items-center justify-between">
-                <span className="text-xs text-gray-500">{b.category}</span>
-                <span className="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-0.5 rounded">
+                <span className="text-xs font-mono text-slate-500 dark:text-slate-400">{b.category}</span>
+                <span className="text-xs font-bold text-blue-700 dark:text-ai-cyan bg-blue-50 dark:bg-cyan-500/10 border border-blue-200 dark:border-cyan-500/20 px-2 py-0.5 rounded-full font-mono">
                   {b.tier}
                 </span>
               </div>
-              <div className="text-sm font-semibold text-gray-900">{b.skill}</div>
-              <div className="text-xs text-gray-600 font-medium pt-1 border-t border-gray-200/60">
-                Required: {b.level}
+              <div className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">{b.skill}</div>
+              <div className="text-xs text-slate-600 dark:text-slate-300 font-mono pt-1 border-t border-slate-200 dark:border-white/10">
+                Required: <strong className="text-slate-900 dark:text-white">{b.level}</strong>
               </div>
             </div>
           ))}
