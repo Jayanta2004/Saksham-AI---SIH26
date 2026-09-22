@@ -1040,20 +1040,24 @@ app.get('/api/admin/users', verifyToken, async (req, res) => {
 
 // ai assistant chat handler
 app.post('/api/ai/assistant/chat', verifyToken, async (req, res) => {
-  const { message } = req.body;
+  const { message, language } = req.body;
   const user = (await pgDb.getUserById(req.user.id)) || req.user;
   const userName = user?.full_name || 'Officer';
   const dept = user?.department || 'Ministry of Statistics & Programme Implementation';
 
+  const selectedLang = language || 'en';
+
   try {
     const aiRes = await axios.post(`${PYTHON_AI_URL}/api/ai/chat`, {
       message: message || '',
+      language: selectedLang,
       user_context: {
         id: user?.id,
         full_name: user?.full_name,
         designation: user?.designation,
         department: user?.department,
         role: user?.role_name || user?.role_id,
+        preferred_language: selectedLang
       }
     }, { timeout: 15000 });
 
@@ -1061,7 +1065,8 @@ app.post('/api/ai/assistant/chat', verifyToken, async (req, res) => {
       return res.json({
         success: true,
         reply: aiRes.data.reply,
-        model: aiRes.data.model
+        model: aiRes.data.model,
+        language: selectedLang
       });
     }
   } catch (err) {

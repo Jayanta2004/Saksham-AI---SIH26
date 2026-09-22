@@ -70,6 +70,7 @@ class SemanticSearchRequest(BaseModel):
 
 class ChatMessageRequest(BaseModel):
     message: str
+    language: Optional[str] = "en"
     user_context: Optional[Dict[str, Any]] = None
 
 def get_intelligent_domain_response(query: str, user_name: str = "Officer", dept: str = "MoSPI") -> str:
@@ -276,6 +277,20 @@ CRITICAL GUIDELINES:
 4. NEVER skip the explanation. The user expects to LEARN from your response, not just receive action items.
 5. Content Coverage: Explain technical, statistical, computing, data engineering, and administrative concepts (e.g. Docker, Python, SQL, Machine Learning, Survey Sampling, SNA 2008, CPI/WPI, DPDPA 2023, Index Numbers, National Accounts) with exceptional clarity, depth, and structure.
 6. Length: Responses should be comprehensive — at least 300 words for conceptual questions. Do NOT give shallow or surface-level answers."""
+
+    lang_map = {
+        "hi": "Hindi (हिन्दी)",
+        "bn": "Bengali (বাংলা)",
+        "ta": "Tamil (தமிழ்)",
+        "mr": "Marathi (मराठी)",
+        "te": "Telugu (తెలుగు)",
+        "gu": "Gujarati (ગુજરાતી)",
+        "kn": "Kannada (ಕನ್ನಡ)",
+        "en": "English"
+    }
+    target_lang = lang_map.get(payload.language, "English")
+    if payload.language and payload.language != "en":
+        system_instruction += f"\n7. Multilingual Directive: The user has selected {target_lang}. Please deliver the comprehensive statistical explanation, formulas, and recommendations fluently in {target_lang}, retaining technical acronyms (SNA 2008, GVA, NSSO, DPDPA, MPCE)."
 
     prompt = f"{system_instruction}\n\nUser Question: {payload.message}\n\nProvide a detailed explanation followed by recommendations:"
 
