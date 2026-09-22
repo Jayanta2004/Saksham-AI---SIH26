@@ -26,6 +26,7 @@ import QuizArena from '../pages/learner/QuizArena';
 import AiAssistant from '../pages/learner/AiAssistant';
 import MyProgress from '../pages/learner/MyProgress';
 import Certificates from '../pages/learner/Certificates';
+import StatisticalPlayground from '../pages/learner/StatisticalPlayground';
 
 // Admin Pages
 import AdminDashboard from '../pages/admin/AdminDashboard';
@@ -70,6 +71,7 @@ const AppRoutes = () => {
         <Route path="/ai-assistant" element={<AiAssistant />} />
         <Route path="/progress" element={<MyProgress />} />
         <Route path="/certificates" element={<Certificates />} />
+        <Route path="/playground" element={<StatisticalPlayground />} />
       </Route>
 
       {/* Admin Protected Routes */}

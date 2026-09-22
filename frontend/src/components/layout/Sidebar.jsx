@@ -18,7 +18,8 @@ import {
   Settings,
   LogOut,
   X,
-  Brain
+  Brain,
+  Terminal
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -32,6 +33,7 @@ const learnerNav = [
   { name: 'NSSTA Workshops', path: '/training', icon: GraduationCap },
   { name: 'AI Assessments', path: '/assessments', icon: CheckSquare },
   { name: 'Statistical Copilot', path: '/ai-assistant', icon: Bot },
+  { name: 'Statistical Sandbox', path: '/playground', icon: Terminal },
   { name: 'Progress & Analytics', path: '/progress', icon: BarChart2 },
   { name: 'Certificates', path: '/certificates', icon: Award },
 ];
