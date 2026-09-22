@@ -36,6 +36,21 @@ export default function Header({ onMenuToggle }) {
   const location = useLocation();
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState(() => featureStore.notifications(user?.id));
+  const [isMac, setIsMac] = useState(false);
+  const searchInputRef = React.useRef(null);
+
+  useEffect(() => {
+    setIsMac(typeof navigator !== 'undefined' && /(Mac|iPhone|iPod|iPad)/i.test(navigator.platform));
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   useEffect(() => setNotifications(featureStore.notifications(user?.id)), [user?.id, location.pathname]);
 
   const getPageTitle = () => {
@@ -74,14 +89,27 @@ export default function Header({ onMenuToggle }) {
       </div>
 
       {/* Center: Search pill with shortcut */}
-      <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-slate-100 border border-slate-200 rounded-full text-xs text-slate-600 w-72">
-        <Search className="w-3.5 h-3.5 text-blue-600" />
+      <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-slate-100 border border-slate-200 rounded-full text-xs text-slate-600 w-72 focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-100 transition-all">
+        <Search className="w-3.5 h-3.5 text-blue-600 shrink-0" />
         <input
+          ref={searchInputRef}
           type="text"
           placeholder="Search competencies, manuals..."
           className="bg-transparent border-none outline-none text-xs text-slate-900 placeholder:text-slate-400 w-full"
         />
-        <kbd className="px-1.5 py-0.5 rounded bg-slate-200 text-[10px] font-mono text-slate-600">⌘K</kbd>
+        <kbd className="shrink-0 inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-slate-200 border border-slate-300/80 text-[10px] font-sans font-medium text-slate-600 select-none shadow-2xs">
+          {isMac ? (
+            <>
+              <span className="text-[11px] leading-none">⌘</span>
+              <span className="font-semibold leading-none">K</span>
+            </>
+          ) : (
+            <>
+              <span className="text-[9px] font-semibold tracking-tight text-slate-500 uppercase">Ctrl</span>
+              <span className="font-bold text-[10px] text-slate-700 ml-0.5">K</span>
+            </>
+          )}
+        </kbd>
       </div>
 
       {/* Right Actions: Home, ThemeToggle, Live Pill, Avatar */}
