@@ -1501,6 +1501,99 @@ app.post('/api/simulator/evaluate', verifyToken, async (req, res) => {
   }
 });
 
+// ==================== PEER BENCHMARKING & CADRE LEADERBOARDS ====================
+let SPRINT_ENROLLMENTS = new Set(['usr_sso_01:sprint_sna_01']);
+
+const DIVISIONAL_RANKINGS = [
+  { id: 'div_nad', division: 'National Accounts Division (NAD)', code: 'NAD', readiness: 88.4, active_officers: 64, modules_completed: 342, rank: 1, streak_days: 18, top_skill: 'SNA 2008 & GVA Deflation' },
+  { id: 'div_sdrd', division: 'Survey Design & Research Division (SDRD)', code: 'SDRD', readiness: 86.1, active_officers: 58, modules_completed: 298, rank: 2, streak_days: 14, top_skill: 'Multi-Stage Sampling Multipliers' },
+  { id: 'div_fod', division: 'Field Operations Division (FOD)', code: 'FOD', readiness: 83.7, active_officers: 142, modules_completed: 412, rank: 3, streak_days: 21, top_skill: 'CAPI Mobile Interviewing & PLFS' },
+  { id: 'div_cso', division: 'Central Statistics Office (CSO)', code: 'CSO', readiness: 81.9, active_officers: 52, modules_completed: 265, rank: 4, streak_days: 9, top_skill: 'CPI / IIP Laspeyres Aggregation' }
+];
+
+const CADRE_LEADERBOARD = [
+  { id: 'usr_sso_01', rank: 1, name: 'Arjun Sharma, ISS', designation: 'Senior Statistical Officer (SSO)', division: 'National Accounts Division (NAD)', cadre: 'ISS Grade IV', xp: 2450, pass_rate: 94, badges_count: 5, streak: 12, is_current_user: true },
+  { id: 'usr_jso_02', rank: 2, name: 'Priya Deshmukh', designation: 'Junior Statistical Officer (JSO)', division: 'Survey Design & Research Division (SDRD)', cadre: 'SSS Cadre', xp: 2280, pass_rate: 91, badges_count: 4, streak: 15, is_current_user: false },
+  { id: 'usr_sso_03', rank: 3, name: 'Shri Vikram Malhotra, ISS', designation: 'Senior Statistical Officer (SSO)', division: 'Field Operations Division (FOD)', cadre: 'ISS Grade IV', xp: 2120, pass_rate: 88, badges_count: 4, streak: 8, is_current_user: false },
+  { id: 'usr_jso_04', rank: 4, name: 'Ananya Sen', designation: 'Junior Statistical Officer (JSO)', division: 'Central Statistics Office (CSO)', cadre: 'SSS Cadre', xp: 1980, pass_rate: 87, badges_count: 3, streak: 6, is_current_user: false },
+  { id: 'usr_sso_05', rank: 5, name: 'Rohit K. Varma, ISS', designation: 'Assistant Director (ISS)', division: 'National Accounts Division (NAD)', cadre: 'ISS Junior Time Scale', xp: 1890, pass_rate: 85, badges_count: 3, streak: 10, is_current_user: false },
+  { id: 'usr_jso_06', rank: 6, name: 'Meenakshi Sundaram', designation: 'Senior Statistical Officer (SSO)', division: 'FOD Regional Office (Chennai)', cadre: 'SSS Cadre', xp: 1760, pass_rate: 84, badges_count: 3, streak: 5, is_current_user: false }
+];
+
+const NATIONAL_SPRINTS = [
+  {
+    id: 'sprint_sna_01',
+    title: 'SNA 2008 National Accounts & GVA Deflation Challenge',
+    division: 'National Accounts Division (NAD)',
+    cadre: 'All Cadres (ISS / SSS)',
+    days_left: 6,
+    xp_reward: 250,
+    enrolled_count: 78,
+    completion_target: '3 Modules + GVA Sandbox Verification',
+    badge: 'SNA 2008 Grandmaster',
+    status: 'Active'
+  },
+  {
+    id: 'sprint_plfs_02',
+    title: 'NSSO PLFS & CAPI Microdata Cleaning Sprint',
+    division: 'Field Operations Division (FOD)',
+    cadre: 'Field Investigators & SSS',
+    days_left: 12,
+    xp_reward: 300,
+    enrolled_count: 124,
+    completion_target: '2 CAPI Simulations + Outlier Imputation',
+    badge: 'Field Survey Specialist',
+    status: 'Active'
+  },
+  {
+    id: 'sprint_dpdp_03',
+    title: 'DPDPA 2023 & Statistical Disclosure Control (SDC) Sprint',
+    division: 'DIID & Governance Division',
+    cadre: 'All Statistical Personnel',
+    days_left: 18,
+    xp_reward: 200,
+    enrolled_count: 95,
+    completion_target: 'Microdata Anonymization Assessment',
+    badge: 'DPDPA Privacy Guardian',
+    status: 'Active'
+  }
+];
+
+// Get Divisional Leaderboard
+app.get('/api/rankings/divisions', (req, res) => {
+  res.json({ success: true, divisions: DIVISIONAL_RANKINGS });
+});
+
+// Get Individual Cadre Leaderboard
+app.get('/api/rankings/cadres', verifyToken, (req, res) => {
+  const userId = req.user?.id;
+  const list = CADRE_LEADERBOARD.map((item) => ({
+    ...item,
+    is_current_user: item.id === userId || (userId === 'usr_sso_01' && item.id === 'usr_sso_01')
+  }));
+  res.json({ success: true, leaderboard: list });
+});
+
+// Get National Statistical Sprints
+app.get('/api/rankings/sprints', verifyToken, (req, res) => {
+  const userId = req.user?.id || 'usr_sso_01';
+  const sprints = NATIONAL_SPRINTS.map((s) => ({
+    ...s,
+    is_joined: SPRINT_ENROLLMENTS.has(`${userId}:${s.id}`)
+  }));
+  res.json({ success: true, sprints });
+});
+
+// Join a Sprint
+app.post('/api/rankings/join-sprint', verifyToken, (req, res) => {
+  const { sprint_id } = req.body;
+  const userId = req.user?.id || 'usr_sso_01';
+  if (!sprint_id) return res.status(400).json({ error: 'Sprint ID required' });
+
+  SPRINT_ENROLLMENTS.add(`${userId}:${sprint_id}`);
+  res.json({ success: true, message: 'Successfully enrolled in National Statistical Sprint!', sprint_id });
+});
+
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
