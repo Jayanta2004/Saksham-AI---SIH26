@@ -19,7 +19,8 @@ import {
   LogOut,
   X,
   Brain,
-  Terminal
+  Terminal,
+  Smartphone
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -34,6 +35,7 @@ const learnerNav = [
   { name: 'AI Assessments', path: '/assessments', icon: CheckSquare },
   { name: 'Statistical Copilot', path: '/ai-assistant', icon: Bot },
   { name: 'Statistical Sandbox', path: '/playground', icon: Terminal },
+  { name: 'CAPI Field Simulator', path: '/capi-simulator', icon: Smartphone },
   { name: 'Progress & Analytics', path: '/progress', icon: BarChart2 },
   { name: 'Certificates', path: '/certificates', icon: Award },
 ];

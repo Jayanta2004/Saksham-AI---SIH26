@@ -1271,6 +1271,237 @@ Feel free to ask detailed questions on **GVA calculations**, **survey sampling m
   });
 });
 
+// ==================== CAPI SURVEY ROLEPLAY SIMULATOR ====================
+const CAPI_PERSONAS = [
+  {
+    id: 'persona_farmer_01',
+    name: 'Rameshwar Patil',
+    age: 48,
+    location: 'Village Ralegaon, Yavatmal District, Maharashtra',
+    survey_round: 'PLFS Schedule 10.4 & Situation Assessment of Agricultural Households',
+    cadre_target: 'FOD Field Investigators & SSS Junior Statistical Officers',
+    difficulty: 'Intermediate',
+    occupation: 'Smallholder Cotton & Soyabean Farmer (4.5 Acres)',
+    personality: 'Cautious, hardworking, suspicious of government officials asking about debt or PM-KISAN, speaks with local dialect nuances.',
+    initial_rapport: 40,
+    background: 'Cultivates kharif cotton and rabi pulses. Experiences erratic rainfall. Hesitant to reveal true informal loan amounts borrowed from local arhatiyas (commission agents).',
+    field_quirks: ['Fears data might be shared with local tax or bank recovery officers', 'Confuses gross farm revenue with net disposable income', 'Underreports female family labor contributions'],
+    sample_dialogues: [
+      { trigger: 'greeting', reply: 'Namaste sahab... Konte official aahat tumhi? Government tax department se toh nahi aaye na? Hum toh seedhe-saadhe kisaan hain.' },
+      { trigger: 'income', reply: 'Sahab, kheti mein kya bachta hai? Pichle saal bemausam baarish se kapaas kharaab ho gaya. Mahine ka hisaab hum diary mein nahi likhte, bas guzaara chal raha hai.' },
+      { trigger: 'debt', reply: 'Kisaan Credit Card ka 60,000 rupaye baaki hai... aur bazaar wale seth ji se 40,000 liya tha beej ke liye. Lekin yeh sab likh ke sarkaar ko kya fayda?' },
+      { trigger: 'confidentiality', reply: 'Achha... statistical survey hai aur DPDPA ke tehat safe rahega? Tab theek hai sahab, ab poochiye jo poochna hai.' }
+    ]
+  },
+  {
+    id: 'persona_gig_02',
+    name: 'Sunita Mehta',
+    age: 26,
+    location: 'Koramangala, Bengaluru Urban, Karnataka',
+    survey_round: 'Time Use Survey (TUS) & Household Consumption Expenditure (HCES)',
+    cadre_target: 'Urban Enumerators & SSS Field Staff',
+    difficulty: 'Intermediate',
+    occupation: 'Quick-Commerce Delivery Partner & Evening Freelance Data Annotator',
+    personality: 'Busy, tech-savvy, time-constrained, skeptical of lengthy government paperwork.',
+    initial_rapport: 50,
+    background: 'Works 10-12 hours across two gig platforms. Unclear about depreciation, fuel expenses, and net profit versus gross wallet payout.',
+    field_quirks: ['Checks her delivery app frequently', 'Excludes petrol and vehicle EMI when calculating daily earnings', 'Recall bias on mobile recharges and convenience food delivery expenses'],
+    sample_dialogues: [
+      { trigger: 'greeting', reply: 'Hi sir, I only have 10 minutes before my next shift order batch drops. What is this survey about?' },
+      { trigger: 'income', reply: 'Platform app shows ₹32,000 gross payout this month, but petrol took ₹8,000 and bike maintenance was ₹2,500. So net is around ₹21,500.' },
+      { trigger: 'hours', reply: 'Logged in for 11 hours daily, but active delivery was maybe 7 hours. Rest is waiting at dark stores.' },
+      { trigger: 'confidentiality', reply: 'Thanks for clarifying that this is for the Ministry of Statistics and not commercial marketing. Let us finish quickly.' }
+    ]
+  },
+  {
+    id: 'persona_factory_03',
+    name: 'Vikram Singhania',
+    age: 52,
+    location: 'Morbi Industrial Estate, Gujarat',
+    survey_round: 'Annual Survey of Industries (ASI) Schedule A',
+    cadre_target: 'ISS Officers & Senior Statistical Officers (SSO)',
+    difficulty: 'Advanced',
+    occupation: 'Managing Director, Krishna Polymer Containers Pvt. Ltd.',
+    personality: 'Assertive, corporate, extremely sensitive regarding proprietary electricity tariff audits and balance-sheet confidentiality.',
+    initial_rapport: 35,
+    background: 'Employs 45 regular workers and 70 contract laborers. Worried that energy consumption and raw material scrap figures might attract GST inspection.',
+    field_quirks: ['Insists on verifying investigator MoSPI ID card', 'Defers contract labor wage sheets to his chartered accountant', 'Reluctant to declare plant machinery depreciation values'],
+    sample_dialogues: [
+      { trigger: 'greeting', reply: 'Good afternoon. Please produce your official MoSPI identification badge and authority letter under the Collection of Statistics Act before we begin.' },
+      { trigger: 'power', reply: 'Our HT electricity connection consumes ₹14.5 Lakhs monthly. All logbooks are audited under ISO 9001 standards.' },
+      { trigger: 'labor', reply: 'Regular employees are on PF/ESI payroll. For temporary packaging labor, our contractor maintains the muster rolls.' },
+      { trigger: 'confidentiality', reply: 'I am familiar with Section 9 of the Collection of Statistics Act and DPDPA 2023. As long as individual unit data is non-disclosable in microdata releases, we will cooperate.' }
+    ]
+  }
+];
+
+// 1. Get Simulator Personas
+app.get('/api/simulator/personas', (req, res) => {
+  res.json({
+    success: true,
+    total_personas: CAPI_PERSONAS.length,
+    personas: CAPI_PERSONAS
+  });
+});
+
+// 2. Chat with Simulated Respondent
+app.post('/api/simulator/chat', verifyToken, async (req, res) => {
+  try {
+    const { persona_id, message, current_rapport = 50 } = req.body;
+    const persona = CAPI_PERSONAS.find((p) => p.id === persona_id) || CAPI_PERSONAS[0];
+
+    const text = (message || '').toLowerCase();
+    let rapportDelta = 0;
+    let feedbackTip = '';
+    let stateTag = 'Neutral Response';
+    let reply = '';
+
+    // Politeness & Professional rapport building
+    const isPolite = text.includes('namaste') || text.includes('hello') || text.includes('please') || 
+                     text.includes('sir') || text.includes('ji') || text.includes('shukriya') || text.includes('thank');
+    const showsId = text.includes('id') || text.includes('identity') || text.includes('mospi') || text.includes('card') || text.includes('badge');
+    const explainsPurpose = text.includes('survey') || text.includes('statistics') || text.includes('plfs') || text.includes('asi') || text.includes('tus') || text.includes('study');
+    const assuresConfidentiality = text.includes('confidential') || text.includes('safe') || text.includes('gopneey') || text.includes('dpdpa') || text.includes('privacy') || text.includes('protect');
+    const isHarsh = text.includes('police') || text.includes('arrest') || text.includes('tax') || text.includes('penalty') || text.includes('mandatory') || text.includes('fine');
+
+    if (isHarsh) {
+      rapportDelta = -20;
+      stateTag = 'Suspicious / Guarded';
+      feedbackTip = 'Warning: Threatening tone or mentioning penalties creates respondent hostility. NSSO investigators must build empathetic trust.';
+      reply = `Sahab, humne koi chori nahi ki hai! Aap police ya tax ka darr mat dikhaiye. Agar aap theek se baat nahi karenge toh main sarpanch ji ya apne advocate ko call karta hoon.`;
+    } else if (assuresConfidentiality || (showsId && explainsPurpose)) {
+      rapportDelta = +18;
+      stateTag = 'Reassured & Cooperative';
+      feedbackTip = 'Excellent field protocol: Citing official MoSPI credentials and DPDPA confidentiality disarms suspicion.';
+      if (persona.id === 'persona_farmer_01') {
+        reply = `Achha sahab, ab samajh aaya. Aap sarkaar ki survey team se hain taaki kisaano ki asli sthiti par report ban sake. Theek hai, main poora sach bataoonga. Meri 4.5 acre zameen par pichle saal 18 quintal kapaas hua tha, par kharcha beej aur keetnashak mein bohot chala gaya.`;
+      } else if (persona.id === 'persona_gig_02') {
+        reply = `Thank you for clarifying the statistical scope and privacy protection, Officer. That makes total sense. Here is my weekly breakdown: 6 days working, averaging 45 deliveries a day at ₹60 average order payout.`;
+      } else {
+        reply = `I appreciate your adherence to the Collection of Statistics protocol. Here is our authenticated summary: Plant capacity is 85% utilized, with 120 metric tons of HDPE resin processed monthly.`;
+      }
+    } else if (isPolite) {
+      rapportDelta = +8;
+      stateTag = 'Receptive';
+      feedbackTip = 'Good conversational tone: Courteous opening maintains positive interviewing rapport.';
+      if (persona.id === 'persona_farmer_01') {
+        reply = `Namaste babuji. Boliye, kya jaankari chahiye aapko? Baithiye, thoda paani lenge? Kheti ka kaam abhi dohar mein thoda thanda rehta hai.`;
+      } else if (persona.id === 'persona_gig_02') {
+        reply = `Hello! Yes, go ahead with the questions. I can spare around 15 minutes before my delivery shift peak starts at 6 PM.`;
+      } else {
+        reply = `Good day. My assistant has retrieved our production logbook. Please state the specific Schedule tables you need to fill.`;
+      }
+    } else if (text.includes('income') || text.includes('kamai') || text.includes('earning') || text.includes('profit') || text.includes('paisa')) {
+      rapportDelta = +4;
+      stateTag = 'Detailed Disclosure';
+      feedbackTip = 'Notice: When probing income, always verify gross receipts vs intermediate operating costs.';
+      if (persona.id === 'persona_farmer_01') {
+        reply = `Pichle saal total fasal bech kar ₹1,85,000 mila tha mandi se. Lekin tractor ka kiraya, diesel aur fertilizer ka ₹95,000 nikal gaya. Toh bacha bas ₹90,000 poore saal ka!`;
+      } else if (persona.id === 'persona_gig_02') {
+        reply = `App shows monthly earnings around ₹28,000 to ₹32,000. But fuel is around ₹7,500 and bike maintenance ₹2,000, so take-home is roughly ₹20,000.`;
+      } else {
+        reply = `Our gross turnover was ₹14.8 Crores in FY 2025-26. Operating EBITDA margin stands at 11.2% after factoring raw material costs and energy tariffs.`;
+      }
+    } else if (text.includes('debt') || text.includes('loan') || text.includes('karz') || text.includes('udhar')) {
+      rapportDelta = +5;
+      stateTag = 'Sensitive Topic Answered';
+      feedbackTip = 'Probing debt requires tact. Ensure the respondent understands this measures rural financial inclusion.';
+      if (persona.id === 'persona_farmer_01') {
+        reply = `Haan sahab... bank ka KCC loan ₹65,000 chal raha hai, aur aadhi fasal kharab hone par gaon ke seth se ₹30,000 liya tha 3% mahine ke byaaj par. Isi chinta mein neend nahi aati.`;
+      } else if (persona.id === 'persona_gig_02') {
+        reply = `I have a two-wheeler vehicle loan EMI of ₹3,400 per month, plus an education loan installment of ₹2,800.`;
+      } else {
+        reply = `We maintain a working capital credit line of ₹2.5 Crores with State Bank of India against plant inventory and receivables.`;
+      }
+    } else {
+      rapportDelta = +2;
+      stateTag = 'Dialogue Active';
+      feedbackTip = 'Continue structured questioning aligned with the CAPI schedule module.';
+      reply = `Ji sahab, samajh gaya. Iske baare mein batata hoon... Is saal humne family members ke saath milkar poora survey schedule complete karne ki koshish ki hai.`;
+    }
+
+    const newRapport = Math.min(100, Math.max(0, current_rapport + rapportDelta));
+
+    res.json({
+      success: true,
+      reply,
+      rapport_delta: rapportDelta,
+      new_rapport: newRapport,
+      state_tag: stateTag,
+      feedback_tip: feedbackTip
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Simulator error', details: err.message });
+  }
+});
+
+// 3. Evaluate CAPI Interview Session
+app.post('/api/simulator/evaluate', verifyToken, async (req, res) => {
+  try {
+    const { persona_id, total_exchanges = 4, final_rapport = 75, history = [] } = req.body;
+    const persona = CAPI_PERSONAS.find((p) => p.id === persona_id) || CAPI_PERSONAS[0];
+
+    // Evaluate 4 core MoSPI competencies
+    const userUtterances = history.filter((h) => h.sender === 'user').map((h) => h.text.toLowerCase()).join(' ');
+    
+    // 1. Rapport building
+    const hasGreeting = userUtterances.includes('namaste') || userUtterances.includes('hello') || userUtterances.includes('please') || userUtterances.includes('ji');
+    const rapportScore = Math.min(95, Math.max(50, Math.round(final_rapport * 0.95 + (hasGreeting ? 10 : 0))));
+
+    // 2. DPDPA 2023 & Confidentiality Compliance
+    const mentionsPrivacy = userUtterances.includes('confidential') || userUtterances.includes('dpdpa') || userUtterances.includes('safe') || userUtterances.includes('statistics') || userUtterances.includes('gopneey');
+    const dpdpaScore = mentionsPrivacy ? 94 : 65;
+
+    // 3. Probing Technique & Bias Prevention
+    const hasDetailedProbe = userUtterances.includes('income') || userUtterances.includes('expense') || userUtterances.includes('net') || userUtterances.includes('hours') || userUtterances.includes('loan');
+    const probingScore = hasDetailedProbe ? 90 : 70;
+
+    // 4. Data Consistency Verification
+    const consistencyScore = total_exchanges >= 4 ? 88 : 72;
+
+    const overallScore = Math.round((rapportScore * 0.25) + (dpdpaScore * 0.30) + (probingScore * 0.25) + (consistencyScore * 0.20));
+
+    const grade = overallScore >= 85 ? 'Grade A (Field Ready Distinction)' :
+                  overallScore >= 70 ? 'Grade B (Competent Field Investigator)' :
+                  'Grade C (Needs Supervisory Refresher)';
+
+    const evaluationReport = {
+      persona_name: persona.name,
+      survey_round: persona.survey_round,
+      overall_score: overallScore,
+      grade,
+      passed: overallScore >= 70,
+      competencies: {
+        rapport_building: { score: rapportScore, label: 'Respondent Rapport & Courtesy' },
+        dpdpa_compliance: { score: dpdpaScore, label: 'DPDPA 2023 & Statistical Confidentiality' },
+        probing_technique: { score: probingScore, label: 'Probing & Recall Bias Prevention' },
+        consistency_validation: { score: consistencyScore, label: 'CAPI Logical Consistency Checks' }
+      },
+      strengths: [
+        hasGreeting ? 'Strong professional introduction establishing investigator credentials.' : 'Maintained focus on CAPI core schedule questions.',
+        mentionsPrivacy ? 'Exemplary communication of DPDPA 2023 and statistical confidentiality protections.' : 'Elicited critical economic inputs from the respondent.',
+        'Successfully transitioned from initial respondent hesitation to verified data collection.'
+      ],
+      improvement_areas: [
+        !mentionsPrivacy ? 'Proactively inform respondents about Collection of Statistics Act protections early in the session.' : 'Probe deeper on secondary enterprise activities.',
+        'Ensure explicit verification between gross turnover and net intermediate consumption costs.'
+      ],
+      recommended_nssta_courses: [
+        'CAPI Field Operational Procedures & Mobile Data Validation (FOD / NSSTA)',
+        'Techniques of Household Survey Interviewing & Bias Elimination'
+      ]
+    };
+
+    res.json({
+      success: true,
+      report: evaluationReport
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Evaluation failed', details: err.message });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
+

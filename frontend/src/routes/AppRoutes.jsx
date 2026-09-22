@@ -27,6 +27,7 @@ import AiAssistant from '../pages/learner/AiAssistant';
 import MyProgress from '../pages/learner/MyProgress';
 import Certificates from '../pages/learner/Certificates';
 import StatisticalPlayground from '../pages/learner/StatisticalPlayground';
+import CapiSimulator from '../pages/learner/CapiSimulator';
 
 // Admin Pages
 import AdminDashboard from '../pages/admin/AdminDashboard';
@@ -72,6 +73,7 @@ const AppRoutes = () => {
         <Route path="/progress" element={<MyProgress />} />
         <Route path="/certificates" element={<Certificates />} />
         <Route path="/playground" element={<StatisticalPlayground />} />
+        <Route path="/capi-simulator" element={<CapiSimulator />} />
       </Route>
 
       {/* Admin Protected Routes */}
