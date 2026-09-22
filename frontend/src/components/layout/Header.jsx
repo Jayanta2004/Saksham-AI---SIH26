@@ -32,7 +32,7 @@ const routeTitles = {
 
 export default function Header({ onMenuToggle }) {
   const { user, logout } = useAuth();
-  const { language, setLanguage, t } = useLanguage();
+  const { t } = useLanguage();
   const location = useLocation();
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState(() => featureStore.notifications(user?.id));
@@ -103,10 +103,6 @@ export default function Header({ onMenuToggle }) {
 
         {/* Theme Toggle */}
         <ThemeToggle size="sm" />
-
-        <select aria-label="Language" value={language} onChange={e => setLanguage(e.target.value)} className="text-[11px] font-bold rounded-lg border border-slate-200 bg-white px-1.5 py-1.5 text-slate-700">
-          <option value="en">EN</option><option value="hi">हिंदी</option>
-        </select>
 
         <button
           onClick={() => { const next = !showNotifications; setShowNotifications(next); if (next) { featureStore.markNotificationsRead(user?.id); setNotifications(featureStore.notifications(user?.id)); } }}
