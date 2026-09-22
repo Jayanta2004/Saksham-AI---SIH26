@@ -1,26 +1,29 @@
 # SAKSHAM AI — Skill Intelligence & Learning Platform
 ### *AI-Enabled Competency Assessment, Skill-Gap Analytics & Personalized Training Engine for India's Official Statistical System*
+#### **Smart India Hackathon 2026 | Problem Statement ID: 26101 | Ministry of Statistics & Programme Implementation (MoSPI)**
 
 [![Platform](https://img.shields.io/badge/Platform-Saksham%20AI-blue.svg)](#)
 [![Organization](https://img.shields.io/badge/Organization-MoSPI%20%2F%20DIID-orange.svg)](https://mospi.gov.in)
 [![FastAPI Docs](https://img.shields.io/badge/Swagger%20UI-FastAPI%20%7C%20Port%208000-009688.svg)](http://127.0.0.1:8000/docs)
 [![API Gateway](https://img.shields.io/badge/API%20Gateway-Express%20%7C%20Port%205000-339933.svg)](http://localhost:5000/health)
 [![Frontend](https://img.shields.io/badge/Frontend-React%20%7C%20Port%203000-61DAFB.svg)](http://localhost:3000)
-[![Database](https://img.shields.io/badge/Database-PostgreSQL%20%7C%20Neon%20Cloud-4169E1.svg)](#)
+[![Database](https://img.shields.io/badge/Database-PostgreSQL%20%7C%20Active-4169E1.svg)](#)
 [![Security](https://img.shields.io/badge/Security-AES--256%20%7C%20DPDPA%202023-red.svg)](#)
 [![Integration](https://img.shields.io/badge/Integration-iGOT%20Karmayogi%20%2B%20NSSTA-blueviolet.svg)](#)
+[![Credentials](https://img.shields.io/badge/Standards-W3C%20Verifiable%20Credentials%202.0-success.svg)](#)
 
 ---
 
 ## 1. Executive Summary & Problem Statement
 
-India's statistical system is undergoing a massive transformation with the integration of modern digital workflows, Big Data analytics, AI/ML models, Computer Assisted Personal Interviewing (CAPI), and administrative data integration. Statistical officers across the **Ministry of Statistics & Programme Implementation (MoSPI)**, **Central Statistics Office (CSO)**, **National Sample Survey Office (NSSO)**, and **National Statistical Systems Training Academy (NSSTA)** require continuous capability enhancement.
+India's statistical system is undergoing a massive transformation with the integration of modern digital workflows, Big Data analytics, AI/ML models, Computer Assisted Personal Interviewing (CAPI), and administrative data integration. Statistical personnel across the **Ministry of Statistics & Programme Implementation (MoSPI)**, **Central Statistics Office (CSO)**, **National Sample Survey Office (NSSO)**, and **National Statistical Systems Training Academy (NSSTA)** require continuous capability enhancement.
 
 While the **iGOT Karmayogi** platform provides vast e-learning repositories, statistical personnel encounter major friction in discovering courses mapped to their specific cadre hierarchy, job descriptions, and actual mathematical skill gaps.
 
 **Saksham AI** bridges this gap by delivering a **Unified AI-Powered Skill Intelligence and Learning Platform** tailored specifically for India's Official Statistical Cadres (*Indian Statistical Service - ISS, Subordinate Statistical Service - SSS*).
 
 ### Institutional Metadata
+* **Problem Statement ID:** 26101 (Smart India Hackathon 2026)
 * **Ministry / Nodal Body:** Ministry of Statistics & Programme Implementation (MoSPI), Govt. of India
 * **Implementing Divisions:** Data Informatics & Innovation Division (DIID) & NSSTA Greater Noida
 * **Theme & Category:** Smart Education | Software Prototype
@@ -33,13 +36,15 @@ While the **iGOT Karmayogi** platform provides vast e-learning repositories, sta
 | Capability | Technical Description | Strategic Objective |
 | :--- | :--- | :--- |
 | **AI Competency Profiling** | Evaluates baseline proficiency across official statistical standards (*Survey Sampling, SNA 2008 National Accounts, Python/R Analytics, DPDPA 2023*). | *Automated Competency Framework Mapping* |
-| **Mathematical Skill-Gap Engine** | Computes multi-dimensional capability deficits ($\Delta = Benchmark - Current$) and renders interactive 7-axis Recharts Radar Charts. | *Automated Skill-Gap Analysis* |
+| **Mathematical Skill-Gap Engine** | Computes multi-dimensional capability deficits ($\Delta = Benchmark - Current$) and renders interactive Recharts Radar Charts. | *Automated Skill-Gap Analysis* |
 | **Dual iGOT & NSSTA Sync** | Bi-directional API connectors synchronizing e-learning modules from **iGOT Karmayogi** and in-person residential workshops from **NSSTA Greater Noida**. | *Seamless iGOT & NSSTA Integration* |
-| **RAG Assessment & MCQ Generator** | Parses uploaded PDFs/training manuals to synthesize 4-option MCQs with difficulty tags, rationale, and official manual citations. | *AI-Powered Assessment Engine* |
-| **AI Virtual Learning Assistant** | Multi-session domain chatbot grounded in official guidelines (SNA 2008 GDP/GVA compilation, Multi-stage sampling, DPDPA confidentiality) delivering in-depth technical explanations alongside actionable iGOT & NSSTA learning recommendations with clean formula rendering. | *Real-Time Learner Support* |
-| **Divisional & Predictive Analytics** | 12-month predictive capability forecasting model and comparative matrix across divisions (**NAD, SDRD, FOD, CSO**). | *Workforce Analytics & Capacity Planning* |
-| **Dynamic Credential Verification** | Issues cryptographically formatted, tamper-resistant certificates (`SAKSHAM-[USER]-[ATTEMPT]`) on passing diagnostic assessments. | *Skill Credentialing & Verification* |
-| **Instant Self-Registration & OTP** | Self-service registration auto-activating users immediately, accompanied by 6-digit OTP password reset. | *DPDPA 2023 Compliant Auth & RBAC* |
+| **RAG Assessment & MCQ Generator** | Parses uploaded PDFs/training manuals using PyMuPDF to synthesize 4-option MCQs with difficulty tags, rationale, and official manual citations. | *AI-Powered Assessment Engine* |
+| **Multilingual Voice Statistical Copilot** | Domain chatbot grounded in official guidelines supporting **8 Indian languages + English**, with full Web Speech Speech-to-Text (STT) and Text-to-Speech (TTS). | *Real-Time Learner Support & Bhashini* |
+| **In-Browser Statistical Sandbox** | WebAssembly Python execution environment (Pyodide) enabling officers to run live calculations (Gini Coefficient, Laspeyres CPI, Stratified Sampling) directly in the browser. | *Hands-On Exercises & Virtual Labs* |
+| **CAPI Survey Enumerator Simulator** | AI-powered field enumeration simulator for PLFS, HCES, and ASI surveys with simulated household respondents and enumerator probing audits. | *Hands-On Field Capability Building* |
+| **Cadre Leaderboard & Sprints** | Gamified nationwide peer benchmarking across ISS and SSS cadres with National Statistical Sprints, divisional readiness indices, and verified badges. | *Continuous Motivation & Peer Benchmarking* |
+| **MoSPI TNA & Deputation Matcher** | Multi-factor mission matching engine for statistical taskforces (SNA 2008, HCES), scheduling NSSTA bridging bootcamps and generating official MoSPI Office Memorandums. | *Data-Driven HR & Capacity Planning* |
+| **Public W3C Verifiable Credentials** | Public verification portal (`/verify/:id`) implementing cryptographic SHA-256 / ECDSA proof verification, JSON-LD context, and tamper seals. | *Skill Credentialing & Verification* |
 
 ---
 
@@ -58,32 +63,36 @@ While the **iGOT Karmayogi** platform provides vast e-learning repositories, sta
 │ • Survey Sampling │    │ • Python & R Dev  │                           │ • DPDPA 2023      │     │ • Policy Advisory │
 │ • SNA 2008 (GDP)  │    │ • AI in Microdata │                           │ • Confidentiality │     │ • Inter-Agency    │
 │ • CPI / WPI Index │    │ • CAPI & Big Data │                           │ • Open Data Dissem│     │ • Survey Direction│
+│ • Agricultural St │    │ • Stata, SPSS, SQL│                           │ • Govt Cloud Sec  │     │ • Change Mgmt     │
 └───────────────────┘    └───────────────────┘                           └───────────────────┘     └───────────────────┘
 ```
 
 ---
 
-## 4. 7-Tier System Architecture
+## 4. System Architecture
 
 ```mermaid
 graph TD
-    subgraph UI ["1. Presentation Layer (Vite React.js & Tailwind CSS - Port 3000)"]
-        LearnerPortal["Learner Portal (Radar Graph, Learning Path, Quiz Arena, Profile, Certificates)"]
-        AdminPortal["Admin Hub (Workforce Analytics, Departmental Matrix, Content Studio)"]
-        AiChat["AI Virtual Assistant (Isolated Multi-Session Chat Engine)"]
+    subgraph UI ["1. Presentation Layer (Vite React 18 + Tailwind CSS - Port 3000)"]
+        LearnerPortal["Learner Portal (Dashboard, Radar, Pathways, Quiz Arena, Progress)"]
+        AdvancedLabs["Virtual Labs (Python Sandbox, CAPI Simulator, Voice Copilot, Leaderboard)"]
+        AdminPortal["Admin Hub (Workforce Analytics, Deputation Matcher, Content Studio)"]
+        PublicVerify["Public W3C Verifiable Credential Portal (/verify/:id)"]
     end
 
     subgraph Gateway ["2. API Gateway & Security Layer (Node.js Express - Port 5000)"]
         JWTAuth["JWT Authentication & RBAC (Learner, Trainer, Sysadmin)"]
         CryptoEngine["AES-256 Field Encryption (PII & National Identifiers)"]
         RedisCache["Redis Hybrid Caching Layer (TTL 3600s)"]
+        DeputationEngine["TNA & Cadre Deputation Matcher Engine"]
     end
 
     subgraph AI ["3. AI Intelligence & RAG Engine (Python FastAPI - Port 8000)"]
-        DocChunker["Document & Slide Chunker (PDF / PPTX / DOCX Parser)"]
+        DocChunker["Document Chunker (PyMuPDF PDF / DOCX Parser)"]
         MCQGen["RAG MCQ Synthesizer (Citation & Explanation Engine)"]
         GapAnalyzer["Mathematical Competency Graph & Skill-Gap Analyzer"]
         Predictor["12-Month Workforce Predictive Forecasting Engine"]
+        LLMChain["Cascading LLM Pipeline (GPT-4o-mini / Gemini / MoSPI Engine)"]
     end
 
     subgraph Integration ["4. Ecosystem Sync Connectors"]
@@ -92,8 +101,8 @@ graph TD
     end
 
     subgraph Database ["5. Persistence & Storage Layer"]
-        PostgresDB["Neon Cloud PostgreSQL Database (SSL Active)"]
-        VectorDB["ChromaDB / In-Memory Vector Store"]
+        PostgresDB["PostgreSQL Database (SSL Active)"]
+        VectorDB["TF-IDF / Vector Store"]
     end
 
     UI -->|REST / JWT| Gateway
@@ -103,305 +112,205 @@ graph TD
     AI -->|Embeddings & Retrieval| VectorDB
 ```
 
+---
+
 ## 5. Repository Directory & Codebase Structure
 
 ```
-Saksham-AI/
+Saksham-AI---SIH26/
 ├── backend/
-│   ├── ai_service/             # FastAPI AI & RAG Engine (Port 8000)
-│   │   ├── services/           # Document Parsers, Quiz Gen, Skill-Gap, Vector Store
-│   │   ├── main.py             # FastAPI App & Chat Handler
-│   │   └── requirements.txt    # Python Dependencies
+│   ├── ai_service/                 # FastAPI AI & RAG Microservice (Port 8000)
+│   │   ├── services/
+│   │   │   ├── document_parser.py      # PyMuPDF Document Ingestion
+│   │   │   ├── quiz_generator.py       # RAG MCQ & Quiz Generator
+│   │   │   ├── skill_gap_engine.py     # Competency Matrix & Gap Analyzer
+│   │   │   ├── predictive_analytics.py # Workforce Forecasting Model
+│   │   │   └── vector_store.py         # Vector Search & Embeddings
+│   │   ├── main.py                     # FastAPI Application Router
+│   │   └── requirements.txt            # Python Dependencies
 │   │
-│   └── gateway_service/        # Node.js Express API Gateway (Port 5000)
+│   └── gateway_service/            # Node.js Express API Gateway (Port 5000)
 │       ├── src/
-│       │   ├── db/             # Schema, Seeds & Database Adapters
-│       │   ├── middleware/     # JWT Auth & Role-Based Access Control
-│       │   ├── services/       # Email OTP, iGOT & NSSTA Sync Connectors
-│       │   └── server.js       # Express Gateway Router & Domain Engine
-│       └── package.json        # Gateway Dependencies
+│       │   ├── db/                     # In-Memory & PostgreSQL DB Adapters
+│       │   ├── middleware/             # JWT & RBAC Middleware
+│       │   ├── services/               # iGOT Sync, NSSTA Sync, Email Service
+│       │   ├── utils/                  # AES-256 Encryption & Token Utils
+│       │   └── server.js               # Express API Gateway Router
+│       └── package.json                # Gateway Dependencies
 │
-├── frontend/                   # React 18 + Vite + Tailwind CSS SPA (Port 3000)
+├── frontend/                       # React 18 + Vite + Tailwind CSS SPA (Port 3000)
 │   ├── src/
-│   │   ├── components/         # Layout (Header, Sidebar, Main Layout)
+│   │   ├── components/                 # Layout (Header, Sidebar, Main Layout)
+│   │   ├── context/                    # Auth, Theme, Language Contexts
 │   │   ├── pages/
-│   │   │   ├── admin/          # Analytics, Content Studio, User Roster
-│   │   │   ├── auth/           # Login, Register, OTP Password Reset
-│   │   │   └── learner/        # Dashboard, Skill Gap, AI Assistant, Quizzes
-│   │   ├── services/           # API Client Modules
-│   │   └── App.jsx             # Root Component & Routes
-│   └── package.json            # Frontend Dependencies
+│   │   │   ├── public/                 # Landing Page, Public W3C Cert Verification
+│   │   │   ├── auth/                   # Login, Register, OTP Password Reset
+│   │   │   ├── learner/                # Dashboard, Radar, Sandbox, CAPI, Leaderboard, AI Assistant
+│   │   │   └── admin/                  # Workforce Intel, Deputation Matcher, RAG Studio, Analytics
+│   │   ├── routes/                     # AppRoutes & ProtectedRoute (RBAC)
+│   │   └── services/                   # Axios API Client & Offline Feature Store
+│   └── package.json                    # Frontend Dependencies
 │
-├── docker-compose.yml          # Multi-Container Orchestration (PostgreSQL, Redis, AI, Gateway)
-├── start_all.bat               # 1-Click Windows Batch Startup Script
-└── start_all.ps1               # 1-Click PowerShell Startup Script
+├── start_all.bat                   # 1-Click Windows Batch Startup Script
+├── start_all.ps1                   # 1-Click PowerShell Startup Script
+└── docker-compose.yml              # Containerized Deployment Configuration
 ```
 
 ---
 
-## 6. Python AI Microservice & Swagger API Docs (Port 8000)
+## 6. Pre-Configured Demo Personas
 
-The **Saksham AI Python Microservice** (`backend/ai_service`) runs on FastAPI, PyMuPDF, Scikit-Learn, and Vector Embeddings. It supports **dual LLM backends** — OpenAI GPT-4o-mini and Google Gemini — with an automatic offline statistical domain knowledge engine fallback.
-
-* **Live Interactive Swagger UI:** [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
-* **OpenAPI JSON Specification:** [http://127.0.0.1:8000/openapi.json](http://127.0.0.1:8000/openapi.json)
-
-### Core AI Endpoints:
-
-| HTTP Method | Endpoint Path | Functionality Description |
-| :--- | :--- | :--- |
-| `GET` | `/` | Root service info and status |
-| `GET` | `/health` | Health check & microservice status verification |
-| `POST` | `/api/ai/chat` | Domain-grounded conversational AI assistant (OpenAI GPT-4o-mini / Gemini / Statistical Fallback) |
-| `POST` | `/api/ai/parse-document` | Parses uploaded training manuals (PDF, DOCX, PPTX) into structured chunks |
-| `POST` | `/api/ai/generate-quiz` | Synthesizes 4-option MCQs using RAG with difficulty tags & official manual citations |
-| `POST` | `/api/ai/calculate-skill-gap` | Calculates multi-dimensional competency gaps ($\Delta$) against MoSPI benchmarks |
-| `POST` | `/api/ai/predictive-analytics` | Computes 12-month predictive workforce growth projections & divisional risk models |
-| `POST` | `/api/ai/semantic-search` | Vector similarity search across vectorized MoSPI manuals and training documents |
-
----
-
-## 7. API Gateway Endpoints Catalog (Node.js - Port 5000)
-
-| Category | Endpoint | Method | Description |
-| :--- | :--- | :--- | :--- |
-| **Root** | `/` | `GET` | Service info, version, and available endpoint groups |
-| **Health** | `/health` | `GET` | Gateway health check with AI service and database status |
-| **Auth** | `/api/auth/register` | `POST` | Self-service registration (Instant auto-activation) |
-| **Auth** | `/api/auth/login` | `POST` | JWT authentication with role authorization |
-| **Auth** | `/api/auth/forgot-password` | `POST` | Generates 6-digit OTP and dispatches live email via Gmail SMTP |
-| **Auth** | `/api/auth/reset-password` | `POST` | Validates OTP and updates password securely |
-| **Learner** | `/api/users/competencies` | `GET` | Computes live competency scores & Recharts radar array |
-| **Learner** | `/api/users/stats` | `GET` | Returns courses completed, learning hours, quizzes passed |
-| **Learner** | `/api/users/certificates` | `GET` | Returns earned certificates with verification hashes |
-| **Learner** | `/api/users/trajectory` | `GET` | Monthly capability trajectory & learning hours bar chart |
-| **Courses** | `/api/courses` | `GET` | Fetches all published MoSPI & iGOT courses |
-| **Quizzes** | `/api/assessments/quizzes` | `GET` | Lists all published diagnostic assessments |
-| **Quizzes** | `/api/assessments/quiz/:id` | `GET` | Fetches assessment questions with randomized options |
-| **Quizzes** | `/api/assessments/submit` | `POST` | Auto-grades attempt, updates competencies, issues certificate |
-| **Sync** | `/api/sync/igot` | `GET` | Syncs course metadata from iGOT Karmayogi |
-| **Sync** | `/api/sync/nssta` | `GET` | Syncs upcoming residential workshop schedule from NSSTA |
-| **Admin** | `/api/admin/users` | `GET` | Administrative officer roster and competency audit |
-| **Admin** | `/api/admin/workforce-analytics`| `GET` | Macro workforce readiness, KPIs, and systemic shortfalls |
-| **Analytics**| `/api/analytics/workforce` | `GET` | Divisional competency breakdown and skill gap analysis |
-| **AI Chat** | `/api/ai/assistant/chat` | `POST` | Proxies user queries to OpenAI / Gemini / Domain Fallback |
-| **Trainer**| `/api/trainer/publish-quiz` | `POST` | Saves and publishes AI-generated quizzes to Assessment Arena |
-
----
-
-## 8. Pre-Configured Demo Personas
-
-The platform includes 1-click quick login buttons for all evaluation personas:
+The platform includes 1-click quick login buttons on the `/login` page for easy evaluation:
 
 | Persona | Name & Cadre | Role | Official Email | Default Password |
 | :--- | :--- | :--- | :--- | :--- |
 | **Learner (SSO)** | **Arjun Sharma, ISS** | `role_learner` | `arjun.sharma@mospi.gov.in` | `Saksham@2026` |
 | **Learner (JSO)** | **Priya Deshmukh, SSS** | `role_learner` | `priya.deshmukh@mospi.gov.in` | `Saksham@2026` |
 | **Trainer / Faculty**| **Dr. Radhika Sen, ISS** | `role_trainer` | `radhika.sen@nssta.gov.in` | `Saksham@2026` |
-| **System Admin** | **Rajesh K. Verma, ISS** | `role_sysadmin`| `rajesh.verma@mospi.gov.in` | `Saksham@2026` |
+| **System Admin / DDG**| **Rajesh K. Verma, ISS** | `role_sysadmin`| `rajesh.verma@mospi.gov.in` | `Saksham@2026` |
 
-*Note: Any newly registered user on `/register` can set their own custom password and is activated immediately with dynamic personalized baseline stats.*
+*Note: Newly registered users on `/register` are activated immediately with dynamic personalized baseline stats.*
 
 ---
 
-## 9. Frontend Route & Pages Map
+## 7. Frontend Routes & Interactive Modules
+
+### Public Routes
+* `/` or `/home` — Official MoSPI Saksham AI Landing Page
+* `/verify/:credentialId` — **Public W3C Verifiable Credential Portal** with cryptographic SHA-256 seal and JSON-LD context
+* `/login`, `/register`, `/forgot-password` — Authentication with 6-digit OTP reset
 
 ### Learner Portal Routes
-* `/dashboard` — Personal Competency Radar, Top Gaps, Key KPIs, AI Pathways
+* `/dashboard` — Competency Radar, Top Gaps, Key KPIs, Upcoming Modules
 * `/profile` — Official Profile, Cadre Information, Edit Personal Details
-* `/skills` — Category-wise breakdown of official competencies (*Statistical, Technical, Governance, Leadership*)
+* `/skills` — 4-Domain breakdown (*Statistical, Technical, Governance, Behavioural*)
 * `/skill-gap` — Mathematical deficit matrix with actionable recommendations
 * `/learning-path` — Dynamic milestone roadmap derived from AI gap analysis
-* `/courses` & `/courses/:id` — Course exploration with direct e-learning module links
-* `/training` — In-person NSSTA workshops with persistent Self-Nomination
+* `/courses` & `/courses/:id` — Synchronized iGOT Karmayogi catalog
+* `/training` — NSSTA Residential Workshops with live seat tracking & nomination
 * `/assessments` & `/quiz/:id` — Diagnostic testing arena with instant grading & feedback
-* `/ai-assistant` — Isolated multi-session AI assistant with dual explanation + recommendation engine and formula card rendering
+* `/ai-assistant` — **Multilingual Voice Statistical Copilot** (8 Indian languages + English, Web Speech STT/TTS)
+* `/playground` — **In-Browser Python Statistical Sandbox** (Pyodide WASM runtime with Gini, CPI, Sampling presets)
+* `/capi-simulator` — **AI CAPI Survey & Field Enumeration Simulator** (PLFS, HCES, ASI roleplay interview with scoring)
+* `/leaderboard` — **Cadre Leaderboard & National Statistical Sprints** (ISS vs SSS rankings, division matrix, badges)
 * `/progress` — Monthly capability trajectory and dynamic learning hours bar charts
 * `/certificates` — Verified certificate gallery with modal preview and PDF download
 
-### Administrator & Trainer Routes
+### Administrator & HR Intelligence Routes
 * `/admin/dashboard` — Macro workforce readiness KPIs, 4-pillar bar chart, systemic deficits
-* `/admin/analytics` — Departmental comparison matrix (**NAD, SDRD, FOD, CSO**), risk levels & 12-month predictive forecast
 * `/admin/users` — Employee roster and competency score auditing
 * `/admin/competencies` — Official MoSPI benchmark standards framework
-* `/admin/content` — AI Assessment Content Studio (Document upload, RAG MCQ synthesis, publish live)
+* `/admin/deputation` — **Automated MoSPI TNA & Deputation Matcher** (Mission presets, sliders, NSSTA cohort provisioning, official Office Memorandum OM)
+* `/admin/content` — RAG Content Studio (Document upload, AI MCQ synthesis, publish live)
+* `/admin/analytics` — Division comparison matrix (**NAD, SDRD, FOD, CSO**), risk levels & 12-month predictive forecast
 * `/admin/reports` — Exportable audit reports (Workforce Audit PDF, Skill Gap Matrix CSV)
 * `/admin/settings` — Recommendation algorithm weights & sync frequency configuration
 
 ---
 
-## 10. Quick Start & Execution Scripts
+## 8. API Endpoints Catalog
 
-The repository includes pre-configured single-command automation scripts for all major runtime environments:
+### API Gateway (Node.js Express - Port 5000)
 
-### Option A: 1-Click Windows Batch Script (`start_all.bat`)
-Double-click `start_all.bat` or run from the root terminal:
+| Category | Endpoint | Method | Auth | Description |
+| :--- | :--- | :--- | :---: | :--- |
+| **Health** | `/health` | `GET` | No | Gateway, database, and AI service health check |
+| **Auth** | `/api/auth/login` | `POST` | No | JWT authentication with role authorization |
+| **Auth** | `/api/auth/register` | `POST` | No | Self-service registration (Instant auto-activation) |
+| **Auth** | `/api/auth/forgot-password`| `POST` | No | Dispatches 6-digit OTP via SMTP |
+| **Auth** | `/api/auth/reset-password` | `POST` | No | Validates OTP and updates password |
+| **Learner**| `/api/users/competencies` | `GET` | Yes | Live competency scores & radar array |
+| **Learner**| `/api/users/stats` | `GET` | Yes | Learning hours, completed courses, quizzes |
+| **Learner**| `/api/users/certificates` | `GET` | Yes | List of user certificates with verification IDs |
+| **Verify** | `/api/certificates/verify/:id` | `GET` | No | **Public W3C Verifiable Credential validation** |
+| **Courses**| `/api/courses` | `GET` | No | Catalog of MoSPI & iGOT courses |
+| **Quizzes**| `/api/assessments/quizzes` | `GET` | Yes | Published diagnostic assessments |
+| **Quizzes**| `/api/assessments/quiz/:id`| `GET` | Yes | Assessment questions with randomized options |
+| **Quizzes**| `/api/assessments/submit` | `POST` | Yes | Auto-grades attempt and updates competencies |
+| **Simulator**| `/api/simulator/personas` | `GET` | No | Personas for CAPI field enumeration |
+| **Simulator**| `/api/simulator/interact` | `POST` | No | Evaluates enumerator probing response |
+| **Rankings**| `/api/rankings/divisions` | `GET` | No | Divisional capability readiness indices |
+| **Rankings**| `/api/rankings/cadres` | `GET` | Yes | Nationwide ISS and SSS cadre rankings |
+| **Rankings**| `/api/rankings/sprints` | `GET` | Yes | Active National Statistical Sprints |
+| **Rankings**| `/api/rankings/join-sprint`| `POST` | Yes | Enrolls officer in a statistical sprint |
+| **Admin**  | `/api/admin/deputation/templates` | `GET` | Admin | Mission templates (SNA 2008, HCES, DPDPA) |
+| **Admin**  | `/api/admin/deputation/match` | `POST` | Admin | **Multi-factor cadre candidate matching engine** |
+| **Admin**  | `/api/admin/deputation/create-cohort` | `POST` | Admin | Commissions bridging training cohort at NSSTA |
+| **Admin**  | `/api/admin/workforce-analytics` | `GET` | Admin | Macro workforce readiness & KPIs |
+| **Admin**  | `/api/admin/users` | `GET` | Admin | Full officer directory and competency audit |
+
+### Python AI Microservice (FastAPI - Port 8000)
+
+| Endpoint | Method | Description |
+| :--- | :---: | :--- |
+| `GET /health` | `GET` | AI engine health check, RAG status, and LLM availability |
+| `POST /api/ai/chat` | `POST` | MoSPI-grounded conversational AI assistant (GPT-4o-mini / Gemini / Fallback) |
+| `POST /api/ai/parse-document` | `POST` | Parses training manuals (PDF, DOCX) into text chunks using PyMuPDF |
+| `POST /api/ai/generate-quiz` | `POST` | Synthesizes 4-option MCQs from content with explanations & citations |
+| `POST /api/ai/calculate-skill-gap` | `POST` | Computes multidimensional competency deficits ($\Delta$) against benchmarks |
+| `POST /api/ai/predictive-analytics` | `POST` | 12-month predictive capability forecasting model |
+| `POST /api/ai/semantic-search` | `POST` | Vector similarity search across vectorized MoSPI documentation |
+
+---
+
+## 9. Quick Start Guide
+
+### Option A: 1-Click Launch (Windows)
+Double-click `start_all.bat` or run:
 ```cmd
 start_all.bat
 ```
-*This simultaneously launches the Python AI engine (Port 8000), Node.js API Gateway (Port 5000), and Vite React frontend (Port 3000) in isolated, labeled command windows.*
+*Launches Python AI Engine (Port 8000), Gateway Service (Port 5000), and Vite Frontend (Port 3000) simultaneously.*
 
-### Option B: 1-Click PowerShell Script (`start_all.ps1`)
-Run the PowerShell automation script:
+### Option B: 1-Click PowerShell Launch
 ```powershell
 .\start_all.ps1
 ```
 
-### Option C: Multi-Container Docker Deployment (`docker-compose.yml`)
-To spin up all services in isolated Docker containers with automated PostgreSQL schema initialization and Redis caching:
-```bash
-docker compose up --build -d
-```
-*Containerized Architecture:*
-* `saksham_postgres` (Port 5432) — PostgreSQL 16 with automatic `schema.sql` and `seed.sql` mounting
-* `saksham_redis` (Port 6379) — Redis 7 Alpine cache
-* `saksham_ai_service` (Port 8000) — Python FastAPI RAG Engine
-* `saksham_gateway` (Port 5000) — Node.js Express API Gateway
-* `saksham_frontend` (Port 3000) — Multi-stage Nginx serving production Vite build
+### Option C: Manual Execution
 
-### Option D: 100% Free Cloud Deployment (Vercel + Render + Neon + Upstash)
-For complete instructions on deploying the full stack on free-tier cloud platforms, see the dedicated [**DEPLOYMENT_GUIDE.md**](./DEPLOYMENT_GUIDE.md).
-- **Frontend:** Vercel (Vite React SPA)
-- **API Gateway:** Render (Node.js Express)
-- **AI Engine:** Render (Python FastAPI)
-- **Database:** Neon (Serverless PostgreSQL)
-- **Cache:** Upstash (Serverless Redis)
-
-### Option E: Manual Local Service Execution
-
-#### 1. Start Python AI Microservice (Port 8000)
+#### 1. Python AI Service (Port 8000)
 ```bash
 cd backend/ai_service
 pip install -r requirements.txt
 python -m uvicorn main:app --host 127.0.0.1 --port 8000 --reload
 ```
-*Interactive Swagger API Docs:* **[http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)**
+*Interactive Swagger UI:* [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 
-#### 2. Start Node.js API Gateway (Port 5000)
+#### 2. Node.js API Gateway (Port 5000)
 ```bash
 cd backend/gateway_service
 npm install
 npm start
 ```
-*Gateway Health Status:* **[http://localhost:5000/health](http://localhost:5000/health)**
+*Gateway Health Status:* [http://localhost:5000/health](http://localhost:5000/health)
 
-#### 3. Start Frontend Portal (Port 3000)
+#### 3. Frontend Portal (Port 3000)
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-*Open Application:* **[http://localhost:3000](http://localhost:3000)**
+*Open Application:* [http://localhost:3000](http://localhost:3000)
 
 ---
 
-## 11. Environment Variables Configuration
-
-### `backend/gateway_service/.env`
-```env
-PORT=5000
-NODE_ENV=development
-JWT_SECRET=your_jwt_secret_key_here
-DATA_ENCRYPTION_KEY=your_32_character_encryption_key_here
-PYTHON_AI_URL=http://127.0.0.1:8000
-DATABASE_URL=postgresql://username:password@ep-sample-pooler.aws.neon.tech/neondb?sslmode=require
-REDIS_URL=rediss://default:password@sample.upstash.io:6379
-
-# Email OTP Notifications (Optional)
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=your_gmail_address@gmail.com
-SMTP_PASS=your_gmail_app_password_here
-SMTP_FROM="Saksham AI - MoSPI" <your_gmail_address@gmail.com>
-```
-
-### `backend/ai_service/.env`
-```env
-PORT=8000
-HOST=127.0.0.1
-GEMINI_API_KEY=your_google_gemini_api_key_here
-OPENAI_API_KEY=your_openai_api_key_here
-```
-
-### `frontend/.env` (Optional in local dev, required on Vercel)
-```env
-VITE_API_URL=https://your-gateway-service.onrender.com
-```
-
-### Key Design & Interface Highlights
-* **Official White Theme Design System:** Built with accessible high-contrast typography, solid white cards, and MoSPI institutional accents (`#1e3a8a` navy, `#047857` emerald).
-* **High-Resolution PNG Certificate Generator:** HTML5 Canvas engine rendering 1200x850 verified credentials complete with Government of India seals and digital signature watermarks.
-
-### AI LLM Priority Chain
-The AI service uses a cascading fallback strategy for chat and quiz generation:
-1. **Priority 1:** OpenAI GPT-4o-mini (requires `OPENAI_API_KEY`)
-2. **Priority 2:** Google Gemini (requires `GEMINI_API_KEY`)
-3. **Priority 3:** Offline domain knowledge engine with MoSPI-specific statistical intelligence
-
-### Email OTP Delivery Priority Chain
-The gateway service uses a cascading fallback strategy for email delivery:
-1. **Priority 1:** Gmail SMTP (requires `SMTP_USER` and `SMTP_PASS`)
-2. **Priority 2:** Resend API (requires `RESEND_API_KEY`, sandbox-limited)
-3. **Priority 3:** Simulated OTP displayed in server console for development
-
----
-
-## 12. Security, Compliance & Data Governance
+## 10. Security, Compliance & Data Governance
 
 * **AES-256-CBC Field Encryption:** National identifiers and sensitive employee records are encrypted before database persistence.
-* **DPDPA 2023 Compliance:** Built strictly following India's Digital Personal Data Protection Act with user data isolation.
+* **DPDPA 2023 Compliance:** Built strictly following India's Digital Personal Data Protection Act with complete user data isolation.
 * **Role-Based Access Control (RBAC):** Strict JWT verification separating Learners, Trainers, and System Administrators.
+* **W3C Verifiable Credentials 2.0:** Tamper-proof certificate issuance with cryptographic SHA-256 digest validation.
 * **UN Fundamental Principles of Official Statistics:** Strict statistical confidentiality and microdata protection protocols.
 
 ---
 
-## 13. API Endpoint Audit Report
+## 11. Institutional Attribution & License
 
-Comprehensive endpoint-level audit conducted across the Express Gateway (Port 5000) and Python AI Microservice (Port 8000). All 25 endpoints tested.
-
-### Gateway Endpoints (Port 5000) — 21/21 PASSED
-
-| Endpoint | Method | Status | Result |
-| :--- | :--- | :--- | :--- |
-| `/` | `GET` | 200 | PASSED |
-| `/health` | `GET` | 200 | PASSED |
-| `/api/auth/login` (Learner) | `POST` | 200 | PASSED |
-| `/api/auth/login` (Admin) | `POST` | 200 | PASSED |
-| `/api/auth/login` (Trainer) | `POST` | 200 | PASSED |
-| `/api/auth/register` | `POST` | 201 | PASSED |
-| `/api/auth/forgot-password` | `POST` | 200 | PASSED |
-| `/api/auth/reset-password` | `POST` | 200 | PASSED |
-| `/api/users/competencies` | `GET` | 200 | PASSED |
-| `/api/users/stats` | `GET` | 200 | PASSED |
-| `/api/users/certificates` | `GET` | 200 | PASSED |
-| `/api/users/trajectory` | `GET` | 200 | PASSED |
-| `/api/courses` | `GET` | 200 | PASSED |
-| `/api/assessments/quizzes` | `GET` | 200 | PASSED |
-| `/api/sync/igot` | `GET` | 200 | PASSED |
-| `/api/sync/nssta` | `GET` | 200 | PASSED |
-| `/api/admin/users` | `GET` | 200 | PASSED |
-| `/api/admin/workforce-analytics` | `GET` | 200 | PASSED |
-| `/api/analytics/workforce` | `GET` | 200 | PASSED |
-| `/api/ai/assistant/chat` | `POST` | 200 | PASSED |
-| `/api/trainer/publish-quiz` | `POST` | 200 | PASSED |
-
-### Python AI Service (Port 8000) — Requires Separate Startup
-
-The Python AI service endpoints (`/health`, `/api/ai/chat`, `/api/ai/calculate-skill-gap`, `/api/ai/predictive-analytics`) require the FastAPI service to be running independently. Start with:
-
-```bash
-cd backend/ai_service
-python -m uvicorn main:app --host 127.0.0.1 --port 8000 --reload
-```
-
----
-
-## 14. License & Institutional Attribution
-Developed for the **Ministry of Statistics & Programme Implementation (MoSPI)**, Government of India.
+Developed for the **Ministry of Statistics & Programme Implementation (MoSPI)**, Government of India, for **Smart India Hackathon 2026** (Problem Statement ID: 26101).
 
 ---
 <p align="center">
   © 2026 <strong>SAKSHAM AI</strong>. All Rights Reserved.<br>
-  <em>Official Statistics Skill Intelligence Platform</em>
+  <em>Official Statistics Skill Intelligence & Capacity Building Platform</em>
 </p>
-
