@@ -21,7 +21,8 @@ import {
   Brain,
   Terminal,
   Smartphone,
-  Trophy
+  Trophy,
+  UserCheck
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -45,6 +46,7 @@ const learnerNav = [
 const adminNav = [
   { name: 'Workforce Intel', path: '/admin/dashboard', icon: LayoutDashboard },
   { name: 'User Management', path: '/admin/users', icon: Users },
+  { name: 'Deputation Matcher', path: '/admin/deputation', icon: UserCheck },
   { name: 'Competency Matrix', path: '/admin/competencies', icon: Target },
   { name: 'Course Catalog', path: '/admin/courses', icon: BookOpen },
   { name: 'Academy Training', path: '/admin/training', icon: GraduationCap },

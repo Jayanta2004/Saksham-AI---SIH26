@@ -1594,6 +1594,150 @@ app.post('/api/rankings/join-sprint', verifyToken, (req, res) => {
   res.json({ success: true, message: 'Successfully enrolled in National Statistical Sprint!', sprint_id });
 });
 
+// ==================== TNA & DEPUTATION MATCHER ====================
+const DEPUTATION_TEMPLATES = [
+  {
+    id: 'tmpl_nas_base',
+    title: 'National Accounts Base Year Revision Taskforce (SNA 2008)',
+    department: 'National Accounts Division (NAD)',
+    target_competencies: {
+      'SNA 2008 & National Accounts': 4.5,
+      'Price Indices & Deflation': 4.0,
+      'Python & R Data Analytics': 3.5,
+      'DPDPA 2023 Compliance': 3.0
+    },
+    min_experience_years: 3.0,
+    cadre_preference: 'ISS Grade IV / STS',
+    description: 'Specialized 6-month taskforce responsible for revising the GDP base year, updating Supply-Use Tables (SUT), and refining double deflation models.'
+  },
+  {
+    id: 'tmpl_hces_direction',
+    title: 'Nationwide Household Consumption Expenditure Survey (HCES) Direction Team',
+    department: 'Survey Design & Research Division (SDRD)',
+    target_competencies: {
+      'Survey Sampling & Frame Design': 4.5,
+      'CAPI Field Operations': 4.0,
+      'Python & R Data Analytics': 3.5,
+      'DPDPA 2023 Compliance': 3.8
+    },
+    min_experience_years: 2.0,
+    cadre_preference: 'ISS / SSS Joint Team',
+    description: 'High-level steering team overseeing schedule design, sampling multiplier validation, and mobile CAPI data consistency audits.'
+  },
+  {
+    id: 'tmpl_open_data_gov',
+    title: 'MoSPI Microdata Anonymization & DPDPA Governance Committee',
+    department: 'Data Informatics & Innovation Division (DIID)',
+    target_competencies: {
+      'DPDPA 2023 Compliance': 4.8,
+      'Statistical Disclosure Control': 4.5,
+      'Python & R Data Analytics': 4.0,
+      'Open Data Standards': 3.5
+    },
+    min_experience_years: 2.5,
+    cadre_preference: 'All Technical Cadres',
+    description: 'Expert panel responsible for implementing k-anonymity algorithms, microdata cell suppression, and DPDPA 2023 consent architecture.'
+  }
+];
+
+// 1. Get Templates
+app.get('/api/admin/deputation/templates', verifyToken, requireRole(['role_sysadmin', 'role_trainer']), (req, res) => {
+  res.json({ success: true, templates: DEPUTATION_TEMPLATES });
+});
+
+// 2. Match Officers
+app.post('/api/admin/deputation/match', verifyToken, requireRole(['role_sysadmin', 'role_trainer']), async (req, res) => {
+  try {
+    const {
+      project_title = 'National Statistical Mission',
+      target_competencies = {},
+      min_experience = 0
+    } = req.body;
+
+    const allUsers = (await pgDb.getAllUsers()) || db.users;
+    const candidates = [];
+
+    for (const u of allUsers) {
+      if (u.role_id === 'role_sysadmin' || u.role_id === 'role_trainer') continue; // evaluate field & statistical officers
+
+      const comps = db.getUserCompetencies(u.id) || {};
+      const exp = u.work_experience_years || 2.0;
+
+      let totalWeight = 0;
+      let earnedScore = 0;
+      const strengths = [];
+      const gaps = [];
+
+      for (const [skill, targetVal] of Object.entries(target_competencies)) {
+        totalWeight += targetVal;
+        let officerScore = 3.0;
+        if (skill.includes('SNA') || skill.includes('National Accounts')) officerScore = comps['National Accounts'] || (u.department?.includes('NAD') ? 4.5 : 2.5);
+        else if (skill.includes('Sampling') || skill.includes('Survey')) officerScore = comps['Survey Sampling'] || (u.department?.includes('SDRD') || u.department?.includes('FOD') ? 4.6 : 3.0);
+        else if (skill.includes('Python') || skill.includes('R') || skill.includes('Analytics')) officerScore = comps['Python / R Analytics'] || 3.8;
+        else if (skill.includes('DPDPA') || skill.includes('Governance') || skill.includes('Privacy')) officerScore = comps['Digital Governance'] || 4.2;
+        else if (skill.includes('CAPI') || skill.includes('Field')) officerScore = comps['Field Operations'] || (u.cadre?.includes('SSS') || u.department?.includes('FOD') ? 4.7 : 3.2);
+
+        earnedScore += Math.min(officerScore, targetVal);
+
+        if (officerScore >= targetVal) {
+          strengths.push(`${skill} (${officerScore.toFixed(1)} / ${targetVal.toFixed(1)})`);
+        } else {
+          gaps.push(`${skill} (Deficit: ${(targetVal - officerScore).toFixed(1)})`);
+        }
+      }
+
+      const expBonus = exp >= min_experience ? 5 : -10;
+      const baseFit = totalWeight > 0 ? (earnedScore / totalWeight) * 100 : 75;
+      const finalFit = Math.min(98, Math.max(45, Math.round(baseFit + expBonus)));
+
+      candidates.push({
+        id: u.id,
+        name: u.full_name,
+        designation: u.designation,
+        department: u.department,
+        cadre: u.cadre,
+        experience_years: exp,
+        fit_percentage: finalFit,
+        fit_tier: finalFit >= 85 ? 'Optimal Match' : finalFit >= 70 ? 'Strong Candidate' : 'Requires Training',
+        strengths,
+        gaps,
+        avatar_url: u.avatar_url
+      });
+    }
+
+    candidates.sort((a, b) => b.fit_percentage - a.fit_percentage);
+
+    res.json({
+      success: true,
+      project_title,
+      total_evaluated: candidates.length,
+      candidates
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Matching error', details: err.message });
+  }
+});
+
+// 3. Create Fast-Track Training Cohort
+app.post('/api/admin/deputation/create-cohort', verifyToken, requireRole(['role_sysadmin', 'role_trainer']), (req, res) => {
+  const { cohort_title, selected_officer_ids = [], focus_skills = [] } = req.body;
+  const cohortId = `cohort_nssta_${Date.now()}`;
+
+  res.json({
+    success: true,
+    message: `Fast-track cohort "${cohort_title}" successfully commissioned at NSSTA Greater Noida.`,
+    cohort: {
+      id: cohortId,
+      title: cohort_title,
+      enrolled_officers_count: selected_officer_ids.length,
+      start_date: '10 Oct 2026',
+      duration: '2 Weeks (Residential + Lab)',
+      location: 'NSSTA Greater Noida',
+      focus_curriculum: focus_skills
+    }
+  });
+});
+
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
