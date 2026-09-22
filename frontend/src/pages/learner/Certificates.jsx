@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Award, Download, Calendar, CheckCircle, X, Shield, Loader2, ArrowRight } from 'lucide-react';
+import { Award, Download, Calendar, CheckCircle, X, Shield, Loader2, ArrowRight, QrCode } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { skillService } from '../../services/skillService';
@@ -256,6 +256,7 @@ export default function Certificates() {
                 >
                   View Credential
                 </button>
+                <Link to={`/verify/${encodeURIComponent(cert.credential_id || cert.credentialId)}`} className="p-2.5 rounded-xl text-blue-700 bg-blue-50 border border-blue-200" title="Open public verification"><QrCode className="w-4 h-4" /></Link>
                 <button
                   onClick={() => handleDownload(cert)}
                   className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition shadow-sm"
@@ -332,6 +333,7 @@ export default function Certificates() {
                   <span className="font-mono">{selectedCert.issue_date || selectedCert.issueDate}</span>
                 </div>
               </div>
+              <div className="pt-2 flex justify-center"><img className="w-20 h-20 rounded bg-white p-1 border border-slate-200" alt="QR code for public certificate verification" src={`https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(`${window.location.origin}/verify/${selectedCert.credential_id || selectedCert.credentialId}`)}`} /></div>
             </div>
 
             <div className="flex justify-end gap-3 pt-2">

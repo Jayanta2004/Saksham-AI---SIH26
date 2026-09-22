@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { Bell, LogOut, Menu, Home, Search } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import ThemeToggle from '../common/ThemeToggle';
+import { featureStore } from '../../services/featureStore';
+import { useLanguage } from '../../context/LanguageContext';
 
 const routeTitles = {
   '/dashboard': 'Dashboard & Competency Radar',
@@ -30,7 +32,11 @@ const routeTitles = {
 
 export default function Header({ onMenuToggle }) {
   const { user, logout } = useAuth();
+  const { language, setLanguage, t } = useLanguage();
   const location = useLocation();
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState(() => featureStore.notifications(user?.id));
+  useEffect(() => setNotifications(featureStore.notifications(user?.id)), [user?.id, location.pathname]);
 
   const getPageTitle = () => {
     const path = location.pathname;
@@ -47,7 +53,7 @@ export default function Header({ onMenuToggle }) {
   const displayName = user?.full_name || user?.name || user?.username || 'User';
 
   return (
-    <header className="h-16 bg-white border-b border-slate-200 px-4 md:px-6 flex items-center justify-between shrink-0 transition-colors duration-200 z-30">
+    <header className="relative h-16 bg-white border-b border-slate-200 px-4 md:px-6 flex items-center justify-between shrink-0 transition-colors duration-200 z-30">
       
       {/* Left: Hamburger + Page Title */}
       <div className="flex items-center gap-3 min-w-0">
@@ -86,7 +92,7 @@ export default function Header({ onMenuToggle }) {
           title="Back to Landing Page"
         >
           <Home className="w-4 h-4" />
-          <span className="hidden md:inline">Portal Home</span>
+          <span className="hidden md:inline">{t.portal}</span>
         </Link>
 
         {/* Live Status Badge */}
@@ -98,13 +104,20 @@ export default function Header({ onMenuToggle }) {
         {/* Theme Toggle */}
         <ThemeToggle size="sm" />
 
+        <select aria-label="Language" value={language} onChange={e => setLanguage(e.target.value)} className="text-[11px] font-bold rounded-lg border border-slate-200 bg-white px-1.5 py-1.5 text-slate-700">
+          <option value="en">EN</option><option value="hi">हिंदी</option>
+        </select>
+
         <button
+          onClick={() => { const next = !showNotifications; setShowNotifications(next); if (next) { featureStore.markNotificationsRead(user?.id); setNotifications(featureStore.notifications(user?.id)); } }}
           className="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors"
           aria-label="Notifications"
           title="Notifications"
         >
-          <Bell className="w-4 h-4" />
+          <span className="relative"><Bell className="w-4 h-4" />{notifications.some(n => !n.read) && <span className="absolute -right-1 -top-1 w-2 h-2 rounded-full bg-red-500" />}</span>
         </button>
+
+        {showNotifications && <div className="absolute right-20 top-14 w-80 max-h-80 overflow-auto bg-white rounded-xl border border-slate-200 shadow-xl p-3 z-50"><p className="text-xs font-bold text-slate-900 mb-2">{t.notifications}</p>{notifications.length ? notifications.map(n => <div key={n.id} className="p-2.5 border-t border-slate-100 text-xs"><p className="font-semibold text-slate-800">{n.title}</p><p className="text-slate-500 mt-0.5">{n.body}</p></div>) : <p className="text-xs text-slate-500 p-2">You’re all caught up.</p>}</div>}
 
         <div className="flex items-center gap-2 pl-2 border-l border-slate-200">
           <div

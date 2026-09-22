@@ -3,11 +3,13 @@ import { Check, Play, Circle, Clock, BookOpen, BarChart2, Loader2, ArrowRight, S
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { skillService } from '../../services/skillService';
+import { featureStore } from '../../services/featureStore';
 
 export default function PersonalizedLearningPath() {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [steps, setSteps] = useState([]);
+  const [weeklyPlan, setWeeklyPlan] = useState(() => featureStore.weeklyPlan(user?.id));
 
   useEffect(() => {
     let isMounted = true;
@@ -157,6 +159,10 @@ export default function PersonalizedLearningPath() {
 
   const completedCount = steps.filter((s) => s.status === 'completed').length;
   const progressPercent = Math.round((completedCount / (steps.length || 1)) * 100);
+  const createWeeklyPlan = () => {
+    const plan = { createdAt: new Date().toISOString(), items: steps.slice(0, 3).map((step, index) => ({ day: ['Mon–Tue', 'Wed–Thu', 'Fri'][index], task: step.title, commitment: index === 0 ? '90 minutes' : '60 minutes' })) };
+    featureStore.saveWeeklyPlan(user?.id, plan); setWeeklyPlan(plan);
+  };
 
   return (
     <div className="space-y-6 pb-12">
@@ -194,6 +200,11 @@ export default function PersonalizedLearningPath() {
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="bg-gradient-to-r from-indigo-600 to-blue-600 text-white rounded-2xl p-6 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div><p className="text-[11px] uppercase tracking-wider font-bold text-blue-100">AI weekly study plan</p><h2 className="font-headline text-lg font-bold mt-1">Turn your learning path into an achievable week</h2>{weeklyPlan && <p className="text-xs text-blue-100 mt-2">{weeklyPlan.items.map(item => `${item.day}: ${item.commitment}`).join(' · ')}</p>}</div>
+        <button onClick={createWeeklyPlan} className="px-4 py-2.5 rounded-xl bg-white text-blue-700 text-xs font-bold shadow-sm">{weeklyPlan ? 'Refresh my plan' : 'Generate my plan'}</button>
       </div>
 
       {/* Vertical Interactive Stepper with Stitch Glass Cards */}

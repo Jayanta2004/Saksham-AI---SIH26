@@ -5,6 +5,7 @@ import MainLayout from '../components/layout/MainLayout';
 
 // Public Landing Page
 import LandingPage from '../pages/public/LandingPage';
+import CertificateVerification from '../pages/public/CertificateVerification';
 
 // Auth Pages
 import Login from '../pages/auth/Login';
@@ -41,6 +42,7 @@ const AppRoutes = () => {
       {/* Public Landing & Home Routes */}
       <Route path="/" element={<LandingPage />} />
       <Route path="/home" element={<LandingPage />} />
+      <Route path="/verify/:credentialId" element={<CertificateVerification />} />
 
       {/* Auth Routes */}
       <Route path="/login" element={<Login />} />

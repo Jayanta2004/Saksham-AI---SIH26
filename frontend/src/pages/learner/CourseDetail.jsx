@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, CheckCircle2, Circle, Clock, BookOpen, Award, Sparkles, Check } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, Circle, Sparkles, Check, Bookmark, Star } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { featureStore } from '../../services/featureStore';
 
 export default function CourseDetail() {
   const { id } = useParams();
@@ -30,6 +31,11 @@ export default function CourseDetail() {
   });
 
   const [toast, setToast] = useState(null);
+  const [bookmarked, setBookmarked] = useState(false);
+  const [rating, setRating] = useState(0);
+
+  useEffect(() => { const saved = featureStore.courseState(user?.id, courseId); setBookmarked(saved.bookmarked); setRating(saved.feedback?.rating || 0); }, [user?.id, courseId]);
+  const saveFeatureState = (changes) => featureStore.saveCourseState(user?.id, courseId, { ...featureStore.courseState(user?.id, courseId), enrolled, completedModules, ...changes });
 
   useEffect(() => {
     try {
@@ -63,6 +69,8 @@ export default function CourseDetail() {
 
   const handleEnroll = () => {
     setEnrolled(true);
+    saveFeatureState({ enrolled: true });
+    featureStore.addNotification(user?.id, { title: 'Course enrollment confirmed', body: 'Your learning progress is now saved across sessions.' });
     setToast('Enrolled successfully in course!');
     setTimeout(() => setToast(null), 3000);
   };
@@ -81,6 +89,7 @@ export default function CourseDetail() {
       setTimeout(() => setToast(null), 3000);
     }
     setCompletedModules(updated);
+    saveFeatureState({ enrolled: true, completedModules: updated });
   };
 
   const progressPercent = modules.length > 0 ? Math.round((completedModules.length / modules.length) * 100) : 0;
@@ -177,6 +186,7 @@ export default function CourseDetail() {
           )}
 
           <div className="flex items-center gap-3">
+            <button onClick={() => { const next = !bookmarked; setBookmarked(next); saveFeatureState({ bookmarked: next }); setToast(next ? 'Course saved to bookmarks' : 'Bookmark removed'); }} className={`p-2.5 rounded-xl border text-xs font-semibold ${bookmarked ? 'bg-amber-50 border-amber-300 text-amber-700' : 'bg-white border-slate-200 text-slate-600'}`} title="Bookmark course"><Bookmark className={`w-4 h-4 ${bookmarked ? 'fill-current' : ''}`} /></button>
             <button
               onClick={handleEnroll}
               className={`px-5 py-2.5 rounded-xl text-xs font-semibold transition-all shadow-sm ${
@@ -198,6 +208,11 @@ export default function CourseDetail() {
             </Link>
           </div>
         </div>
+      </div>
+
+      <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div><h2 className="font-bold text-sm text-slate-900">Rate this learning experience</h2><p className="text-xs text-slate-500 mt-1">Your feedback improves future recommendations.</p></div>
+        <div className="flex gap-1">{[1,2,3,4,5].map(value => <button key={value} onClick={() => { setRating(value); saveFeatureState({ feedback: { rating: value, updatedAt: new Date().toISOString() } }); setToast('Thank you for your feedback!'); }} aria-label={`Rate ${value} stars`}><Star className={`w-6 h-6 ${value <= rating ? 'fill-amber-400 text-amber-400' : 'text-slate-300'}`} /></button>)}</div>
       </div>
 
       {/* Learning Modules List */}
