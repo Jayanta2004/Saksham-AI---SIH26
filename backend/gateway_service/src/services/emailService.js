@@ -184,37 +184,7 @@ Ministry of Statistics & Programme Implementation (MoSPI), Government of India`;
       }
     }
 
-    // 2. Fallback to Resend API if key is set (HTTPS port 443 - never blocked by cloud firewalls)
-    const resendKey = process.env.RESEND_API_KEY;
-    if (resendKey && resendKey.startsWith('re_')) {
-      try {
-        const fromAddr = process.env.RESEND_FROM || 'Saksham AI <onboarding@resend.dev>';
-        const response = await axios.post(
-          'https://api.resend.com/emails',
-          {
-            from: fromAddr,
-            to: [toEmail],
-            subject,
-            text: textContent,
-            html: htmlContent
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${resendKey}`,
-              'Content-Type': 'application/json'
-            },
-            timeout: 8000
-          }
-        );
-
-        console.log(`[EmailService] OTP email dispatched via Resend API to ${toEmail}. Resend ID: ${response.data?.id}`);
-        return { success: true, liveDispatched: true, provider: 'resend', id: response.data?.id };
-      } catch (resendErr) {
-        console.error('[EmailService] Resend API dispatch error:', resendErr?.response?.data || resendErr.message);
-      }
-    }
-
-    // 3. Fallback to Brevo REST API if key is set (HTTPS port 443 - works on Render Free Tier to any email)
+    // 2. Try Brevo REST API first if configured (HTTPS port 443 - free 300/day to ANY recipient globally without domain verification)
     const brevoKey = process.env.BREVO_API_KEY;
     if (brevoKey) {
       try {
@@ -241,6 +211,40 @@ Ministry of Statistics & Programme Implementation (MoSPI), Government of India`;
         return { success: true, liveDispatched: true, provider: 'brevo', messageId: response.data?.messageId };
       } catch (brevoErr) {
         console.error('[EmailService] Brevo API dispatch error:', brevoErr?.response?.data || brevoErr.message);
+      }
+    }
+
+    // 3. Try Resend API (HTTPS port 443 - note: onboarding@resend.dev sandbox only allows sending to your own registered email until a domain is verified at resend.com/domains)
+    const resendKey = process.env.RESEND_API_KEY;
+    if (resendKey && resendKey.startsWith('re_')) {
+      try {
+        const fromAddr = process.env.RESEND_FROM || 'Saksham AI <onboarding@resend.dev>';
+        const response = await axios.post(
+          'https://api.resend.com/emails',
+          {
+            from: fromAddr,
+            to: [toEmail],
+            subject,
+            text: textContent,
+            html: htmlContent
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${resendKey}`,
+              'Content-Type': 'application/json'
+            },
+            timeout: 8000
+          }
+        );
+
+        console.log(`[EmailService] OTP email dispatched via Resend API to ${toEmail}. Resend ID: ${response.data?.id}`);
+        return { success: true, liveDispatched: true, provider: 'resend', id: response.data?.id };
+      } catch (resendErr) {
+        const errMsg = resendErr?.response?.data?.message || resendErr.message;
+        console.error('[EmailService] Resend API error:', errMsg);
+        if (errMsg?.includes('only send testing emails to your own email address')) {
+          console.warn('[EmailService] ⚠️ Resend Sandbox Restriction: onboarding@resend.dev can only send to your own registered Resend email. To send to other users, either: 1) Verify a custom domain at resend.com/domains, or 2) Add BREVO_API_KEY in Render dashboard (Brevo sends to any email for free).');
+        }
       }
     }
 
