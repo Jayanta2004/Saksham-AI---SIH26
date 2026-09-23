@@ -37,6 +37,7 @@ const learnerNav = [
   { name: 'iGOT Courses', path: '/courses', icon: BookOpen },
   { name: 'NSSTA Workshops', path: '/training', icon: GraduationCap },
   { name: 'AI Assessments', path: '/assessments', icon: CheckSquare },
+  { name: 'Adaptive CAT Testing', path: '/adaptive-test', icon: Brain },
   { name: 'Statistical Copilot', path: '/ai-assistant', icon: Bot },
   { name: 'Statistical Sandbox', path: '/playground', icon: Terminal },
   { name: 'CAPI Field Simulator', path: '/capi-simulator', icon: Smartphone },

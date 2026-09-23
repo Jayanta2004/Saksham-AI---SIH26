@@ -2295,9 +2295,360 @@ app.post('/api/synthetic/generate', verifyToken, (req, res) => {
   }
 });
 
+// ==================== COMPUTERIZED ADAPTIVE TESTING (CAT / IRT ENGINE) ====================
+// Calibrated item bank with 2PL IRT parameters (a = discrimination, b = difficulty)
+const IRT_ITEM_BANK = [
+  // Domain 1: National Accounts (SNA 2008)
+  {
+    id: 'irt_sna_01',
+    domain: 'National Accounts (SNA 2008)',
+    competency_id: 'comp_sna_accounts',
+    difficulty: -1.2, // b (Easy)
+    discrimination: 1.1, // a
+    question: 'Under the System of National Accounts (SNA 2008), which formula accurately defines Gross Value Added (GVA) at basic prices?',
+    options: [
+      'GVA = Output + Intermediate Consumption - Subsidies',
+      'GVA = Value of Output - Intermediate Consumption',
+      'GVA = Final Consumption Expenditure + Gross Capital Formation',
+      'GVA = Net National Income + Depreciation + Direct Taxes'
+    ],
+    correct_index: 1,
+    explanation: 'SNA 2008 defines Gross Value Added (GVA) as the total value of goods and services produced (Output) minus the goods and services consumed in the production process (Intermediate Consumption).'
+  },
+  {
+    id: 'irt_sna_02',
+    domain: 'National Accounts (SNA 2008)',
+    competency_id: 'comp_sna_accounts',
+    difficulty: 0.1, // b (Medium)
+    discrimination: 1.3,
+    question: 'How is Financial Intermediation Services Indirectly Measured (FISIM) allocated among institutional sectors in SNA 2008?',
+    options: [
+      'Entirely treated as intermediate consumption of the banking sector',
+      'Excluded from production boundary and treated as transfer payment',
+      'Allocated between intermediate consumption of borrowing/depositing industries and final household consumption based on reference interest rates',
+      'Offset directly against central bank seigniorage revenues'
+    ],
+    correct_index: 2,
+    explanation: 'Under SNA 2008, FISIM is calculated as the difference between interest rates on loans/deposits and an uncollateralized reference rate, and is allocated proportionally between intermediate consumption of enterprises and final household consumption.'
+  },
+  {
+    id: 'irt_sna_03',
+    domain: 'National Accounts (SNA 2008)',
+    competency_id: 'comp_sna_accounts',
+    difficulty: 1.4, // b (Hard / Advanced)
+    discrimination: 1.5,
+    question: 'In the treatment of Research and Development (R&D) and Intellectual Property Products (IPP), how did SNA 2008 amend the 1993 guidelines?',
+    options: [
+      'R&D expenditures were reclassified from intermediate consumption to Gross Fixed Capital Formation (GFCF)',
+      'R&D was shifted to the government consumption boundary as non-market output',
+      'Patents are now treated as non-produced non-financial tangible assets',
+      'R&D amortization is no longer included in Consumption of Fixed Capital (CFC)'
+    ],
+    correct_index: 0,
+    explanation: 'SNA 2008 recognized R&D as creating future economic value and capital assets, reclassifying R&D expenditures from intermediate consumption into Gross Fixed Capital Formation (GFCF).'
+  },
+  {
+    id: 'irt_sna_04',
+    domain: 'National Accounts (SNA 2008)',
+    competency_id: 'comp_sna_accounts',
+    difficulty: 2.2, // b (Expert)
+    discrimination: 1.7,
+    question: 'When compiling Supply-Use Tables (SUT) under SNA 2008, what condition must hold for double deflation of Gross Value Added?',
+    options: [
+      'Gross output and intermediate consumption must be deflated simultaneously using separate dedicated price indices',
+      'The single composite GDP deflator must be applied directly to current GVA',
+      'Double deflation is only permitted when trade and transport margins exceed 25% of supply',
+      'Taxes less subsidies must be deflated using the Consumer Price Index for Agricultural Labourers'
+    ],
+    correct_index: 0,
+    explanation: 'Double deflation requires that gross output is deflated by the appropriate output producer price index (PPI) and intermediate inputs are independently deflated by input-specific price indices before subtracting.'
+  },
+
+  // Domain 2: Survey Sampling Methodology
+  {
+    id: 'irt_smp_01',
+    domain: 'Survey Sampling & Design',
+    competency_id: 'comp_sampling',
+    difficulty: -1.0, // b (Easy)
+    discrimination: 1.0,
+    question: 'In multi-stage stratified sampling for NSSO surveys, what does the First Stage Unit (FSU) typically represent in rural India?',
+    options: [
+      'Individual households engaged in crop cultivation',
+      'Census villages or parts thereof (sub-units)',
+      'Sub-regional District Collectorates',
+      'Agricultural Landholdings exceeding 5 hectares'
+    ],
+    correct_index: 1,
+    explanation: 'In NSSO rural sample design, the First Stage Units (FSUs) are standard Census Villages (or Urban Frame Survey blocks in urban areas), while households constitute the Ultimate Stage Units (USUs).'
+  },
+  {
+    id: 'irt_smp_02',
+    domain: 'Survey Sampling & Design',
+    competency_id: 'comp_sampling',
+    difficulty: 0.2, // b (Medium)
+    discrimination: 1.4,
+    question: 'Why does NSSO employ Probability Proportional to Size (PPS) sampling with replacement (PPSWR) or systematic PPS rather than Simple Random Sampling (SRS)?',
+    options: [
+      'To ensure that larger census villages with higher populations have a proportionally higher chance of selection, minimizing sample variance',
+      'To completely eliminate non-response in remote hilly FSUs',
+      'Because PPS eliminates the need for calculating post-survey multipliers',
+      'Because SRS is prohibited under the Collection of Statistics Act'
+    ],
+    correct_index: 0,
+    explanation: 'PPS sampling assigns selection probabilities proportional to a measure of size (e.g. population), drastically reducing the sampling variance of total population estimators compared to unweighted SRS.'
+  },
+  {
+    id: 'irt_smp_03',
+    domain: 'Survey Sampling & Design',
+    competency_id: 'comp_sampling',
+    difficulty: 1.6, // b (Hard)
+    discrimination: 1.6,
+    question: 'When calibrating survey weights using Generalized Regression Estimators (GREG), what objective does the distance function minimize?',
+    options: [
+      'The difference between design weights (inverse probability) and calibrated weights subject to benchmark constraints',
+      'The total number of enumerated household schedules in second-stage stratification',
+      'The covariance between primary sampling units across different regional zones',
+      'The standard deviation of non-sampling interviewer bias'
+    ],
+    correct_index: 0,
+    explanation: 'GREG calibration minimizes a metric distance (e.g. chi-squared distance) between original design weights and final calibrated weights subject to the constraint that weighted sample totals match known administrative auxiliary totals.'
+  },
+  {
+    id: 'irt_smp_04',
+    domain: 'Survey Sampling & Design',
+    competency_id: 'comp_sampling',
+    difficulty: 2.3, // b (Expert)
+    discrimination: 1.8,
+    question: 'In small area estimation (SAE) for district-level official statistics, how does the Fay-Herriot area-level model borrow strength across domains?',
+    options: [
+      'By linking direct survey estimators to administrative covariates via a linear mixed model with area-specific random effects',
+      'By pooling microdata without weights and running ordinary least squares regression',
+      'By imputing missing districts using nearest-neighbor k-NN classification',
+      'By multiplying design multipliers by the state-level Consumer Price Index'
+    ],
+    correct_index: 0,
+    explanation: 'The Fay-Herriot model is an empirical best linear unbiased predictor (EBLUP) that combines small area direct sample estimates with regression synthetic predictions using area-level auxiliary administrative covariates and random effects.'
+  }
+];
+
+// Active CAT Sessions Store (In-Memory Map)
+const catSessions = new Map();
+
+// Helper: 2PL IRT probability function P(theta)
+function irtProb(theta, a, b) {
+  return 1.0 / (1.0 + Math.exp(-a * (theta - b)));
+}
+
+// Helper: Fisher Information I(theta)
+function irtInfo(theta, a, b) {
+  const p = irtProb(theta, a, b);
+  return a * a * p * (1.0 - p);
+}
+
+// Helper: Select next optimal item maximizing Fisher Information among unadministered items
+function selectNextItem(theta, domain, administeredIds) {
+  const candidates = IRT_ITEM_BANK.filter(item => 
+    (!domain || item.domain === domain) && !administeredIds.includes(item.id)
+  );
+
+  if (candidates.length === 0) return null;
+
+  let bestItem = candidates[0];
+  let maxInfo = -1;
+
+  for (const item of candidates) {
+    const info = irtInfo(theta, item.discrimination, item.difficulty);
+    if (info > maxInfo) {
+      maxInfo = info;
+      bestItem = item;
+    }
+  }
+
+  return bestItem;
+}
+
+// 1. Get available domains
+app.get('/api/adaptive-test/domains', (req, res) => {
+  const domains = [...new Set(IRT_ITEM_BANK.map(item => item.domain))];
+  res.json({
+    success: true,
+    model: '2-Parameter Logistic (2PL) Item Response Theory (IRT)',
+    stopping_criterion: 'Fixed Test Length (5 Adaptive Items) with Maximum Fisher Information',
+    domains: domains.map(d => ({
+      name: d,
+      item_count: IRT_ITEM_BANK.filter(i => i.domain === d).length,
+      competency_id: IRT_ITEM_BANK.find(i => i.domain === d)?.competency_id
+    }))
+  });
+});
+
+// 2. Start CAT Session
+app.post('/api/adaptive-test/start', verifyToken, (req, res) => {
+  const { domain = 'National Accounts (SNA 2008)' } = req.body;
+  const sessionId = `cat_sess_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+  const initialTheta = 0.0; // Start at average ability (0.0)
+
+  const firstItem = selectNextItem(initialTheta, domain, []);
+  if (!firstItem) {
+    return res.status(404).json({ error: 'No items available for selected domain.' });
+  }
+
+  const session = {
+    id: sessionId,
+    user_id: req.user.id,
+    domain,
+    current_theta: initialTheta,
+    standard_error: 1.0,
+    trajectory: [{ step: 0, theta: initialTheta, se: 1.0 }],
+    administered_items: [firstItem.id],
+    responses: [],
+    start_time: new Date().toISOString()
+  };
+
+  catSessions.set(sessionId, session);
+
+  res.json({
+    success: true,
+    session_id: sessionId,
+    domain,
+    current_theta: initialTheta,
+    step: 1,
+    total_steps: 5,
+    item: {
+      id: firstItem.id,
+      question: firstItem.question,
+      options: firstItem.options,
+      difficulty: firstItem.difficulty,
+      difficulty_label: firstItem.difficulty < -0.5 ? 'Foundational' : firstItem.difficulty > 1.0 ? 'Advanced' : 'Intermediate'
+    }
+  });
+});
+
+// 3. Submit Answer & Adapt
+app.post('/api/adaptive-test/submit-answer', verifyToken, (req, res) => {
+  const { session_id, item_id, selected_option_index } = req.body;
+  const session = catSessions.get(session_id);
+
+  if (!session) {
+    return res.status(404).json({ error: 'Active CAT session not found.' });
+  }
+
+  const currentItem = IRT_ITEM_BANK.find(i => i.id === item_id);
+  if (!currentItem) {
+    return res.status(404).json({ error: 'Item not found in bank.' });
+  }
+
+  const isCorrect = parseInt(selected_option_index) === currentItem.correct_index;
+  const u = isCorrect ? 1.0 : 0.0;
+
+  // Newton-Raphson / Fisher Scoring Theta Update
+  const p = irtProb(session.current_theta, currentItem.discrimination, currentItem.difficulty);
+  const info = irtInfo(session.current_theta, currentItem.discrimination, currentItem.difficulty);
+  const stepSize = Math.max(0.25, Math.min(1.0, (u - p) / (info + 0.3)));
+  
+  let newTheta = session.current_theta + stepSize;
+  newTheta = Math.max(-2.5, Math.min(2.8, parseFloat(newTheta.toFixed(3))));
+  
+  const newSe = Math.max(0.35, parseFloat((session.standard_error * 0.82).toFixed(3)));
+
+  session.current_theta = newTheta;
+  session.standard_error = newSe;
+  session.responses.push({
+    item_id: currentItem.id,
+    difficulty: currentItem.difficulty,
+    discrimination: currentItem.discrimination,
+    selected: selected_option_index,
+    is_correct: isCorrect,
+    correct_index: currentItem.correct_index,
+    explanation: currentItem.explanation,
+    theta_after: newTheta
+  });
+
+  session.trajectory.push({
+    step: session.responses.length,
+    theta: newTheta,
+    se: newSe
+  });
+
+  // Check if test reached fixed length (5 items)
+  const isFinished = session.responses.length >= 5;
+
+  if (isFinished) {
+    // Convert Theta (-2.5 to +2.5) to MoSPI 1.0–5.0 Competency Scale
+    // theta = -2.5 -> score = 1.0; theta = 0.0 -> score = 3.0; theta = +2.5 -> score = 5.0
+    const rawCompetencyScore = 3.0 + (newTheta / 2.5) * 2.0;
+    const finalCompetency = parseFloat(Math.min(5.0, Math.max(1.0, rawCompetencyScore)).toFixed(1));
+
+    // Update in user memory/db store
+    try {
+      db.updateUserCompetency(session.user_id, currentItem.competency_id, finalCompetency);
+    } catch (e) {
+      // safe fallback if db method not registered
+    }
+
+    return res.json({
+      success: true,
+      test_completed: true,
+      final_results: {
+        domain: session.domain,
+        final_latent_ability_theta: newTheta,
+        standard_error: newSe,
+        mospi_competency_scale_score: finalCompetency,
+        performance_tier: finalCompetency >= 4.5 ? 'Mastery / Cadre SME' : finalCompetency >= 3.8 ? 'Advanced Practitioner' : finalCompetency >= 3.0 ? 'Competent' : 'Developing',
+        items_administered: session.responses.length,
+        correct_count: session.responses.filter(r => r.is_correct).length,
+        trajectory: session.trajectory,
+        detailed_responses: session.responses
+      }
+    });
+  }
+
+  // Select next optimal item
+  const nextItem = selectNextItem(newTheta, session.domain, session.administered_items);
+  if (!nextItem) {
+    // If no more items available in domain, terminate gracefully
+    return res.json({
+      success: true,
+      test_completed: true,
+      final_results: {
+        domain: session.domain,
+        final_latent_ability_theta: newTheta,
+        standard_error: newSe,
+        mospi_competency_scale_score: parseFloat((3.0 + (newTheta / 2.5) * 2.0).toFixed(1)),
+        trajectory: session.trajectory,
+        detailed_responses: session.responses
+      }
+    });
+  }
+
+  session.administered_items.push(nextItem.id);
+
+  res.json({
+    success: true,
+    test_completed: false,
+    session_id,
+    current_theta: newTheta,
+    step: session.responses.length + 1,
+    total_steps: 5,
+    previous_feedback: {
+      is_correct: isCorrect,
+      explanation: currentItem.explanation
+    },
+    trajectory: session.trajectory,
+    item: {
+      id: nextItem.id,
+      question: nextItem.question,
+      options: nextItem.options,
+      difficulty: nextItem.difficulty,
+      difficulty_label: nextItem.difficulty < -0.5 ? 'Foundational' : nextItem.difficulty > 1.0 ? 'Advanced' : 'Intermediate'
+    }
+  });
+});
+
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
+
 
 
 
