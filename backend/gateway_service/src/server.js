@@ -1960,8 +1960,168 @@ app.post('/api/geo/deploy-mission', verifyToken, requireRole(['role_sysadmin', '
   });
 });
 
+// ==================== POLICY BRIEF & OFFICIAL PRESS NOTE SYNTHESIZER ====================
+const POLICY_BRIEF_TEMPLATES = [
+  {
+    id: 'tpl_gdp',
+    title: 'Quarterly Estimates of GDP & GVA (SNA 2008)',
+    division: 'National Accounts Division (NAD)',
+    release_type: 'Press Release & Executive Cabinet Summary',
+    period_options: ['Q1 (Apr–Jun) 2026-27', 'Q2 (Jul–Sep) 2026-27', 'Q3 (Oct–Dec) 2026-27', 'Q4 (Jan–Mar) 2026-27'],
+    default_period: 'Q1 (Apr–Jun) 2026-27',
+    headline_metric: 'Real GDP Growth Rate',
+    default_headline_value: '7.4%',
+    primary_metrics: [
+      { name: 'Real GDP Growth (YoY)', default_val: '7.4%', unit: '%' },
+      { name: 'Nominal GDP Growth (YoY)', default_val: '11.2%', unit: '%' },
+      { name: 'Real GVA Growth at Basic Prices', default_val: '7.0%', unit: '%' },
+      { name: 'Manufacturing Sector GVA', default_val: '8.6%', unit: '%' },
+      { name: 'Agriculture, Forestry & Fishing', default_val: '3.9%', unit: '%' },
+      { name: 'Trade, Hotels, Transport, Comm.', default_val: '7.8%', unit: '%' },
+      { name: 'Gross Fixed Capital Formation (GFCF)', default_val: '34.8% of GDP', unit: '% of GDP' }
+    ],
+    methodology: 'Compilation follows SNA 2008 standards utilizing MCA-21 database, GST collections, IIP volume indices, and agricultural first advance estimates.'
+  },
+  {
+    id: 'tpl_cpi',
+    title: 'All-India Consumer Price Index (CPI) & Inflation Note',
+    division: 'Price Statistics Division (CSO)',
+    release_type: 'Monthly Inflation Press Bulletin',
+    period_options: ['August 2026', 'July 2026', 'June 2026', 'May 2026'],
+    default_period: 'August 2026',
+    headline_metric: 'CPI General Inflation (Combined)',
+    default_headline_value: '4.28%',
+    primary_metrics: [
+      { name: 'CPI Combined Inflation (YoY)', default_val: '4.28%', unit: '%' },
+      { name: 'Consumer Food Price Index (CFPI)', default_val: '5.12%', unit: '%' },
+      { name: 'CPI Rural Inflation', default_val: '4.46%', unit: '%' },
+      { name: 'CPI Urban Inflation', default_val: '4.05%', unit: '%' },
+      { name: 'Core Inflation (ex Food & Fuel)', default_val: '3.65%', unit: '%' },
+      { name: 'Housing & Fuel Group', default_val: '3.10%', unit: '%' }
+    ],
+    methodology: 'Price data gathered from 1,181 selected village markets and 1,114 urban markets across all States/UTs via CAPI mobile portal.'
+  },
+  {
+    id: 'tpl_plfs',
+    title: 'Periodic Labour Force Survey (PLFS) Urban Bulletin',
+    division: 'Survey Design & Research Division (SDRD / NSSO)',
+    release_type: 'Quarterly Urban Labour Force Digest',
+    period_options: ['Quarter Ending June 2026', 'Quarter Ending March 2026', 'Quarter Ending Dec 2025'],
+    default_period: 'Quarter Ending June 2026',
+    headline_metric: 'Urban Unemployment Rate (UR, 15+ years)',
+    default_headline_value: '6.4%',
+    primary_metrics: [
+      { name: 'Unemployment Rate (UR - 15+ yrs)', default_val: '6.4%', unit: '%' },
+      { name: 'Female Unemployment Rate (Urban)', default_val: '8.2%', unit: '%' },
+      { name: 'Labour Force Participation Rate (LFPR)', default_val: '50.1%', unit: '%' },
+      { name: 'Worker Population Ratio (WPR)', default_val: '46.9%', unit: '%' },
+      { name: 'Youth Unemployment Rate (15–29 yrs)', default_val: '14.8%', unit: '%' }
+    ],
+    methodology: 'Rotational panel sampling covering 5,720 First Stage Units (FSUs) and 45,600 urban households using 100% CAPI enumeration.'
+  },
+  {
+    id: 'tpl_iip',
+    title: 'Index of Industrial Production (IIP) Release',
+    division: 'Economic Statistics Division (ESD)',
+    release_type: 'Monthly Industrial Output Bulletin',
+    period_options: ['July 2026', 'June 2026', 'May 2026', 'April 2026'],
+    default_period: 'July 2026',
+    headline_metric: 'IIP Overall Growth Rate (Base 2011-12)',
+    default_headline_value: '5.6%',
+    primary_metrics: [
+      { name: 'General IIP Growth (YoY)', default_val: '5.6%', unit: '%' },
+      { name: 'Manufacturing Sector Growth', default_val: '5.8%', unit: '%' },
+      { name: 'Mining Sector Growth', default_val: '4.2%', unit: '%' },
+      { name: 'Electricity Generation Growth', default_val: '6.5%', unit: '%' },
+      { name: 'Capital Goods Segment Growth', default_val: '7.9%', unit: '%' },
+      { name: 'Consumer Non-Durables Growth', default_val: '3.4%', unit: '%' }
+    ],
+    methodology: 'Aggregated from 14 source agencies covering 839 items across 407 item groups with 2011-12 weighting diagram.'
+  }
+];
+
+app.get('/api/policy-briefs/templates', (req, res) => {
+  res.json({
+    success: true,
+    templates: POLICY_BRIEF_TEMPLATES
+  });
+});
+
+app.post('/api/policy-briefs/generate', verifyToken, async (req, res) => {
+  try {
+    const {
+      template_id = 'tpl_gdp',
+      reference_period,
+      metrics = {},
+      format_type = 'Official Press Note',
+      user_notes = ''
+    } = req.body;
+
+    const tpl = POLICY_BRIEF_TEMPLATES.find(t => t.id === template_id) || POLICY_BRIEF_TEMPLATES[0];
+    const period = reference_period || tpl.default_period;
+    const releaseNumber = `PRESS RELEASE NO. ${Math.floor(Math.random() * 50) + 20}/${tpl.division.split(' ')[0]}/2026`;
+    const releaseDate = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' });
+
+    // Merged metrics
+    const finalMetrics = tpl.primary_metrics.map(m => ({
+      name: m.name,
+      value: metrics[m.name] || m.default_val,
+      unit: m.unit
+    }));
+
+    const headlineValue = finalMetrics[0]?.value || tpl.default_headline_value;
+
+    let executiveSummary = '';
+    let policyImplications = '';
+
+    if (tpl.id === 'tpl_gdp') {
+      executiveSummary = `The National Accounts Division (NAD), Ministry of Statistics and Programme Implementation (MoSPI), releases the Quarterly Estimates of Gross Domestic Product (GDP) for ${period}. Real GDP (Constant 2011-12 Prices) in ${period} is estimated to expand by ${headlineValue}, reflecting robust domestic fixed investment, resilient manufacturing activity, and steady rural consumption recovery. Gross Value Added (GVA) at Basic Prices expanded in tandem at ${finalMetrics.find(m => m.name.includes('GVA Growth'))?.value || '7.0%'}, underpinned by resilient secondary and tertiary sectors.`;
+      policyImplications = `1. Monetary Policy: The steady ${headlineValue} expansion validates current macro liquidity conditions, granting the Monetary Policy Committee (MPC) headroom to maintain price stability.\n2. Fiscal Trajectory: Strong nominal output momentum (+${finalMetrics.find(m => m.name.includes('Nominal'))?.value || '11.2%'}) continues to fortify direct and indirect tax collections, supporting the targeted fiscal consolidation roadmap.\n3. Capital Formation: Gross Fixed Capital Formation remaining elevated demonstrates private capex crowding-in following sustained public infrastructure outlay.`;
+    } else if (tpl.id === 'tpl_cpi') {
+      executiveSummary = `The Price Statistics Division, Central Statistics Office (CSO), MoSPI, today releases the All-India Consumer Price Index (CPI) on Base 2012=100 for ${period}. The year-on-year inflation rate based on all-India Consumer Price Index (Combined) stood at ${headlineValue}. Food inflation measured by CFPI recorded ${finalMetrics.find(m => m.name.includes('Food'))?.value || '5.12%'}, reflecting seasonal softening in key vegetable and edible oil sub-indices. Core inflation remained well anchored at ${finalMetrics.find(m => m.name.includes('Core'))?.value || '3.65%'}.`;
+      policyImplications = `1. Inflation Anchor: CPI Combined headline at ${headlineValue} comfortably inhabits the RBI's target band (4.0% ± 2.0%), reinforcing price stability.\n2. Rural-Urban Disparity: The rural-urban inflation spread (${finalMetrics.find(m => m.name.includes('Rural'))?.value} vs ${finalMetrics.find(m => m.name.includes('Urban'))?.value}) highlights the need for targeted distribution buffer interventions in interior mandis.\n3. Supply Chain Governance: Stable core print demonstrates absence of broad-based second-order pricing pressures.`;
+    } else if (tpl.id === 'tpl_plfs') {
+      executiveSummary = `The Survey Design and Research Division (SDRD), National Sample Survey Office (NSSO), MoSPI, presents the Quarterly Bulletin for the Periodic Labour Force Survey (PLFS) for ${period}. In urban areas, the Unemployment Rate (UR) among persons aged 15 years and above in current weekly status (CWS) was recorded at ${headlineValue}. Labour Force Participation Rate (LFPR) improved to ${finalMetrics.find(m => m.name.includes('Participation'))?.value || '50.1%'}, driven by steady female entry in services and technical vocations.`;
+      policyImplications = `1. Employment Elasticity: Urban unemployment easing to ${headlineValue} reflects formalization and robust hiring across organized manufacturing and modern digital services.\n2. Female Workforce Ingress: Female LFPR gains validate nationwide initiatives in flexible gig protection, urban transport safety, and digital upskilling.\n3. Skilling Alignment: Youth unemployment (${finalMetrics.find(m => m.name.includes('Youth'))?.value || '14.8%'}) reinforces the priority of expanding fast-track technical and analytical apprenticeships.`;
+    } else {
+      executiveSummary = `The Economic Statistics Division, MoSPI, releases the Quick Estimates of Index of Industrial Production (IIP) with base 2011-12 for ${period}. The General Index for ${period} stands with year-on-year growth of ${headlineValue}. The manufacturing sub-index registered ${finalMetrics.find(m => m.name.includes('Manufacturing'))?.value || '5.8%'}, led by strong double-digit prints in electrical equipment, automotive fabrication, and pharmaceuticals.`;
+      policyImplications = `1. Industrial Recovery: Robust ${headlineValue} output confirms broad-based manufacturing expansion across basic metals and capital goods.\n2. Infrastructure Outlay: High capital goods growth indicates robust industrial ordering pipelines from renewable energy and transport sectors.\n3. Capacity Utilization: Sustained monthly throughput signals factory operating rates crossing 76%, setting the stage for greenfield private investments.`;
+    }
+
+    res.json({
+      success: true,
+      brief: {
+        id: `PB-${Date.now()}`,
+        template_id: tpl.id,
+        title: tpl.title,
+        division: tpl.division,
+        format_type,
+        release_number: releaseNumber,
+        release_date: releaseDate,
+        embargo_notice: 'EMBARGO: NOT TO BE PUBLISHED OR BROADCAST BEFORE 17:30 HOURS IST',
+        reference_period: period,
+        headline_metric: tpl.headline_metric,
+        headline_value: headlineValue,
+        executive_summary: executiveSummary,
+        metrics_table: finalMetrics,
+        policy_implications: policyImplications,
+        methodology_note: tpl.methodology,
+        signatory: {
+          name: 'Dr. Rajesh K. Verma, ISS',
+          designation: 'Deputy Director General',
+          institution: 'Ministry of Statistics & Programme Implementation, Government of India'
+        },
+        user_notes
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to generate policy brief', details: err.message });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
+
 
 

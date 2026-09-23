@@ -40,6 +40,7 @@ const learnerNav = [
   { name: 'Statistical Sandbox', path: '/playground', icon: Terminal },
   { name: 'CAPI Field Simulator', path: '/capi-simulator', icon: Smartphone },
   { name: 'Cadre Leaderboard', path: '/leaderboard', icon: Trophy },
+  { name: 'Policy Brief Studio', path: '/brief-generator', icon: FileText },
   { name: 'Progress & Analytics', path: '/progress', icon: BarChart2 },
   { name: 'Certificates', path: '/certificates', icon: Award },
 ];

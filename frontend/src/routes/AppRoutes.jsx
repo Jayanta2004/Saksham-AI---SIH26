@@ -29,6 +29,7 @@ import Certificates from '../pages/learner/Certificates';
 import StatisticalPlayground from '../pages/learner/StatisticalPlayground';
 import CapiSimulator from '../pages/learner/CapiSimulator';
 import CadreLeaderboard from '../pages/learner/CadreLeaderboard';
+import PolicyBriefGenerator from '../pages/learner/PolicyBriefGenerator';
 
 // Admin Pages
 import AdminDashboard from '../pages/admin/AdminDashboard';
@@ -78,6 +79,7 @@ const AppRoutes = () => {
         <Route path="/playground" element={<StatisticalPlayground />} />
         <Route path="/capi-simulator" element={<CapiSimulator />} />
         <Route path="/leaderboard" element={<CadreLeaderboard />} />
+        <Route path="/brief-generator" element={<PolicyBriefGenerator />} />
       </Route>
 
       {/* Admin Protected Routes */}
