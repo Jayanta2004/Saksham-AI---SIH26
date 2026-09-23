@@ -32,6 +32,7 @@ import CadreLeaderboard from '../pages/learner/CadreLeaderboard';
 import PolicyBriefGenerator from '../pages/learner/PolicyBriefGenerator';
 import SyntheticDataStudio from '../pages/learner/SyntheticDataStudio';
 import AdaptiveTesting from '../pages/learner/AdaptiveTesting';
+import VivaExaminer from '../pages/learner/VivaExaminer';
 
 // Admin Pages
 import AdminDashboard from '../pages/admin/AdminDashboard';
@@ -84,6 +85,7 @@ const AppRoutes = () => {
         <Route path="/brief-generator" element={<PolicyBriefGenerator />} />
         <Route path="/synthetic-data" element={<SyntheticDataStudio />} />
         <Route path="/adaptive-test" element={<AdaptiveTesting />} />
+        <Route path="/viva-examiner" element={<VivaExaminer />} />
       </Route>
 
       {/* Admin Protected Routes */}

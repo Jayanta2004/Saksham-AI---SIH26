@@ -2645,6 +2645,415 @@ app.post('/api/adaptive-test/submit-answer', verifyToken, (req, res) => {
   });
 });
 
+// ==========================================
+// STEP 11: AI VOICE ROLEPLAY EXAMINER FOR NSSTA VIVA & ORAL EVALUATION
+// ==========================================
+
+const VIVA_SCENARIOS = [
+  {
+    id: 'iss_probationary_viva',
+    title: 'Probationary ISS Officer Comprehensive Viva Voce',
+    cadre: 'Indian Statistical Service (ISS) Probationers',
+    board_name: 'NSSTA Board of Examiners for Statistical Services',
+    lead_examiner: 'Dr. B. K. Rath, ISS (Retd.)',
+    lead_title: 'Former Director General, NSSO & Senior Academician, NSSTA',
+    badge_color: 'from-amber-600 to-red-700',
+    duration_min: 20,
+    passing_score: 75,
+    overview: 'High-stakes oral defense simulating the NSSTA residential viva examination. Scrutinizes multi-stage survey sampling designs, handling non-sampling bias, Horvitz-Thompson weighting, and Section 3 of the Collection of Statistics Act with DPDPA 2023 data governance.',
+    rubric_weights: {
+      technical_depth: 0.4,
+      methodological_accuracy: 0.35,
+      articulation_clarity: 0.25
+    },
+    questions: [
+      {
+        id: 'q1',
+        title: 'Sampling Frame & Multi-Stage Design Defense',
+        question: 'Candidate, explain the theoretical justification for adopting a stratified two-stage design with probability proportional to size (PPS) in the first stage and SRSWOR in the second stage for NSSO socio-economic surveys, as opposed to simple random sampling.',
+        context_hint: 'Highlight variance reduction, cluster heterogeneity, cost efficiency, and frame feasibility for First Stage Units (Census villages / UFS blocks).',
+        official_reference: 'NSSO Instructions to Field Staff Vol I, Section 2 (Concepts & Design), Chapter 3.',
+        key_concepts: ['stratified', 'two-stage', 'pps', 'fsu', 'village', 'variance', 'cost', 'efficiency', 'heterogeneity', 'cluster', 'srswor', 'ssu', 'household']
+      },
+      {
+        id: 'q2',
+        title: 'Non-Sampling Error & Item Non-Response Imputation',
+        question: 'When scrutinizing household consumption expenditure returns from a rural stratum, your field team reports a 14% item non-response on durable goods expenditure. Which statistical imputation methodology would you recommend and how does it safeguard against attenuation bias?',
+        context_hint: 'Discuss Hot-Deck imputation using auxiliary demographic matching vs Multiple Imputation vs Mean Imputation flaws.',
+        official_reference: 'UN Statistics Division Household Sample Surveys Manual, Section 12 (Imputation & Data Editing).',
+        key_concepts: ['hot-deck', 'donor', 'auxiliary', 'multiple imputation', 'mean imputation', 'bias', 'mar', 'mcar', 'variance estimation', 'stratum matching']
+      },
+      {
+        id: 'q3',
+        title: 'Sub-Sample Multiplier & Weight Adjustment Under Casualty',
+        question: 'How does the Multiplier calculation incorporate casualty households in second-stage units? Specifically, write the formula or logic for the adjusted household weight when h_i households were surveyed out of selected H_i in FSU i.',
+        context_hint: 'State the inverse selection probability inflator and the scaling factor (H_i / h_i) applied to sub-sample multipliers.',
+        official_reference: 'NSSO Estimation Procedure for Round 79/80, Paragraph 5.3.',
+        key_concepts: ['multiplier', 'inverse probability', 'weight', 'h_i', 'casualty', 'sub-sample', 'inflator', 'unbiased estimator', 'design weight']
+      },
+      {
+        id: 'q4',
+        title: 'DPDPA 2023 & Microdata Disclosure Control',
+        question: 'Before public release of the unit-level microdata, what specific statistical disclosure control (SDC) mechanisms will you enforce on direct identifiers and quasi-identifiers to comply with Section 3 of the Collection of Statistics Act and DPDPA 2023?',
+        context_hint: 'Detail k-anonymity, l-diversity, top-coding extreme expenditures, geographic aggregation, and Laplace differential privacy.',
+        official_reference: 'MoSPI Microdata Dissemination Policy & Guidelines on Data Anonymization, 2024.',
+        key_concepts: ['k-anonymity', 'l-diversity', 'top-coding', 'suppression', 'differential privacy', 'quasi-identifier', 'direct identifier', 'perturbation', 'geo-masking']
+      }
+    ]
+  },
+  {
+    id: 'fod_supervisory_defense',
+    title: 'Field Operations Division (FOD) Supervisory Defense',
+    cadre: 'Senior Statistical Officers (SSO) & Field Supervisors',
+    board_name: 'FOD Technical Scrutiny & Supervisory Review Panel',
+    lead_examiner: 'Smt. Sunita Verma, ISS',
+    lead_title: 'Additional Director General, NSSO (FOD) Headquarters',
+    badge_color: 'from-blue-600 to-indigo-800',
+    duration_min: 15,
+    passing_score: 70,
+    overview: 'Practical field investigation defense. Evaluates supervisory decision-making under non-contact refusal, CAPI geo-tagging timestamp audits, schedule scrutiny consistency checks, and enumerator bias mitigation.',
+    rubric_weights: {
+      technical_depth: 0.35,
+      methodological_accuracy: 0.4,
+      articulation_clarity: 0.25
+    },
+    questions: [
+      {
+        id: 'fod_q1',
+        title: 'Urban Non-Contact & Refusal Protocol',
+        question: 'During the Annual Survey of Unincorporated Sector Enterprises (ASUSE), an urban survey block shows a 35% non-contact and refusal rate. What is the mandatory FOD standard operating protocol before declaring a casualty enterprise?',
+        context_hint: 'Recall the 3-visit requirement across varied time slots, supervisory re-visits, local authority liaison, and casualty substitution rules.',
+        official_reference: 'NSSO (FOD) Field Manual on ASUSE, Chapter 4: Casualty Protocols.',
+        key_concepts: ['three visits', 'varied time', 'supervisory visit', 'casualty', 'substitution', 'refusal schedule', 'local liaison', 're-canvassing']
+      },
+      {
+        id: 'fod_q2',
+        title: 'CAPI Geo-fencing & Timestamp Audit',
+        question: 'During digital scrutiny of CAPI tablet uploads, you detect that an enumerator completed 8 household schedules within 42 minutes with identical GPS coordinates. How do you investigate and validate this anomaly?',
+        context_hint: 'Explain tablet telemetry logs, time-per-question audit, spot-check re-interviewing, and zero-tolerance integrity protocol.',
+        official_reference: 'CAPI Quality Assurance Framework & Server-Side Telemetry Protocol, MoSPI 2023.',
+        key_concepts: ['telemetry', 'gps', 'geo-fencing', 'timestamp', 'scrutiny', 'spot check', 're-interview', 'sub-sample verification', 'integrity']
+      },
+      {
+        id: 'fod_q3',
+        title: 'Schedule Scrutiny Discrepancy Reconciliation',
+        question: 'In a rural household schedule, reported monthly food expenditure exceeds total household gross income by 220%, with no reported loan or asset liquidation. What systematic probing questions must the field investigator ask?',
+        context_hint: 'Identify home-grown produce consumption, transfers/remittances, seasonal earnings, and informal borrowing omission.',
+        official_reference: 'HCES Schedule Scrutiny Manual, Internal Consistency Checks.',
+        key_concepts: ['home grown', 'own farm produce', 'remittance', 'informal loan', 'seasonal', 'imputed value', 'reconciliation', 'probing']
+      },
+      {
+        id: 'fod_q4',
+        title: 'Enumerator Age-Heaping & Digital Audit',
+        question: 'A sub-regional office reports digit preference bias in age recording (heaping at multiples of 5, Myers index > 18). What institutional corrective action and supervisory retraining do you mandate?',
+        context_hint: 'Historical event calendar reference, birth certificate verification, enumerator refresher, and automated CAPI soft-validation warnings.',
+        official_reference: 'Demographic Scrutiny Guidelines, NSSTA Field Training Module 7.',
+        key_concepts: ['myers index', 'whipples index', 'event calendar', 'birth certificate', 'heaping', 'soft check', 'capi validation', 'retraining']
+      }
+    ]
+  },
+  {
+    id: 'nad_methodology_defense',
+    title: 'National Accounts & Macroeconomic Statistics Defense',
+    cadre: 'National Accounts Division (NAD) Economists & ISS Officers',
+    board_name: 'NAD Advisory Committee on National Accounts Compilation',
+    lead_examiner: 'Dr. Arvind Swaminathan',
+    lead_title: 'Senior Economic Adviser & Member, National Statistical Commission',
+    badge_color: 'from-emerald-600 to-teal-800',
+    duration_min: 20,
+    passing_score: 80,
+    overview: 'Rigorous defense of System of National Accounts (SNA 2008) principles, GVA compilation, FISIM allocation across sectors, MCA21 database scrubbing, and annual chain-linking methodology.',
+    rubric_weights: {
+      technical_depth: 0.45,
+      methodological_accuracy: 0.4,
+      articulation_clarity: 0.15
+    },
+    questions: [
+      {
+        id: 'nad_q1',
+        title: 'FISIM Allocation Across User Sectors',
+        question: 'State the exact SNA 2008 theoretical definition of Financial Intermediation Services Indirectly Measured (FISIM), and explain whether FISIM allocated to households for housing loans is intermediate or final consumption.',
+        context_hint: 'Reference reference rate of interest, loan/deposit balances, owner-occupied dwellings service production as intermediate consumption.',
+        official_reference: 'System of National Accounts 2008, Chapter 6 (The Production Account), Paragraphs 6.163-6.169.',
+        key_concepts: ['fisim', 'reference rate', 'pure interest', 'service charge', 'intermediate consumption', 'dwelling', 'housing loan', 'sna 2008']
+      },
+      {
+        id: 'nad_q2',
+        title: 'MCA21 Database Scrubbing & Non-Filing Companies',
+        question: 'In compiling Gross Value Added for the private corporate sector from the MCA21 database, how does CSO address non-filing companies and active shell entities for the reference fiscal year?',
+        context_hint: 'Explain blowing-up factors using paid-up capital (PUC) ratios, active status filtering, and multi-year reporting lags.',
+        official_reference: 'Sources and Methods: New Series of National Accounts (Base 2011-12), CSO MoSPI.',
+        key_concepts: ['mca21', 'paid up capital', 'puc', 'blowing up factor', 'active companies', 'non-filers', 'extrapolation', 'scrubbing']
+      },
+      {
+        id: 'nad_q3',
+        title: 'Chain Volume Measures vs Fixed Base Laspeyres',
+        question: 'What are the statistical and economic justifications for transitioning from fixed base Laspeyres indices to Annual Chain-Linked Volume Measures (Chain Fisher/Törnqvist) in India GDP accounting?',
+        context_hint: 'Substitution bias reduction, structural shift reflection, elimination of base-year price distortion, and international comparability.',
+        official_reference: 'Report of the Advisory Committee on National Accounts Statistics (ACNAS), 2023.',
+        key_concepts: ['chain linking', 'laspeyres', 'substitution bias', 'paasche', 'fisher index', 'relative price', 'structural shift', 'rebasing']
+      },
+      {
+        id: 'nad_q4',
+        title: 'Capitalization of R&D and Software Under SNA 2008',
+        question: 'Under SNA 2008, how does the capitalization of Intellectual Property Products (IPP)—specifically R&D and software—alter Gross Fixed Capital Formation (GFCF) and Consumption of Fixed Capital (CFC)?',
+        context_hint: 'Formerly intermediate consumption now reclassified as GFCF, increasing headline GDP level and expanding capital stock depreciation.',
+        official_reference: 'SNA 2008 Chapter 10: Intellectual Property Products & Asset Boundary.',
+        key_concepts: ['intellectual property', 'r&d', 'software', 'gfcf', 'intermediate consumption', 'capital formation', 'cfc', 'depreciation', 'gdp level']
+      }
+    ]
+  }
+];
+
+// In-memory viva sessions
+const VIVA_SESSIONS = new Map();
+
+// 1. Get Viva Scenarios
+app.get('/api/viva/scenarios', (req, res) => {
+  const summary = VIVA_SCENARIOS.map(s => ({
+    id: s.id,
+    title: s.title,
+    cadre: s.cadre,
+    board_name: s.board_name,
+    lead_examiner: s.lead_examiner,
+    lead_title: s.lead_title,
+    badge_color: s.badge_color,
+    duration_min: s.duration_min,
+    passing_score: s.passing_score,
+    overview: s.overview,
+    question_count: s.questions.length
+  }));
+  res.json({ success: true, scenarios: summary });
+});
+
+// 2. Start Viva Session
+app.post('/api/viva/start', (req, res) => {
+  const { scenario_id } = req.body;
+  const scenario = VIVA_SCENARIOS.find(s => s.id === scenario_id) || VIVA_SCENARIOS[0];
+  
+  const sessionId = `viva_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
+  const session = {
+    sessionId,
+    scenarioId: scenario.id,
+    startTime: new Date().toISOString(),
+    currentIndex: 0,
+    turns: [],
+    scenario
+  };
+
+  VIVA_SESSIONS.set(sessionId, session);
+
+  const initialQuestion = scenario.questions[0];
+
+  res.json({
+    success: true,
+    session_id: sessionId,
+    scenario: {
+      id: scenario.id,
+      title: scenario.title,
+      board_name: scenario.board_name,
+      lead_examiner: scenario.lead_examiner,
+      lead_title: scenario.lead_title,
+      total_questions: scenario.questions.length
+    },
+    current_turn: {
+      index: 0,
+      total: scenario.questions.length,
+      question_id: initialQuestion.id,
+      title: initialQuestion.title,
+      question: initialQuestion.question,
+      context_hint: initialQuestion.context_hint,
+      examiner_speech: `Welcome to the oral examination board, Candidate. Let us proceed with question one. ${initialQuestion.question}`
+    }
+  });
+});
+
+// 3. Evaluate Viva Turn (Oral Defense Response)
+app.post('/api/viva/evaluate-turn', (req, res) => {
+  const { session_id, response_text } = req.body;
+  const session = VIVA_SESSIONS.get(session_id);
+
+  if (!session) {
+    return res.status(404).json({ error: 'Session not found or expired.' });
+  }
+
+  const scenario = session.scenario;
+  const currentQ = scenario.questions[session.currentIndex];
+  const text = (response_text || '').trim();
+  const lower = text.toLowerCase();
+
+  // Keyword / Concept Match Evaluation
+  let matchCount = 0;
+  const matchedConcepts = [];
+  const missedConcepts = [];
+
+  currentQ.key_concepts.forEach(concept => {
+    if (lower.includes(concept)) {
+      matchCount++;
+      matchedConcepts.push(concept);
+    } else {
+      missedConcepts.push(concept);
+    }
+  });
+
+  const matchRatio = matchCount / Math.max(1, currentQ.key_concepts.length);
+  const wordCount = text.split(/\s+/).filter(Boolean).length;
+
+  // Depth & Rubric Calculation
+  let depth = 2.0;
+  if (matchRatio >= 0.55 || wordCount > 60) depth = 4.6;
+  else if (matchRatio >= 0.35 || wordCount > 35) depth = 3.8;
+  else if (matchRatio >= 0.18 || wordCount > 18) depth = 3.0;
+  else depth = 2.1;
+
+  let accuracy = 2.2;
+  if (matchRatio >= 0.5) accuracy = 4.8;
+  else if (matchRatio >= 0.3) accuracy = 3.9;
+  else if (matchRatio >= 0.15) accuracy = 3.1;
+  else accuracy = 2.0;
+
+  let articulation = 2.5;
+  if (wordCount >= 40) articulation = 4.7;
+  else if (wordCount >= 20) articulation = 3.9;
+  else articulation = 3.0;
+
+  // Examiner remarks synthesis
+  let remark = '';
+  let speechFeedback = '';
+  if (matchRatio >= 0.45 && wordCount >= 35) {
+    remark = `Commendable technical articulation. You correctly identified foundational tenets (${matchedConcepts.slice(0, 3).join(', ')}). The Board notes your methodological clarity.`;
+    speechFeedback = `Well articulated, Candidate. You demonstrated sound grasp of the concepts. Notice the reference manual citation. Let us move forward.`;
+  } else if (matchRatio >= 0.2 || wordCount >= 20) {
+    remark = `Acceptable basic understanding, though lacking analytical rigor. You mentioned ${matchedConcepts.slice(0, 2).join(', ') || 'general principles'}, but omitted crucial official parameters such as ${missedConcepts.slice(0, 2).join(' and ')}.`;
+    speechFeedback = `Adequate, but you must be more precise with MoSPI standard operational procedures. Pay attention to the technical manual guidelines.`;
+  } else {
+    remark = `Sub-optimal oral defense. Response fails to cite mandatory statistical protocols. Missed core mechanisms: ${missedConcepts.slice(0, 3).join(', ')}. Scrutiny of official guidelines required.`;
+    speechFeedback = `Candidate, your answer lacks the required technical depth for this level of service. You must review the relevant manual chapters thoroughly.`;
+  }
+
+  const turnScore = Math.round((depth * 0.4 + accuracy * 0.4 + articulation * 0.2) * 20); // 0-100 scale
+
+  const turnRecord = {
+    turn_index: session.currentIndex,
+    question_title: currentQ.title,
+    question: currentQ.question,
+    candidate_response: text,
+    matched_concepts: matchedConcepts,
+    missed_concepts: missedConcepts.slice(0, 4),
+    official_reference: currentQ.official_reference,
+    scores: {
+      technical_depth: depth,
+      methodological_accuracy: accuracy,
+      articulation_clarity: articulation,
+      turn_score_pct: turnScore
+    },
+    examiner_remarks: remark
+  };
+
+  session.turns.push(turnRecord);
+  session.currentIndex += 1;
+
+  const isComplete = session.currentIndex >= scenario.questions.length;
+
+  if (isComplete) {
+    // Generate final certificate dossier
+    const avgScore = Math.round(session.turns.reduce((acc, t) => acc + t.scores.turn_score_pct, 0) / session.turns.length);
+    const avgDepth = (session.turns.reduce((acc, t) => acc + t.scores.technical_depth, 0) / session.turns.length).toFixed(1);
+    const avgAccuracy = (session.turns.reduce((acc, t) => acc + t.scores.methodological_accuracy, 0) / session.turns.length).toFixed(1);
+    const avgArticulation = (session.turns.reduce((acc, t) => acc + t.scores.articulation_clarity, 0) / session.turns.length).toFixed(1);
+
+    let verdict = 'PROVISIONAL CLEARANCE';
+    let verdictColor = 'text-amber-500';
+    let recommendation = 'Candidate has fulfilled basic requirements. Recommended to complete 2 in-service iGOT refresher modules prior to independent field posting.';
+
+    if (avgScore >= 80) {
+      verdict = 'PASSED WITH DISTINCTION';
+      verdictColor = 'text-emerald-500';
+      recommendation = 'Exceptional conceptual mastery and regulatory command. Fully recommended for immediate deployment in mission-critical statistical divisions and international representation.';
+    } else if (avgScore < scenario.passing_score) {
+      verdict = 'RE-EVALUATION REQUIRED';
+      verdictColor = 'text-red-500';
+      recommendation = 'Candidate did not meet the minimum NSSTA viva threshold (75%). Deputed for a 3-week intensive residential refresher course at NSSTA Greater Noida.';
+    }
+
+    const finalDossier = {
+      session_id,
+      scenario_title: scenario.title,
+      board_name: scenario.board_name,
+      lead_examiner: scenario.lead_examiner,
+      lead_title: scenario.lead_title,
+      date_certified: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }),
+      overall_score: avgScore,
+      verdict,
+      verdictColor,
+      recommendation,
+      rubric_summary: {
+        technical_depth: parseFloat(avgDepth),
+        methodological_accuracy: parseFloat(avgAccuracy),
+        articulation_clarity: parseFloat(avgArticulation)
+      },
+      turns: session.turns,
+      recommended_courses: [
+        {
+          id: 'igot-nssta-801',
+          title: 'Advanced Multi-Stage Sampling & Estimation (NSSTA Module)',
+          provider: 'iGOT Karmayogi / NSSTA',
+          duration: '6 Hours',
+          competency: 'Sample Survey Design & Weighting'
+        },
+        {
+          id: 'igot-dpdpa-902',
+          title: 'Official Statistics Governance under DPDPA 2023',
+          provider: 'MoSPI Training Division',
+          duration: '4 Hours',
+          competency: 'Data Governance & Microdata SDC'
+        },
+        {
+          id: 'igot-sna-601',
+          title: 'System of National Accounts (SNA 2008) In-Depth',
+          provider: 'IMF / National Accounts Division',
+          duration: '8 Hours',
+          competency: 'Macroeconomic Accounting'
+        }
+      ]
+    };
+
+    return res.json({
+      success: true,
+      is_complete: true,
+      last_turn_feedback: {
+        scores: turnRecord.scores,
+        examiner_remarks: remark,
+        speech_feedback: `The examination is concluded. ${speechFeedback} The Board will now render its official evaluation dossier.`,
+        official_reference: currentQ.official_reference
+      },
+      final_dossier: finalDossier
+    });
+  }
+
+  // Next question
+  const nextQ = scenario.questions[session.currentIndex];
+  res.json({
+    success: true,
+    is_complete: false,
+    last_turn_feedback: {
+      scores: turnRecord.scores,
+      examiner_remarks: remark,
+      speech_feedback: speechFeedback,
+      official_reference: currentQ.official_reference
+    },
+    next_turn: {
+      index: session.currentIndex,
+      total: scenario.questions.length,
+      question_id: nextQ.id,
+      title: nextQ.title,
+      question: nextQ.question,
+      context_hint: nextQ.context_hint,
+      examiner_speech: `Let us proceed to the next item, Question ${session.currentIndex + 1}. ${nextQ.question}`
+    }
+  });
+});
+
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
