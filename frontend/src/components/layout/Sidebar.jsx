@@ -22,7 +22,8 @@ import {
   Terminal,
   Smartphone,
   Trophy,
-  UserCheck
+  UserCheck,
+  MapPin
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -53,6 +54,7 @@ const adminNav = [
   { name: 'Assessment Studio', path: '/admin/assessments', icon: CheckSquare },
   { name: 'RAG Content Studio', path: '/admin/content', icon: Layers },
   { name: 'Division Analytics', path: '/admin/analytics', icon: BarChart2 },
+  { name: 'Geo-Statistical Map', path: '/admin/geo-readiness', icon: MapPin },
   { name: 'Reports', path: '/admin/reports', icon: FileText },
   { name: 'System Settings', path: '/admin/settings', icon: Settings },
 ];

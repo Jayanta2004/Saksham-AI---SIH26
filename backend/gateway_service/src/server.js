@@ -1738,7 +1738,230 @@ app.post('/api/admin/deputation/create-cohort', verifyToken, requireRole(['role_
   });
 });
 
+// ==================== GEO-STATISTICAL READINESS & GIS CAPABILITY ====================
+const GEO_ZONES_DATA = [
+  {
+    id: 'zone_north',
+    name: 'Northern Statistical Zone',
+    code: 'NZ',
+    color: '#3b82f6',
+    hq: 'New Delhi (Sardar Patel Bhawan)',
+    readiness_index: 89.2,
+    tier: 'High Readiness',
+    total_personnel: 3420,
+    iss_supervisors: 142,
+    sss_enumerators: 3278,
+    ros_count: 11,
+    sros_count: 26,
+    capi_sync_rate: 96.4,
+    gis_ufs_digitized: 94.1,
+    primary_language: 'Hindi, Punjabi, Dogri',
+    states: ['Delhi', 'Uttar Pradesh', 'Punjab', 'Haryana', 'Rajasthan', 'Himachal Pradesh', 'Jammu & Kashmir', 'Ladakh', 'Uttarakhand'],
+    capabilities: {
+      'CAPI Mobile App & Offline Sync': 95.0,
+      'UFS GIS Block Digitization': 92.4,
+      'Multilingual Household Probing': 88.5,
+      'Non-Response Correction': 86.2,
+      'Price Statistics & Rural CPI': 84.0
+    },
+    deficits: [
+      { skill: 'Rural CPI Market Price Quotation Verification', gap: -0.8, priority: 'Medium' },
+      { skill: 'Complex Multi-Stage PPS Weight Calibration', gap: -0.6, priority: 'Low' }
+    ],
+    recent_surveys: ['PLFS 2025-26', 'Annual Survey of Unincorporated Enterprises (ASUSE)', 'Periodic CPI Basket Update']
+  },
+  {
+    id: 'zone_west',
+    name: 'Western Statistical Zone',
+    code: 'WZ',
+    color: '#10b981',
+    hq: 'Mumbai (Old CGO Building)',
+    readiness_index: 87.5,
+    tier: 'High Readiness',
+    total_personnel: 2890,
+    iss_supervisors: 118,
+    sss_enumerators: 2772,
+    ros_count: 9,
+    sros_count: 22,
+    capi_sync_rate: 93.8,
+    gis_ufs_digitized: 91.5,
+    primary_language: 'Marathi, Gujarati, Konkani',
+    states: ['Maharashtra', 'Gujarat', 'Goa', 'Daman & Diu', 'Dadra & Nagar Haveli'],
+    capabilities: {
+      'CAPI Mobile App & Offline Sync': 92.0,
+      'UFS GIS Block Digitization': 89.0,
+      'Multilingual Household Probing': 87.2,
+      'Non-Response Correction': 85.0,
+      'Annual Survey of Industries (ASI)': 94.5
+    },
+    deficits: [
+      { skill: 'Urban Slum Frame Mapping in Megacities (Mumbai/Pune)', gap: -1.2, priority: 'High' },
+      { skill: 'Factory Schedule Balance Sheet Reconciliation', gap: -0.7, priority: 'Medium' }
+    ],
+    recent_surveys: ['ASI 2024-25', 'HCES Urban Frame Pilot', 'Services Sector Enterprise Survey']
+  },
+  {
+    id: 'zone_south',
+    name: 'Southern Statistical Zone',
+    code: 'SZ',
+    color: '#8b5cf6',
+    hq: 'Bengaluru (Kendriya Sadan)',
+    readiness_index: 91.4,
+    tier: 'Exemplary',
+    total_personnel: 3150,
+    iss_supervisors: 135,
+    sss_enumerators: 3015,
+    ros_count: 10,
+    sros_count: 24,
+    capi_sync_rate: 97.8,
+    gis_ufs_digitized: 96.2,
+    primary_language: 'Kannada, Tamil, Telugu, Malayalam',
+    states: ['Karnataka', 'Tamil Nadu', 'Kerala', 'Andhra Pradesh', 'Telangana', 'Puducherry', 'Lakshadweep'],
+    capabilities: {
+      'CAPI Mobile App & Offline Sync': 98.2,
+      'UFS GIS Block Digitization': 95.8,
+      'Multilingual Household Probing': 92.4,
+      'Non-Response Correction': 89.6,
+      'Time Use Survey (TUS) Methodology': 93.1
+    },
+    deficits: [
+      { skill: 'Coastal Fishing Hamlet Frame Updates', gap: -0.5, priority: 'Low' }
+    ],
+    recent_surveys: ['All-India Time Use Survey', 'PLFS High-Frequency Urban Sample', 'CPI Rural Quotation Survey']
+  },
+  {
+    id: 'zone_east',
+    name: 'Eastern Statistical Zone',
+    code: 'EZ',
+    color: '#f59e0b',
+    hq: 'Kolkata (Mahalanobis Bhawan)',
+    readiness_index: 83.6,
+    tier: 'Moderate Readiness',
+    total_personnel: 2450,
+    iss_supervisors: 98,
+    sss_enumerators: 2352,
+    ros_count: 8,
+    sros_count: 18,
+    capi_sync_rate: 88.5,
+    gis_ufs_digitized: 84.0,
+    primary_language: 'Bengali, Odia, Hindi, Santhali',
+    states: ['West Bengal', 'Bihar', 'Odisha', 'Jharkhand', 'Andaman & Nicobar Islands'],
+    capabilities: {
+      'CAPI Mobile App & Offline Sync': 86.4,
+      'UFS GIS Block Digitization': 83.2,
+      'Multilingual Household Probing': 82.0,
+      'Non-Response Correction': 81.5,
+      'Agricultural Statistics & Crop Cutting': 89.0
+    },
+    deficits: [
+      { skill: 'Floodplain UFS Inundation Frame Resampling', gap: -1.4, priority: 'High' },
+      { skill: 'Tablet Offline Battery Lifecycle Management', gap: -1.0, priority: 'High' }
+    ],
+    recent_surveys: ['Agricultural Census Pilot', 'Rural Labour Enquiry', 'HCES Round 80']
+  },
+  {
+    id: 'zone_central',
+    name: 'Central Statistical Zone',
+    code: 'CZ',
+    color: '#06b6d4',
+    hq: 'Bhopal (Paryavas Bhawan)',
+    readiness_index: 80.2,
+    tier: 'Needs Enhancement',
+    total_personnel: 1680,
+    iss_supervisors: 62,
+    sss_enumerators: 1618,
+    ros_count: 5,
+    sros_count: 12,
+    capi_sync_rate: 84.2,
+    gis_ufs_digitized: 79.5,
+    primary_language: 'Hindi, Gondi, Bundelkhandi',
+    states: ['Madhya Pradesh', 'Chhattisgarh'],
+    capabilities: {
+      'CAPI Mobile App & Offline Sync': 82.5,
+      'UFS GIS Block Digitization': 78.4,
+      'Multilingual Household Probing': 79.2,
+      'Non-Response Correction': 77.0,
+      'Tribal Belt Household Enumeration': 84.1
+    },
+    deficits: [
+      { skill: 'Tribal Hamlet Geotagging & Boundary Verification', gap: -1.6, priority: 'Critical' },
+      { skill: 'CAPI Bluetooth Dongle Synchronization', gap: -1.2, priority: 'High' }
+    ],
+    recent_surveys: ['Periodic Labour Force Survey', 'Domestic Tourism Expenditure Survey']
+  },
+  {
+    id: 'zone_northeast',
+    name: 'North-Eastern Statistical Zone',
+    code: 'NEZ',
+    color: '#ec4899',
+    hq: 'Guwahati (NEDFi House)',
+    readiness_index: 76.8,
+    tier: 'Targeted Focus Region',
+    total_personnel: 690,
+    iss_supervisors: 28,
+    sss_enumerators: 662,
+    ros_count: 5,
+    sros_count: 10,
+    capi_sync_rate: 78.4,
+    gis_ufs_digitized: 72.0,
+    primary_language: 'Assamese, Bodo, Khasi, Garo, Mizo, Manipuri',
+    states: ['Assam', 'Meghalaya', 'Tripura', 'Manipur', 'Nagaland', 'Mizoram', 'Arunachal Pradesh', 'Sikkim'],
+    capabilities: {
+      'CAPI Mobile App & Offline Sync': 76.0,
+      'UFS GIS Block Digitization': 71.5,
+      'Multilingual Household Probing': 79.8,
+      'Non-Response Correction': 73.2,
+      'Hilly Terrain Enumeration Logistics': 83.5
+    },
+    deficits: [
+      { skill: 'Zero-Connectivity Offline CAPI Multi-Day Vaulting', gap: -1.8, priority: 'Critical' },
+      { skill: 'Bhuvan Satellite Village Boundary Georeferencing', gap: -1.5, priority: 'Critical' },
+      { skill: 'Indigenous Dialect Translation Verification', gap: -1.1, priority: 'High' }
+    ],
+    recent_surveys: ['Hill Economy Sample Survey', 'Special Livestock Survey', 'PLFS North-East Booster']
+  }
+];
+
+app.get('/api/geo/readiness-zones', (req, res) => {
+  const allIndiaAvg = (GEO_ZONES_DATA.reduce((acc, z) => acc + z.readiness_index, 0) / GEO_ZONES_DATA.length).toFixed(1);
+  const totalStaff = GEO_ZONES_DATA.reduce((acc, z) => acc + z.total_personnel, 0);
+  const totalROs = GEO_ZONES_DATA.reduce((acc, z) => acc + z.ros_count, 0);
+  const totalSROs = GEO_ZONES_DATA.reduce((acc, z) => acc + z.sros_count, 0);
+
+  res.json({
+    success: true,
+    all_india_average_index: parseFloat(allIndiaAvg),
+    total_field_staff: totalStaff,
+    total_regional_offices: totalROs,
+    total_sub_regional_offices: totalSROs,
+    average_capi_sync_rate: 89.9,
+    zones: GEO_ZONES_DATA
+  });
+});
+
+app.post('/api/geo/deploy-mission', verifyToken, requireRole(['role_sysadmin', 'role_trainer']), (req, res) => {
+  const { zone_id, focus_deficits = [], target_ros = [], lead_faculty = 'Dr. Radhika Sen, ISS' } = req.body;
+  const targetZone = GEO_ZONES_DATA.find(z => z.id === zone_id) || GEO_ZONES_DATA[0];
+
+  res.json({
+    success: true,
+    mission_id: `MIS-GEO-${Date.now()}`,
+    message: `Regional Training Mission deployed successfully to ${targetZone.name}.`,
+    details: {
+      zone: targetZone.name,
+      hq: targetZone.hq,
+      lead_faculty,
+      dispatch_date: '15 Oct 2026',
+      duration: '7 Days Intensive Field Workshop',
+      focus_modules: focus_deficits.length > 0 ? focus_deficits : targetZone.deficits.map(d => d.skill),
+      estimated_trainees_impacted: Math.min(250, targetZone.total_personnel),
+      venues: target_ros.length > 0 ? target_ros : [`NSSO RO ${targetZone.hq.split('(')[0].trim()}`]
+    }
+  });
+});
+
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
+
 

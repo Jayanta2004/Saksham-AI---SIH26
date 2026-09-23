@@ -39,6 +39,7 @@ import ContentStudio from '../pages/admin/ContentStudio';
 import AdminReports from '../pages/admin/AdminReports';
 import AdminSettings from '../pages/admin/AdminSettings';
 import DeputationMatcher from '../pages/admin/DeputationMatcher';
+import GeoReadinessMap from '../pages/admin/GeoReadinessMap';
 
 const AppRoutes = () => {
   return (
@@ -91,6 +92,7 @@ const AppRoutes = () => {
         <Route path="/admin/users" element={<UserManagement />} />
         <Route path="/admin/competencies" element={<CompetencyFramework />} />
         <Route path="/admin/deputation" element={<DeputationMatcher />} />
+        <Route path="/admin/geo-readiness" element={<GeoReadinessMap />} />
         <Route path="/admin/courses" element={<RecommendedCourses />} />
         <Route path="/admin/training" element={<TrainingProgrammes />} />
         <Route path="/admin/assessments" element={<Assessments />} />
