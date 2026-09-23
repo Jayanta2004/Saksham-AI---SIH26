@@ -260,7 +260,117 @@ The platform includes 1-click quick login buttons on the `/login` page for easy 
 
 ---
 
-## 9. Quick Start Guide
+---
+
+## 9. Environment Variables & Setup Guide (`.env.example`)
+
+Saksham AI uses a 3-tier microservice architecture. Each service has its own dedicated `.env` configuration file. A root template is provided in [`.env.example`](file:///j:/Coding/WEB%20DEV/IITM/SIH26/Saksham-AI---SIH26/.env.example).
+
+### Microservices Configuration Structure
+
+```
+Saksham-AI---SIH26/
+├── .env.example                          # Root aggregated template
+├── backend/
+│   ├── ai_service/
+│   │   ├── .env.example                  # AI Engine configuration template
+│   │   └── .env                          # Local AI Engine environment (Git-ignored)
+│   └── gateway_service/
+│       ├── .env.example                  # Gateway & DB configuration template
+│       └── .env                          # Local Gateway environment (Git-ignored)
+└── frontend/
+    ├── .env.example                      # React Vite configuration template
+    └── .env                              # Local Frontend environment (Git-ignored)
+```
+
+### Quick Setup: Create `.env` Files from Templates
+
+#### Windows (Command Prompt)
+```cmd
+copy backend\ai_service\.env.example backend\ai_service\.env
+copy backend\gateway_service\.env.example backend\gateway_service\.env
+copy frontend\.env.example frontend\.env
+```
+
+#### Windows (PowerShell)
+```powershell
+Copy-Item backend\ai_service\.env.example backend\ai_service\.env
+Copy-Item backend\gateway_service\.env.example backend\gateway_service\.env
+Copy-Item frontend\.env.example frontend\.env
+```
+
+#### Linux / macOS
+```bash
+cp backend/ai_service/.env.example backend/ai_service/.env
+cp backend/gateway_service/.env.example backend/gateway_service/.env
+cp frontend/.env.example frontend/.env
+```
+
+---
+
+### Detailed Environment Variables Reference
+
+#### 1. Node.js API Gateway (`backend/gateway_service/.env`)
+
+| Variable | Required | Default / Example | Purpose & Notes |
+| :--- | :---: | :--- | :--- |
+| `PORT` | Yes | `5000` | Port on which the Gateway Express server listens |
+| `NODE_ENV` | Yes | `development` / `production` | Runtime mode |
+| `JWT_SECRET` | Yes | `saksham_super_secret_jwt_key_...` | Cryptographic secret for signing RBAC session tokens |
+| `DATA_ENCRYPTION_KEY` | Yes | `saksham_ai_mospi_secure_key_2026_32char!!` | 32-character key for AES-256-CBC field encryption |
+| `PYTHON_AI_URL` | Yes | `http://127.0.0.1:8000` | Internal URL to Python FastAPI microservice |
+| `DATABASE_URL` | Yes | `postgresql://user:pass@host/db?sslmode=require` | PostgreSQL connection URI (Neon DB or local Postgres) |
+| `REDIS_URL` | Yes | `rediss://default:token@host:6379` | Redis connection URI (Upstash Redis or local Redis) |
+
+#### 2. Email OTP Delivery Configuration (Choose One Option)
+
+> [!IMPORTANT]
+> **Cloud Deployment Notice (Render Free Tier):** Render Free Tier strictly blocks outbound TCP ports `25`, `465`, and `587`. For cloud deployments on Render Free Tier, use **Option B (Brevo)** or **Option C (Resend)**, which communicate over HTTPS Port 443. Check your deployed server status anytime at `GET /api/auth/email-health`.
+
+* **Option A: Gmail / Standard SMTP (Best for Localhost & Paid Cloud / VPS)**
+  ```env
+  SMTP_HOST=smtp.gmail.com
+  SMTP_PORT=587
+  SMTP_USER=your_gmail_address@gmail.com
+  SMTP_PASS=your_16_character_google_app_password
+  SMTP_FROM="Saksham AI - MoSPI" <your_gmail_address@gmail.com>
+  ```
+  *(Generate an App Password at: Google Account → Security → 2-Step Verification → App passwords)*
+
+* **Option B: Brevo REST API (RECOMMENDED for Render Free Tier — No Domain Needed)**
+  Sends 300 free emails/day to **any recipient email address globally** without custom domain DNS setup:
+  ```env
+  BREVO_API_KEY=xkeysib-your_brevo_api_key_here
+  BREVO_FROM_EMAIL=your_verified_gmail_address@gmail.com
+  ```
+  *(Sign up at [brevo.com](https://www.brevo.com) → Profile → SMTP & API → API Keys)*
+
+* **Option C: Resend API (HTTPS Port 443)**
+  ```env
+  RESEND_API_KEY=re_your_api_key_here
+  RESEND_FROM="Saksham AI <onboarding@resend.dev>"
+  ```
+  > [!WARNING]
+  > When using `onboarding@resend.dev`, Resend's free sandbox policy **only delivers to your registered account email**. To send OTPs to any email address, verify a custom domain at [resend.com/domains](https://resend.com/domains) and set `RESEND_FROM="Saksham AI <otp@yourdomain.com>"`.
+
+#### 3. Python AI Engine (`backend/ai_service/.env`)
+
+| Variable | Required | Default / Example | Purpose & Notes |
+| :--- | :---: | :--- | :--- |
+| `PORT` | Yes | `8000` | Port on which the FastAPI AI engine runs |
+| `HOST` | Yes | `127.0.0.1` / `0.0.0.0` | Bind host address |
+| `GEMINI_API_KEY` | Optional | `AQ.Ab8RN6...` | Google Gemini API key for conversational AI & quiz generation |
+| `OPENAI_API_KEY` | Optional | `sk-proj-...` | OpenAI API key for embeddings, RAG & LLM evaluation |
+
+#### 4. Frontend Portal (`frontend/.env`)
+
+| Variable | Required | Default / Example | Purpose & Notes |
+| :--- | :---: | :--- | :--- |
+| `VITE_API_URL` | Yes | `http://localhost:5000` | Base URL pointing to the Node.js API Gateway (use live cloud URL for production) |
+
+---
+
+## 10. Quick Start Guide
 
 ### Option A: 1-Click Launch (Windows)
 Double-click `start_all.bat` or run:
@@ -290,7 +400,8 @@ cd backend/gateway_service
 npm install
 npm start
 ```
-*Gateway Health Status:* [http://localhost:5000/health](http://localhost:5000/health)
+*Gateway Health Status:* [http://localhost:5000/health](http://localhost:5000/health)  
+*Email Diagnostic Status:* [http://localhost:5000/api/auth/email-health](http://localhost:5000/api/auth/email-health)
 
 #### 3. Frontend Portal (Port 3000)
 ```bash
@@ -302,7 +413,7 @@ npm run dev
 
 ---
 
-## 10. Security, Compliance & Data Governance
+## 11. Security, Compliance & Data Governance
 
 * **AES-256-CBC Field Encryption:** National identifiers and sensitive employee records are encrypted before database persistence.
 * **DPDPA 2023 Compliance:** Built strictly following India's Digital Personal Data Protection Act with complete user data isolation.
@@ -312,7 +423,7 @@ npm run dev
 
 ---
 
-## 11. Institutional Attribution & License
+## 12. Institutional Attribution & License
 
 Developed for the **Ministry of Statistics & Programme Implementation (MoSPI)**, Government of India, for **Smart India Hackathon 2026** (Problem Statement ID: 26101).
 
