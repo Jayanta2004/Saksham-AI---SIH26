@@ -134,6 +134,17 @@ docker compose logs -f ai_service
   - `PYTHON_AI_URL=https://saksham-ai-service.onrender.com`
   - `JWT_SECRET=your_long_jwt_secret`
   - `DATA_ENCRYPTION_KEY=your_32_char_key`
+  - **Email OTP Variables (Choose one):**
+    - *Option 1 (Direct SMTP / Paid Render or VPS):*
+      - `SMTP_HOST=smtp.gmail.com`
+      - `SMTP_PORT=587`
+      - `SMTP_USER=webbyashu21@gmail.com`
+      - `SMTP_PASS=cpfwqenogqhklcqq`
+      - `SMTP_FROM="Saksham AI - MoSPI" <webbyashu21@gmail.com>`
+    - *Option 2 (Render Free Tier - Uses HTTPS Port 443 which is never blocked):*
+      - `RESEND_API_KEY=re_...` (from https://resend.com) OR
+      - `BREVO_API_KEY=xkeysib-...` (from https://brevo.com - sends to any address)
+  > ⚠️ **Render.com Free Tier Note:** Render Free Tier blocks outbound ports 25, 465, and 587. If using Render Free Tier, you must set `RESEND_API_KEY` or `BREVO_API_KEY` (which use HTTPS port 443) or upgrade to a paid Render instance. Check live status anytime at: `https://saksham-gateway.onrender.com/api/auth/email-health`.
 - Note your live Gateway URL: `https://saksham-gateway.onrender.com`
 
 ### 4. React Frontend (Vercel / Cloudflare Pages)

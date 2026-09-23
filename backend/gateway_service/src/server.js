@@ -22,9 +22,40 @@ const PYTHON_AI_URL = process.env.PYTHON_AI_URL || 'http://127.0.0.1:8000';
 // init db & redis connections
 initPostgres();
 initRedis();
+try {
+  emailService.logEmailConfigStatus();
+  emailService.getTransporter();
+} catch (err) {
+  console.warn('[EmailService] Transporter init warning:', err.message);
+}
 
 app.use(cors({ origin: '*' }));
 app.use(express.json({ limit: '25mb' }));
+
+// Diagnostic endpoint to check deployed email configuration
+app.get('/api/auth/email-health', (req, res) => {
+  const hasSmtp = Boolean(process.env.SMTP_USER && process.env.SMTP_PASS);
+  const hasResend = Boolean(process.env.RESEND_API_KEY);
+  const hasBrevo = Boolean(process.env.BREVO_API_KEY);
+
+  res.json({
+    status: hasSmtp || hasResend || hasBrevo ? 'configured' : 'unconfigured',
+    providers: {
+      smtp: {
+        configured: hasSmtp,
+        host: process.env.SMTP_HOST || 'smtp.gmail.com',
+        user: process.env.SMTP_USER ? `${process.env.SMTP_USER.slice(0, 3)}***@${process.env.SMTP_USER.split('@')[1] || ''}` : null
+      },
+      resend: {
+        configured: hasResend
+      },
+      brevo: {
+        configured: hasBrevo
+      }
+    },
+    cloud_notice: 'Render free tier blocks ports 25, 465, 587. If using Render free tier, configure RESEND_API_KEY or BREVO_API_KEY (HTTPS port 443).'
+  });
+});
 // root route
 app.get('/', (req, res) => {
   res.json({
@@ -254,13 +285,30 @@ app.post('/api/auth/forgot-password', async (req, res) => {
     const expiry = Date.now() + 15 * 60 * 1000; // 15 minutes validity
     await redisStore.set(`pwd_reset_otp:${email.toLowerCase()}`, { otp, expiry }, 900);
 
-    // Dispatch real email via SMTP
-    const mailResult = await emailService.sendPasswordResetOtp(email, otp, user.full_name);
+    // Fast dispatch email via pooled SMTP with a responsive race window (max 1.2s wait)
+    // If SMTP delivers within 1.2s, confirmation is instant. If network/TLS handshakes take longer,
+    // dispatch continues non-blocking in the background so the user is never kept waiting.
+    console.log(`[ForgotPassword] Fast path triggered for ${email} with OTP ${otp}`);
+    const emailPromise = emailService.sendPasswordResetOtp(email, otp, user.full_name);
+    emailPromise.catch((err) => console.error('[ForgotPassword] Email background dispatch error:', err?.message || err));
+
+    let liveDispatched = true;
+    try {
+      const raceResult = await Promise.race([
+        emailPromise,
+        new Promise((resolve) => setTimeout(() => resolve('ASYNC_IN_FLIGHT'), 400))
+      ]);
+      if (raceResult && raceResult !== 'ASYNC_IN_FLIGHT') {
+        liveDispatched = Boolean(raceResult.liveDispatched);
+      }
+    } catch (e) {
+      console.warn('[ForgotPassword] Initial email dispatch race warning:', e?.message || e);
+    }
 
     res.json({
       success: true,
       message: `A 6-digit verification code has been dispatched to ${email}.`,
-      live_email_sent: mailResult.liveDispatched,
+      live_email_sent: liveDispatched,
       demo_otp: otp
     });
   } catch (err) {

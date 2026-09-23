@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { KeyRound, ArrowLeft, CheckCircle2, ShieldCheck, Loader2 } from 'lucide-react';
+import { KeyRound, ArrowLeft, CheckCircle2, Loader2, RefreshCw, AlertTriangle } from 'lucide-react';
 import api from '../../services/api';
 import ThemeToggle from '../../components/common/ThemeToggle';
 
@@ -9,18 +9,31 @@ export default function ForgotPassword() {
   const [otp, setOtp] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  
+
   const [step, setStep] = useState(1); // 1 = Enter Email, 2 = Enter OTP & New Password, 3 = Success
-  const [demoOtpHint, setDemoOtpHint] = useState('');
   const [liveEmailSent, setLiveEmailSent] = useState(false);
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [resendSeconds, setResendSeconds] = useState(0);
+  const [resendMessage, setResendMessage] = useState('');
   const navigate = useNavigate();
+
+  // Resend countdown timer
+  useEffect(() => {
+    let timer;
+    if (resendSeconds > 0) {
+      timer = setInterval(() => {
+        setResendSeconds((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [resendSeconds]);
 
   // Step 1: Request OTP
   const handleRequestOtp = async (e) => {
     e.preventDefault();
     setError('');
+    setResendMessage('');
 
     if (!email.trim()) {
       setError('Please enter your registered email address.');
@@ -32,17 +45,33 @@ export default function ForgotPassword() {
     try {
       const res = await api.post('/api/auth/forgot-password', { email: email.trim() });
       if (res.data?.success) {
-        if (res.data.live_email_sent) {
-          setLiveEmailSent(true);
-          setDemoOtpHint('');
-        } else if (res.data.demo_otp) {
-          setDemoOtpHint(res.data.demo_otp);
-          setOtp(res.data.demo_otp); // prefill demo OTP for offline testing
-        }
+        setLiveEmailSent(Boolean(res.data.live_email_sent));
         setStep(2);
+        setResendSeconds(30);
       }
     } catch (err) {
       setError(err?.response?.data?.error || 'No account found with this registered email address.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Resend OTP
+  const handleResendOtp = async () => {
+    if (resendSeconds > 0 || isSubmitting) return;
+    setError('');
+    setResendMessage('');
+    setIsSubmitting(true);
+
+    try {
+      const res = await api.post('/api/auth/forgot-password', { email: email.trim() });
+      if (res.data?.success) {
+        setLiveEmailSent(Boolean(res.data.live_email_sent));
+        setResendMessage('A new verification code has been dispatched.');
+        setResendSeconds(30);
+      }
+    } catch (err) {
+      setError(err?.response?.data?.error || 'Failed to resend code. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -171,30 +200,61 @@ export default function ForgotPassword() {
         {step === 2 && (
           <form onSubmit={handleResetPassword} noValidate className="space-y-3.5">
             {liveEmailSent ? (
-              <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 flex items-start space-x-2 text-xs text-emerald-800">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                <span>A 6-digit verification code has been dispatched to <strong>{email}</strong>. Please check your inbox.</span>
+              <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 text-xs text-emerald-900 space-y-1">
+                <div className="flex items-center gap-1.5 font-semibold text-emerald-800">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>Verification Code Dispatched</span>
+                </div>
+                <p className="text-[11px] text-emerald-700 leading-relaxed">
+                  Sent to <strong>{email}</strong>. Check your inbox and Spam/Promotions folder. Code is valid for 15 minutes.
+                </p>
               </div>
-            ) : demoOtpHint ? (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-2.5 flex items-center space-x-2 text-xs text-blue-800">
-                <ShieldCheck className="w-4 h-4 text-blue-600 shrink-0" />
-                <span>Verification code: <strong className="font-mono">{demoOtpHint}</strong></span>
+            ) : (
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-xs text-amber-900 space-y-1">
+                <div className="flex items-center gap-1.5 font-semibold text-amber-800">
+                  <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+                  <span>Email Dispatch Notice</span>
+                </div>
+                <p className="text-[11px] text-amber-700 leading-relaxed">
+                  Live email delivery to <strong>{email}</strong> could not be confirmed. If running on cloud hosting (e.g. Render free tier), outbound SMTP ports are blocked by default. Check server environment variables or <code>/api/auth/email-health</code>.
+                </p>
               </div>
-            ) : null}
+            )}
+
+            {resendMessage && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-2.5 text-xs text-blue-800 flex items-center gap-1.5 font-medium">
+                <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                <span>{resendMessage}</span>
+              </div>
+            )}
 
             <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1" htmlFor="otp">
-                6-Digit Verification Code
-              </label>
+              <div className="flex justify-between items-center mb-1">
+                <label className="block text-xs font-medium text-slate-700" htmlFor="otp">
+                  6-Digit Verification Code
+                </label>
+                <button
+                  type="button"
+                  disabled={resendSeconds > 0 || isSubmitting}
+                  onClick={handleResendOtp}
+                  className="text-[11px] font-medium text-blue-600 hover:underline disabled:text-slate-400 disabled:no-underline transition-colors flex items-center gap-1"
+                >
+                  <RefreshCw className={`w-3 h-3 ${isSubmitting ? 'animate-spin' : ''}`} />
+                  {resendSeconds > 0 ? `Resend in ${resendSeconds}s` : 'Resend code'}
+                </button>
+              </div>
               <input
                 id="otp"
                 name="otp"
                 type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
                 maxLength={6}
                 value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm text-slate-900 font-mono text-center tracking-widest focus:outline-none focus:ring-2 focus:ring-blue-600"
+                onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+                className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-base text-slate-900 font-mono text-center tracking-widest focus:outline-none focus:ring-2 focus:ring-blue-600"
                 placeholder="123456"
+                autoComplete="one-time-code"
               />
             </div>
 
