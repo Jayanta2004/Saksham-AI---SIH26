@@ -23,7 +23,8 @@ import {
   Smartphone,
   Trophy,
   UserCheck,
-  MapPin
+  MapPin,
+  Shield
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -41,6 +42,7 @@ const learnerNav = [
   { name: 'CAPI Field Simulator', path: '/capi-simulator', icon: Smartphone },
   { name: 'Cadre Leaderboard', path: '/leaderboard', icon: Trophy },
   { name: 'Policy Brief Studio', path: '/brief-generator', icon: FileText },
+  { name: 'Synthetic Microdata', path: '/synthetic-data', icon: Shield },
   { name: 'Progress & Analytics', path: '/progress', icon: BarChart2 },
   { name: 'Certificates', path: '/certificates', icon: Award },
 ];

@@ -30,6 +30,7 @@ import StatisticalPlayground from '../pages/learner/StatisticalPlayground';
 import CapiSimulator from '../pages/learner/CapiSimulator';
 import CadreLeaderboard from '../pages/learner/CadreLeaderboard';
 import PolicyBriefGenerator from '../pages/learner/PolicyBriefGenerator';
+import SyntheticDataStudio from '../pages/learner/SyntheticDataStudio';
 
 // Admin Pages
 import AdminDashboard from '../pages/admin/AdminDashboard';
@@ -80,6 +81,7 @@ const AppRoutes = () => {
         <Route path="/capi-simulator" element={<CapiSimulator />} />
         <Route path="/leaderboard" element={<CadreLeaderboard />} />
         <Route path="/brief-generator" element={<PolicyBriefGenerator />} />
+        <Route path="/synthetic-data" element={<SyntheticDataStudio />} />
       </Route>
 
       {/* Admin Protected Routes */}
