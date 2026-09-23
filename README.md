@@ -45,6 +45,11 @@ While the **iGOT Karmayogi** platform provides vast e-learning repositories, sta
 | **Cadre Leaderboard & Sprints** | Gamified nationwide peer benchmarking across ISS and SSS cadres with National Statistical Sprints, divisional readiness indices, and verified badges. | *Continuous Motivation & Peer Benchmarking* |
 | **MoSPI TNA & Deputation Matcher** | Multi-factor mission matching engine for statistical taskforces (SNA 2008, HCES), scheduling NSSTA bridging bootcamps and generating official MoSPI Office Memorandums. | *Data-Driven HR & Capacity Planning* |
 | **Public W3C Verifiable Credentials** | Public verification portal (`/verify/:id`) implementing cryptographic SHA-256 / ECDSA proof verification, JSON-LD context, and tamper seals. | *Skill Credentialing & Verification* |
+| **Interactive Geo-Statistical Map (GIS / Bhuvan)** | Interactive choropleth map across 6 geographical zones and 36 States/UTs tracking CAPI tablet adoption, NSSO RO/SRO staffing, and dispatching rapid training missions. | *Spatial Capability Intelligence & Regional Governance* |
+| **Automated Policy Brief Synthesizer** | Generates official Government of India statistical press releases and cabinet briefs from GDP, CPI, PLFS, and IIP microdata indicators in minutes. | *Executive Reporting & Policy Advisory* |
+| **Differential-Privacy Synthetic Data Studio** | Laplace differential-privacy ($\epsilon \in [0.1, 2.0]$) microdata generator for HCES, PLFS, and ASI surveys compliant with DPDPA 2023 with 1-click sandbox injection. | *Privacy-Preserving Statistical Training* |
+| **Adaptive CAT / 2PL IRT Testing Engine** | Computerized Adaptive Testing using 2-Parameter Logistic Item Response Theory with real-time Fisher information maximization and latent ability ($\theta$) trajectory plotting. | *Precise Latent Competency Calibration* |
+| **NSSTA AI Voice Roleplay Examiner** | Voice-driven oral defense simulator with Web Speech STT/TTS mirroring residential NSSTA viva examinations across Probationary ISS, FOD Supervisory, and National Accounts boards. | *Rigorous Oral Evaluation & Viva Defense* |
 
 ---
 
@@ -76,6 +81,7 @@ graph TD
     subgraph UI ["1. Presentation Layer (Vite React 18 + Tailwind CSS - Port 3000)"]
         LearnerPortal["Learner Portal (Dashboard, Radar, Pathways, Quiz Arena, Progress)"]
         AdvancedLabs["Virtual Labs (Python Sandbox, CAPI Simulator, Voice Copilot, Leaderboard)"]
+        Phase2Labs["Strategic Labs (Geo-Map, Policy Briefs, DPDPA Synthetic Data, CAT IRT Arena, NSSTA Viva)"]
         AdminPortal["Admin Hub (Workforce Analytics, Deputation Matcher, Content Studio)"]
         PublicVerify["Public W3C Verifiable Credential Portal (/verify/:id)"]
     end
@@ -85,6 +91,7 @@ graph TD
         CryptoEngine["AES-256 Field Encryption (PII & National Identifiers)"]
         RedisCache["Redis Hybrid Caching Layer (TTL 3600s)"]
         DeputationEngine["TNA & Cadre Deputation Matcher Engine"]
+        Phase2Engines["2PL IRT CAT Engine + Viva Oral Rubric Evaluator + Laplace DP Synthesizer"]
     end
 
     subgraph AI ["3. AI Intelligence & RAG Engine (Python FastAPI - Port 8000)"]
