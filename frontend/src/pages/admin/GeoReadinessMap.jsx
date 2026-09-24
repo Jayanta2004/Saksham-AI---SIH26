@@ -209,171 +209,285 @@ export default function GeoReadinessMap() {
           {/* Interactive SVG India Zonal Map */}
           <div className="relative bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col items-center justify-center min-h-[420px] overflow-hidden">
             <svg
-              viewBox="0 0 540 600"
-              className="w-full max-w-[480px] h-auto drop-shadow-md select-none transition-all duration-300"
+              viewBox="0 0 600 700"
+              className="w-full max-w-[520px] h-auto drop-shadow-md select-none transition-all duration-300"
             >
               <defs>
                 <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
                   <feDropShadow dx="0" dy="4" stdDeviation="6" floodOpacity="0.15" />
                 </filter>
+                <filter id="inner-shadow" x="-5%" y="-5%" width="110%" height="110%">
+                  <feComponentTransfer in="SourceAlpha"><feFuncA type="table" tableValues="1 0" /></feComponentTransfer>
+                  <feGaussianBlur stdDeviation="3" />
+                  <feOffset dx="0" dy="2" result="offsetblur" />
+                  <feFlood floodColor="#000" floodOpacity="0.12" result="color" />
+                  <feComposite in2="offsetblur" operator="in" />
+                  <feComposite in2="SourceAlpha" operator="in" />
+                  <feMerge><feMergeNode /><feMergeNode in="SourceGraphic" /></feMerge>
+                </filter>
               </defs>
 
-              {/* Northern Zone */}
+              {/* India outer boundary (faint guide) */}
+              <path
+                d="M248 8 L225 12 L190 22 L168 38 L150 55 L138 72 L130 95 L125 118 L118 135 L105 155 L95 172 L82 195 L72 218 L62 238 L55 265 L52 290 L58 318 L68 345 L85 375 L105 402 L125 428 L148 452 L170 475 L195 498 L218 518 L245 540 L262 558 L275 575 L285 590 L290 600 L295 608 L292 595 L298 580 L308 562 L318 542 L330 520 L342 498 L350 475 L358 450 L362 425 L365 402 L368 378 L375 355 L382 335 L395 312 L405 295 L418 275 L428 258 L435 242 L440 225 L445 208 L448 190 L450 172 L448 155 L442 138 L435 122 L425 108 L412 95 L398 85 L382 75 L365 68 L348 62 L330 55 L312 48 L295 40 L278 30 L262 18 Z"
+                fill="none"
+                stroke="#cbd5e1"
+                strokeWidth="0.5"
+                strokeDasharray="3 2"
+                opacity="0.5"
+              />
+
+              {/* ===== NORTHERN ZONE ===== */}
+              {/* J&K, Ladakh, HP, Punjab, Haryana, Uttarakhand, Delhi, UP, Rajasthan */}
               <g
                 onClick={() => setSelectedZoneId('zone_north')}
                 onMouseEnter={() => setHoveredZoneId('zone_north')}
                 onMouseLeave={() => setHoveredZoneId(null)}
-                className="cursor-pointer transition-all duration-200"
+                className="cursor-pointer"
+                style={{ transition: 'opacity 0.2s, transform 0.2s' }}
               >
+                {/* Kashmir & Ladakh */}
                 <path
-                  d="M 190 20 L 250 15 L 290 50 L 300 110 L 260 160 L 200 170 L 150 130 L 150 70 Z"
+                  d="M175 10 L205 5 L240 8 L270 15 L290 30 L275 55 L258 42 L240 35 L218 38 L195 45 L178 38 L165 25 Z"
                   fill={selectedZoneId === 'zone_north' ? '#2563eb' : hoveredZoneId === 'zone_north' ? '#3b82f6' : '#60a5fa'}
-                  stroke="#ffffff"
-                  strokeWidth={selectedZoneId === 'zone_north' ? '3' : '1.5'}
-                  filter={selectedZoneId === 'zone_north' ? 'url(#glow)' : ''}
-                  opacity={selectedZoneId === 'zone_north' ? '1' : '0.85'}
+                  stroke="#ffffff" strokeWidth="1.5"
+                  filter={selectedZoneId === 'zone_north' ? 'url(#glow)' : 'url(#inner-shadow)'}
+                  opacity={selectedZoneId === 'zone_north' ? '1' : '0.82'}
                 />
-                <text x="215" y="95" fill="#ffffff" fontSize="12" fontWeight="bold" textAnchor="middle" pointerEvents="none">
+                {/* HP, Punjab, Haryana, Uttarakhand */}
+                <path
+                  d="M165 25 L178 38 L195 45 L218 38 L240 35 L258 42 L275 55 L282 72 L278 92 L268 108 L252 118 L230 125 L205 128 L182 122 L162 110 L148 92 L140 72 L148 50 Z"
+                  fill={selectedZoneId === 'zone_north' ? '#2563eb' : hoveredZoneId === 'zone_north' ? '#3b82f6' : '#60a5fa'}
+                  stroke="#ffffff" strokeWidth="1.5"
+                  filter={selectedZoneId === 'zone_north' ? 'url(#glow)' : 'url(#inner-shadow)'}
+                  opacity={selectedZoneId === 'zone_north' ? '1' : '0.82'}
+                />
+                {/* Delhi, UP, Rajasthan */}
+                <path
+                  d="M100 120 L140 72 L148 92 L162 110 L182 122 L205 128 L230 125 L252 118 L268 108 L278 92 L290 105 L295 128 L292 155 L280 178 L260 195 L238 205 L215 210 L190 208 L165 198 L142 185 L120 168 L105 148 Z"
+                  fill={selectedZoneId === 'zone_north' ? '#2563eb' : hoveredZoneId === 'zone_north' ? '#3b82f6' : '#60a5fa'}
+                  stroke="#ffffff" strokeWidth="1.5"
+                  filter={selectedZoneId === 'zone_north' ? 'url(#glow)' : 'url(#inner-shadow)'}
+                  opacity={selectedZoneId === 'zone_north' ? '1' : '0.82'}
+                />
+                {/* Zone label */}
+                <text x="205" y="120" fill="#ffffff" fontSize="14" fontWeight="800" textAnchor="middle" pointerEvents="none" style={{textShadow: '0 1px 3px rgba(0,0,0,0.3)'}}>
                   NORTH
                 </text>
-                <text x="215" y="112" fill="#eff6ff" fontSize="10" fontWeight="bold" textAnchor="middle" pointerEvents="none">
-                  89.2%
+                <text x="205" y="138" fill="#dbeafe" fontSize="13" fontWeight="700" textAnchor="middle" pointerEvents="none">
+                  {geoData?.zones?.find(z => z.id === 'zone_north')?.readiness_index || 89.2}%
                 </text>
               </g>
 
-              {/* Western Zone */}
+              {/* ===== WESTERN ZONE ===== */}
+              {/* Gujarat, Maharashtra, Goa */}
               <g
                 onClick={() => setSelectedZoneId('zone_west')}
                 onMouseEnter={() => setHoveredZoneId('zone_west')}
                 onMouseLeave={() => setHoveredZoneId(null)}
-                className="cursor-pointer transition-all duration-200"
+                className="cursor-pointer"
+                style={{ transition: 'opacity 0.2s, transform 0.2s' }}
               >
+                {/* Gujarat */}
                 <path
-                  d="M 90 200 L 190 180 L 210 240 L 190 320 L 120 330 L 80 260 Z"
+                  d="M60 215 L100 120 L105 148 L120 168 L142 185 L140 210 L128 238 L110 255 L88 268 L68 272 L55 260 L50 240 Z"
                   fill={selectedZoneId === 'zone_west' ? '#059669' : hoveredZoneId === 'zone_west' ? '#10b981' : '#34d399'}
-                  stroke="#ffffff"
-                  strokeWidth={selectedZoneId === 'zone_west' ? '3' : '1.5'}
-                  filter={selectedZoneId === 'zone_west' ? 'url(#glow)' : ''}
-                  opacity={selectedZoneId === 'zone_west' ? '1' : '0.85'}
+                  stroke="#ffffff" strokeWidth="1.5"
+                  filter={selectedZoneId === 'zone_west' ? 'url(#glow)' : 'url(#inner-shadow)'}
+                  opacity={selectedZoneId === 'zone_west' ? '1' : '0.82'}
                 />
-                <text x="145" y="260" fill="#ffffff" fontSize="12" fontWeight="bold" textAnchor="middle" pointerEvents="none">
+                {/* Maharashtra & Goa */}
+                <path
+                  d="M68 272 L88 268 L110 255 L128 238 L142 225 L165 228 L185 238 L198 255 L205 278 L200 305 L188 328 L168 345 L145 355 L120 358 L98 350 L80 335 L70 315 L65 295 Z"
+                  fill={selectedZoneId === 'zone_west' ? '#059669' : hoveredZoneId === 'zone_west' ? '#10b981' : '#34d399'}
+                  stroke="#ffffff" strokeWidth="1.5"
+                  filter={selectedZoneId === 'zone_west' ? 'url(#glow)' : 'url(#inner-shadow)'}
+                  opacity={selectedZoneId === 'zone_west' ? '1' : '0.82'}
+                />
+                <text x="120" y="288" fill="#ffffff" fontSize="14" fontWeight="800" textAnchor="middle" pointerEvents="none" style={{textShadow: '0 1px 3px rgba(0,0,0,0.3)'}}>
                   WEST
                 </text>
-                <text x="145" y="277" fill="#ecfdf5" fontSize="10" fontWeight="bold" textAnchor="middle" pointerEvents="none">
-                  87.5%
+                <text x="120" y="306" fill="#d1fae5" fontSize="13" fontWeight="700" textAnchor="middle" pointerEvents="none">
+                  {geoData?.zones?.find(z => z.id === 'zone_west')?.readiness_index || 87.5}%
                 </text>
               </g>
 
-              {/* Central Zone */}
+              {/* ===== CENTRAL ZONE ===== */}
+              {/* MP, Chhattisgarh */}
               <g
                 onClick={() => setSelectedZoneId('zone_central')}
                 onMouseEnter={() => setHoveredZoneId('zone_central')}
                 onMouseLeave={() => setHoveredZoneId(null)}
-                className="cursor-pointer transition-all duration-200"
+                className="cursor-pointer"
+                style={{ transition: 'opacity 0.2s, transform 0.2s' }}
               >
                 <path
-                  d="M 200 175 L 290 165 L 305 240 L 265 310 L 205 280 L 200 210 Z"
+                  d="M142 185 L165 198 L190 208 L215 210 L238 205 L260 195 L280 205 L298 218 L312 238 L318 262 L310 288 L295 308 L275 322 L252 330 L228 335 L205 328 L188 328 L200 305 L205 278 L198 255 L185 238 L165 228 L142 225 Z"
                   fill={selectedZoneId === 'zone_central' ? '#0891b2' : hoveredZoneId === 'zone_central' ? '#06b6d4' : '#22d3ee'}
-                  stroke="#ffffff"
-                  strokeWidth={selectedZoneId === 'zone_central' ? '3' : '1.5'}
-                  filter={selectedZoneId === 'zone_central' ? 'url(#glow)' : ''}
-                  opacity={selectedZoneId === 'zone_central' ? '1' : '0.85'}
+                  stroke="#ffffff" strokeWidth="1.5"
+                  filter={selectedZoneId === 'zone_central' ? 'url(#glow)' : 'url(#inner-shadow)'}
+                  opacity={selectedZoneId === 'zone_central' ? '1' : '0.82'}
                 />
-                <text x="248" y="235" fill="#ffffff" fontSize="12" fontWeight="bold" textAnchor="middle" pointerEvents="none">
+                <text x="235" y="262" fill="#ffffff" fontSize="13" fontWeight="800" textAnchor="middle" pointerEvents="none" style={{textShadow: '0 1px 3px rgba(0,0,0,0.3)'}}>
                   CENTRAL
                 </text>
-                <text x="248" y="252" fill="#ecfeff" fontSize="10" fontWeight="bold" textAnchor="middle" pointerEvents="none">
-                  80.2%
+                <text x="235" y="280" fill="#cffafe" fontSize="13" fontWeight="700" textAnchor="middle" pointerEvents="none">
+                  {geoData?.zones?.find(z => z.id === 'zone_central')?.readiness_index || 80.2}%
                 </text>
               </g>
 
-              {/* Eastern Zone */}
+              {/* ===== EASTERN ZONE ===== */}
+              {/* Bihar, Jharkhand, Odisha, West Bengal */}
               <g
                 onClick={() => setSelectedZoneId('zone_east')}
                 onMouseEnter={() => setHoveredZoneId('zone_east')}
                 onMouseLeave={() => setHoveredZoneId(null)}
-                className="cursor-pointer transition-all duration-200"
+                className="cursor-pointer"
+                style={{ transition: 'opacity 0.2s, transform 0.2s' }}
               >
                 <path
-                  d="M 295 165 L 375 165 L 385 240 L 350 320 L 285 295 L 295 210 Z"
+                  d="M290 105 L310 98 L332 92 L355 98 L368 112 L375 132 L378 155 L375 178 L368 198 L358 218 L342 232 L325 242 L318 262 L312 238 L298 218 L280 205 L260 195 L280 178 L292 155 L295 128 Z"
                   fill={selectedZoneId === 'zone_east' ? '#d97706' : hoveredZoneId === 'zone_east' ? '#f59e0b' : '#fbbf24'}
-                  stroke="#ffffff"
-                  strokeWidth={selectedZoneId === 'zone_east' ? '3' : '1.5'}
-                  filter={selectedZoneId === 'zone_east' ? 'url(#glow)' : ''}
-                  opacity={selectedZoneId === 'zone_east' ? '1' : '0.85'}
+                  stroke="#ffffff" strokeWidth="1.5"
+                  filter={selectedZoneId === 'zone_east' ? 'url(#glow)' : 'url(#inner-shadow)'}
+                  opacity={selectedZoneId === 'zone_east' ? '1' : '0.82'}
                 />
-                <text x="335" y="240" fill="#ffffff" fontSize="12" fontWeight="bold" textAnchor="middle" pointerEvents="none">
+                {/* Odisha coastal strip */}
+                <path
+                  d="M318 262 L325 242 L342 232 L358 245 L368 268 L372 295 L362 318 L345 335 L325 342 L310 338 L295 328 L295 308 L310 288 Z"
+                  fill={selectedZoneId === 'zone_east' ? '#d97706' : hoveredZoneId === 'zone_east' ? '#f59e0b' : '#fbbf24'}
+                  stroke="#ffffff" strokeWidth="1.5"
+                  filter={selectedZoneId === 'zone_east' ? 'url(#glow)' : 'url(#inner-shadow)'}
+                  opacity={selectedZoneId === 'zone_east' ? '1' : '0.82'}
+                />
+                <text x="335" y="190" fill="#ffffff" fontSize="13" fontWeight="800" textAnchor="middle" pointerEvents="none" style={{textShadow: '0 1px 3px rgba(0,0,0,0.3)'}}>
                   EAST
                 </text>
-                <text x="335" y="257" fill="#fffbeb" fontSize="10" fontWeight="bold" textAnchor="middle" pointerEvents="none">
-                  83.6%
+                <text x="335" y="208" fill="#fef3c7" fontSize="13" fontWeight="700" textAnchor="middle" pointerEvents="none">
+                  {geoData?.zones?.find(z => z.id === 'zone_east')?.readiness_index || 83.6}%
                 </text>
               </g>
 
-              {/* North-Eastern Zone */}
+              {/* ===== NORTH-EASTERN ZONE ===== */}
+              {/* Assam, Meghalaya, Manipur, Mizoram, Tripura, Nagaland, Arunachal, Sikkim */}
               <g
                 onClick={() => setSelectedZoneId('zone_northeast')}
                 onMouseEnter={() => setHoveredZoneId('zone_northeast')}
                 onMouseLeave={() => setHoveredZoneId(null)}
-                className="cursor-pointer transition-all duration-200"
+                className="cursor-pointer"
+                style={{ transition: 'opacity 0.2s, transform 0.2s' }}
               >
+                {/* Sikkim & Arunachal */}
                 <path
-                  d="M 385 155 L 460 140 L 510 175 L 490 235 L 435 245 L 390 200 Z"
+                  d="M368 112 L388 85 L415 68 L445 62 L478 68 L502 82 L518 100 L520 118 L512 135 L498 148 L480 155 L460 158 L442 155 L425 148 L408 138 L395 128 L382 120 L375 112 Z"
                   fill={selectedZoneId === 'zone_northeast' ? '#db2777' : hoveredZoneId === 'zone_northeast' ? '#ec4899' : '#f472b6'}
-                  stroke="#ffffff"
-                  strokeWidth={selectedZoneId === 'zone_northeast' ? '3' : '1.5'}
-                  filter={selectedZoneId === 'zone_northeast' ? 'url(#glow)' : ''}
-                  opacity={selectedZoneId === 'zone_northeast' ? '1' : '0.85'}
+                  stroke="#ffffff" strokeWidth="1.5"
+                  filter={selectedZoneId === 'zone_northeast' ? 'url(#glow)' : 'url(#inner-shadow)'}
+                  opacity={selectedZoneId === 'zone_northeast' ? '1' : '0.82'}
                 />
-                <text x="445" y="195" fill="#ffffff" fontSize="12" fontWeight="bold" textAnchor="middle" pointerEvents="none">
+                {/* Assam corridor & remaining NE states */}
+                <path
+                  d="M375 132 L395 128 L408 138 L425 148 L442 155 L460 158 L480 155 L498 165 L505 182 L498 200 L485 215 L468 225 L448 230 L428 228 L412 220 L398 208 L388 192 L380 175 L376 158 Z"
+                  fill={selectedZoneId === 'zone_northeast' ? '#db2777' : hoveredZoneId === 'zone_northeast' ? '#ec4899' : '#f472b6'}
+                  stroke="#ffffff" strokeWidth="1.5"
+                  filter={selectedZoneId === 'zone_northeast' ? 'url(#glow)' : 'url(#inner-shadow)'}
+                  opacity={selectedZoneId === 'zone_northeast' ? '1' : '0.82'}
+                />
+                <text x="445" y="145" fill="#ffffff" fontSize="11" fontWeight="800" textAnchor="middle" pointerEvents="none" style={{textShadow: '0 1px 3px rgba(0,0,0,0.3)'}}>
                   NORTH-EAST
                 </text>
-                <text x="445" y="212" fill="#fdf2f8" fontSize="10" fontWeight="bold" textAnchor="middle" pointerEvents="none">
-                  76.8%
+                <text x="445" y="162" fill="#fce7f3" fontSize="12" fontWeight="700" textAnchor="middle" pointerEvents="none">
+                  {geoData?.zones?.find(z => z.id === 'zone_northeast')?.readiness_index || 76.8}%
                 </text>
               </g>
 
-              {/* Southern Zone */}
+              {/* ===== SOUTHERN ZONE ===== */}
+              {/* Andhra Pradesh, Telangana, Karnataka, Kerala, Tamil Nadu */}
               <g
                 onClick={() => setSelectedZoneId('zone_south')}
                 onMouseEnter={() => setHoveredZoneId('zone_south')}
                 onMouseLeave={() => setHoveredZoneId(null)}
-                className="cursor-pointer transition-all duration-200"
+                className="cursor-pointer"
+                style={{ transition: 'opacity 0.2s, transform 0.2s' }}
               >
+                {/* Telangana & AP */}
                 <path
-                  d="M 160 330 L 270 315 L 320 375 L 260 520 L 210 570 L 160 450 Z"
+                  d="M145 355 L168 345 L188 328 L205 328 L228 335 L252 330 L275 322 L295 328 L310 338 L325 342 L338 355 L342 375 L335 398 L320 418 L298 432 L275 440 L250 442 L225 438 L200 428 L178 412 L158 392 L148 375 Z"
                   fill={selectedZoneId === 'zone_south' ? '#7c3aed' : hoveredZoneId === 'zone_south' ? '#8b5cf6' : '#a78bfa'}
-                  stroke="#ffffff"
-                  strokeWidth={selectedZoneId === 'zone_south' ? '3' : '1.5'}
-                  filter={selectedZoneId === 'zone_south' ? 'url(#glow)' : ''}
-                  opacity={selectedZoneId === 'zone_south' ? '1' : '0.85'}
+                  stroke="#ffffff" strokeWidth="1.5"
+                  filter={selectedZoneId === 'zone_south' ? 'url(#glow)' : 'url(#inner-shadow)'}
+                  opacity={selectedZoneId === 'zone_south' ? '1' : '0.82'}
                 />
-                <text x="235" y="440" fill="#ffffff" fontSize="13" fontWeight="bold" textAnchor="middle" pointerEvents="none">
+                {/* Karnataka, Kerala & TN — southern peninsula */}
+                <path
+                  d="M120 358 L145 355 L148 375 L158 392 L178 412 L200 428 L225 438 L250 442 L275 440 L298 432 L308 448 L312 468 L308 492 L298 515 L282 538 L265 558 L248 572 L235 582 L225 590 L218 596 L215 600 L210 605 L205 598 L198 585 L188 568 L175 548 L162 525 L148 498 L138 472 L128 448 L118 425 L112 398 L110 375 Z"
+                  fill={selectedZoneId === 'zone_south' ? '#7c3aed' : hoveredZoneId === 'zone_south' ? '#8b5cf6' : '#a78bfa'}
+                  stroke="#ffffff" strokeWidth="1.5"
+                  filter={selectedZoneId === 'zone_south' ? 'url(#glow)' : 'url(#inner-shadow)'}
+                  opacity={selectedZoneId === 'zone_south' ? '1' : '0.82'}
+                />
+                <text x="218" y="465" fill="#ffffff" fontSize="14" fontWeight="800" textAnchor="middle" pointerEvents="none" style={{textShadow: '0 1px 3px rgba(0,0,0,0.3)'}}>
                   SOUTH
                 </text>
-                <text x="235" y="458" fill="#f5f3ff" fontSize="11" fontWeight="bold" textAnchor="middle" pointerEvents="none">
-                  91.4%
+                <text x="218" y="484" fill="#ede9fe" fontSize="13" fontWeight="700" textAnchor="middle" pointerEvents="none">
+                  {geoData?.zones?.find(z => z.id === 'zone_south')?.readiness_index || 91.4}%
                 </text>
               </g>
 
-              {/* Pin markers for Major Zonal HQs */}
-              <circle cx="245" cy="140" r="4.5" fill="#ffffff" stroke="#1e3a8a" strokeWidth="2" />
-              <text x="255" y="144" fill="#1e293b" fontSize="9" fontWeight="600">HQ: Delhi</text>
+              {/* ===== ZONAL HQ PIN MARKERS ===== */}
+              {/* Delhi (North) */}
+              <g>
+                <circle cx="228" cy="155" r="6" fill="#ffffff" stroke="#1e3a8a" strokeWidth="2.5" />
+                <circle cx="228" cy="155" r="2.5" fill="#2563eb" />
+                <text x="240" y="152" fill="#1e293b" fontSize="9" fontWeight="700" style={{textShadow: '0 0 3px #fff, 0 0 3px #fff'}}>New Delhi</text>
+              </g>
 
-              <circle cx="120" cy="320" r="4.5" fill="#ffffff" stroke="#047857" strokeWidth="2" />
-              <text x="75" y="335" fill="#1e293b" fontSize="9" fontWeight="600">HQ: Mumbai</text>
+              {/* Mumbai (West) */}
+              <g>
+                <circle cx="95" cy="305" r="6" fill="#ffffff" stroke="#047857" strokeWidth="2.5" />
+                <circle cx="95" cy="305" r="2.5" fill="#059669" />
+                <text x="62" y="322" fill="#1e293b" fontSize="9" fontWeight="700" style={{textShadow: '0 0 3px #fff, 0 0 3px #fff'}}>Mumbai</text>
+              </g>
 
-              <circle cx="215" cy="480" r="4.5" fill="#ffffff" stroke="#6d28d9" strokeWidth="2" />
-              <text x="225" y="484" fill="#1e293b" fontSize="9" fontWeight="600">HQ: Bengaluru</text>
+              {/* Bhopal (Central) */}
+              <g>
+                <circle cx="215" cy="235" r="6" fill="#ffffff" stroke="#0e7490" strokeWidth="2.5" />
+                <circle cx="215" cy="235" r="2.5" fill="#0891b2" />
+                <text x="195" y="228" fill="#1e293b" fontSize="9" fontWeight="700" style={{textShadow: '0 0 3px #fff, 0 0 3px #fff'}}>Bhopal</text>
+              </g>
 
-              <circle cx="360" cy="235" r="4.5" fill="#ffffff" stroke="#b45309" strokeWidth="2" />
-              <text x="368" y="240" fill="#1e293b" fontSize="9" fontWeight="600">HQ: Kolkata</text>
+              {/* Kolkata (East) */}
+              <g>
+                <circle cx="358" cy="200" r="6" fill="#ffffff" stroke="#b45309" strokeWidth="2.5" />
+                <circle cx="358" cy="200" r="2.5" fill="#d97706" />
+                <text x="348" y="218" fill="#1e293b" fontSize="9" fontWeight="700" style={{textShadow: '0 0 3px #fff, 0 0 3px #fff'}}>Kolkata</text>
+              </g>
 
-              <circle cx="230" cy="270" r="4.5" fill="#ffffff" stroke="#0e7490" strokeWidth="2" />
-              <text x="238" y="275" fill="#1e293b" fontSize="9" fontWeight="600">HQ: Bhopal</text>
+              {/* Guwahati (North-East) */}
+              <g>
+                <circle cx="418" cy="172" r="6" fill="#ffffff" stroke="#be185d" strokeWidth="2.5" />
+                <circle cx="418" cy="172" r="2.5" fill="#db2777" />
+                <text x="425" y="188" fill="#1e293b" fontSize="9" fontWeight="700" style={{textShadow: '0 0 3px #fff, 0 0 3px #fff'}}>Guwahati</text>
+              </g>
 
-              <circle cx="430" cy="210" r="4.5" fill="#ffffff" stroke="#be185d" strokeWidth="2" />
-              <text x="438" y="215" fill="#1e293b" fontSize="9" fontWeight="600">HQ: Guwahati</text>
+              {/* Bengaluru (South) */}
+              <g>
+                <circle cx="195" cy="470" r="6" fill="#ffffff" stroke="#6d28d9" strokeWidth="2.5" />
+                <circle cx="195" cy="470" r="2.5" fill="#7c3aed" />
+                <text x="155" y="485" fill="#1e293b" fontSize="9" fontWeight="700" style={{textShadow: '0 0 3px #fff, 0 0 3px #fff'}}>Bengaluru</text>
+              </g>
+
+              {/* Sri Lanka placeholder for geographical context */}
+              <ellipse cx="248" cy="632" rx="22" ry="14" fill="#e2e8f0" stroke="#cbd5e1" strokeWidth="0.8" opacity="0.5" />
+              <text x="248" y="636" fill="#94a3b8" fontSize="7" textAnchor="middle" pointerEvents="none">Sri Lanka</text>
+
+              {/* Andaman & Nicobar context */}
+              <ellipse cx="420" cy="468" rx="8" ry="28" fill="#a78bfa" stroke="#ffffff" strokeWidth="1" opacity="0.4" />
+              <text x="438" y="468" fill="#94a3b8" fontSize="7" pointerEvents="none">A&N</text>
+
+              {/* Lakshadweep context */}
+              <circle cx="82" cy="468" r="5" fill="#a78bfa" stroke="#ffffff" strokeWidth="1" opacity="0.4" />
+              <text x="55" y="478" fill="#94a3b8" fontSize="7" pointerEvents="none">Lkdp</text>
             </svg>
 
             {/* Floating Map Helper Badge */}
