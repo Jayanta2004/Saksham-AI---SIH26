@@ -34,6 +34,7 @@ import SyntheticDataStudio from '../pages/learner/SyntheticDataStudio';
 import AdaptiveTesting from '../pages/learner/AdaptiveTesting';
 import VivaExaminer from '../pages/learner/VivaExaminer';
 import ScrutinyStudio from '../pages/learner/ScrutinyStudio';
+import SurveyLocalizer from '../pages/learner/SurveyLocalizer';
 
 // Admin Pages
 import AdminDashboard from '../pages/admin/AdminDashboard';
@@ -88,6 +89,7 @@ const AppRoutes = () => {
         <Route path="/adaptive-test" element={<AdaptiveTesting />} />
         <Route path="/viva-examiner" element={<VivaExaminer />} />
         <Route path="/scrutiny-studio" element={<ScrutinyStudio />} />
+        <Route path="/survey-localizer" element={<SurveyLocalizer />} />
       </Route>
 
       {/* Admin Protected Routes */}

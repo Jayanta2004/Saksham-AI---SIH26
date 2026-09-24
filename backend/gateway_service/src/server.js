@@ -3433,6 +3433,275 @@ app.post('/api/scrutiny/run-audit', (req, res) => {
   });
 });
 
+// ==========================================
+// STEP 13: BHASHINI MULTILINGUAL SURVEY LOCALIZER & FIELD DIALECT REPHRASER
+// ==========================================
+
+const BHASHINI_LANGUAGES = [
+  { code: 'hi', name: 'Hindi', native: 'हिन्दी', region: 'Northern & Central India', flag: '🇮🇳' },
+  { code: 'bn', name: 'Bengali', native: 'বাংলা', region: 'West Bengal, Tripura, Assam', flag: '🇮🇳' },
+  { code: 'ta', name: 'Tamil', native: 'தமிழ்', region: 'Tamil Nadu, Puducherry', flag: '🇮🇳' },
+  { code: 'te', name: 'Telugu', native: 'తెలుగు', region: 'Andhra Pradesh, Telangana', flag: '🇮🇳' },
+  { code: 'mr', name: 'Marathi', native: 'मराठी', region: 'Maharashtra, Goa', flag: '🇮🇳' },
+  { code: 'gu', name: 'Gujarati', native: 'ગુજરાતી', region: 'Gujarat, Daman & Diu', flag: '🇮🇳' },
+  { code: 'kn', name: 'Kannada', native: 'ಕನ್ನಡ', region: 'Karnataka', flag: '🇮🇳' },
+  { code: 'ml', name: 'Malayalam', native: 'മലയാളം', region: 'Kerala, Lakshadweep', flag: '🇮🇳' },
+  { code: 'or', name: 'Odia', native: 'ଓଡ଼ିଆ', region: 'Odisha', flag: '🇮🇳' },
+  { code: 'pa', name: 'Punjabi', native: 'ਪੰਜਾਬੀ', region: 'Punjab, Chandigarh', flag: '🇮🇳' }
+];
+
+const MOSPI_LEXICON = [
+  {
+    id: 'lex_upas',
+    english: 'Usual Principal Activity Status (UPAS)',
+    hindi: 'मुख्य सामान्य क्रियाकलाप स्थिति',
+    bengali: 'প্রধান স্বাভাবিক কার্যকলাপের স্থिति',
+    tamil: 'வழக்கமான முதன்மை நடவடிக்கை நிலை',
+    telugu: 'సాధారణ ప్రధాన కార్యాచరణ స్థితి',
+    marathi: 'मुख्य नेहमीची कार्यकलाप स्थिती',
+    gujarati: 'મુખ્ય સામાન્ય પ્રવૃત્તિ સ્થિતિ',
+    kannada: 'ಸಾಮಾನ್ಯ ಪ್ರಧಾನ ಚಟುವಟಿಕೆ ಸ್ಥಿತಿ',
+    malayalam: 'സാധാരണ പ്രധാന പ്രവർത്തന പദവി',
+    odia: 'ମୁଖ୍ୟ ସାଧାରଣ କାର୍ଯ୍ୟକଳାପ ସ୍ଥିତି',
+    punjabi: 'ਮੁੱਖ ਆਮ ਗਤੀਵਿਧੀ ਸਥਿਤੀ',
+    official_reference: 'NSSO Instructions to Field Staff Vol I, Section 2, Para 2.14',
+    concept: 'The activity status on which a person spent relatively long time (major time criterion) during the 365 days preceding the date of survey.'
+  },
+  {
+    id: 'lex_ic',
+    english: 'Intermediate Consumption',
+    hindi: 'मध्यवर्ती उपभोग',
+    bengali: 'অন্তর্বর্তীকালীন ভোগ',
+    tamil: 'இடைநிலை நுகர்வு',
+    telugu: 'మధ్యంతర వినియోగం',
+    marathi: 'मध्यम उपभोग',
+    gujarati: 'મધ્યવર્તી વપરાશ',
+    kannada: 'ಮಧ್ಯಂತರ ಬಳಕೆ',
+    malayalam: 'ഇടത്തരം ഉപഭോഗം',
+    odia: 'ମଧ୍ୟବର୍ତ୍ତୀ ଉପଭୋଗ',
+    punjabi: 'ਦਰਮਿਆਨੀ ਖਪਤ',
+    official_reference: 'SNA 2008 Chapter 6 / ASI Manual Para 4.8',
+    concept: 'Value of goods and services consumed as inputs by a process of production, excluding fixed assets.'
+  },
+  {
+    id: 'lex_imputed_rent',
+    english: 'Imputed Rent of Owner-Occupied Dwelling',
+    hindi: 'स्वामी-अधिगृहीत आवास का आरोपित किराया',
+    bengali: 'মালিকানাধীন বাসগৃহের আনুমানিক ভাড়া',
+    tamil: 'உரிமையாளர் குடியிருப்பின் உத்தேச வாடகை',
+    telugu: 'స్వంత నివాస గృహం యొక్క ఊహాత్మక అద్దె',
+    marathi: 'मालकीच्या घराचे अंदाजित भाडे',
+    gujarati: 'માલિકીના ઘરનું કાલ્પનિક ભાડું',
+    kannada: 'ಸ್ವಂತ ಮನೆಯ ಕಾಲ್ಪನಿಕ ಬಾಡಿಗೆ',
+    malayalam: 'സ്വന്തം വീടിന്റെ കണക്കാക്കിയ വാടക',
+    odia: 'ମାଲିକାନା ଘରର ଆନୁମାନିକ ଭଡ଼ା',
+    punjabi: 'ਮਾਲਕੀ ਵਾਲੇ ਘਰ ਦਾ ਅਨੁਮਾਨਿਤ ਕਿਰਾਇਆ',
+    official_reference: 'HCES Round 80 Schedule Concepts, Chapter 3',
+    concept: 'The estimated market rental value of an owner-occupied residence if it were rented out in prevailing conditions.'
+  },
+  {
+    id: 'lex_casual_labour',
+    english: 'Casual Labour in Other than Public Works',
+    hindi: 'सार्वजनिक निर्माण कार्यों के अलावा अन्य में अनियत मजदूर',
+    bengali: 'সাধারণ মজুর (সরকারি কাজ ব্যতীত)',
+    tamil: 'பொதுப் பணிகள் அல்லாத இதர தினக்கூலித் தொழிலாளி',
+    telugu: 'ప్రజా పనులు కాకుండా ఇతర సాధారణ శ్రామికుడు',
+    marathi: 'सार्वजनिक कामे सोडून इतर अनियत कामगार',
+    gujarati: 'જાહેર બાંધકામ સિવાય અન્યમાં છૂટક મજૂર',
+    kannada: 'ಸಾರ್ವಜನಿಕ ಕಾಮಗಾರಿಗಳ ಹೊರತಾಗಿ ಇತರೆ ದಿನಗೂಲಿ ಕಾರ್ಮಿಕ',
+    malayalam: 'പൊതുമരാമത്ത് അല്ലാത്ത മറ്റ് ദിവസക്കൂലി തൊഴിലാളി',
+    odia: 'ସର୍ବସାଧାରଣ କାର୍ଯ୍ୟ ବ୍ୟତୀତ ଅନ୍ୟାନ୍ୟ ଅନିୟମିତ ଶ୍ରମିକ',
+    punjabi: 'ਸਰਕਾਰੀ ਕੰਮਾਂ ਤੋਂ ਬਿਨਾਂ ਹੋਰ ਦਿਹਾੜੀਦਾਰ ਮਜ਼ਦੂਰ',
+    official_reference: 'PLFS Concepts & Definitions, Activity Code 51/41',
+    concept: 'A person casually engaged in others farm or non-farm enterprises and receiving wages according to terms of daily or periodic work.'
+  },
+  {
+    id: 'lex_home_grown',
+    english: 'Consumption Out of Home-Grown Agricultural Produce',
+    hindi: 'गृह-उत्पादित खाद्यान्न से उपभोग',
+    bengali: 'নিজস্ব খামার উৎপাদিত ব্যবহৃত পণ্য',
+    tamil: 'சொந்த விளைச்சலிலிருந்து நுகரப்படும் உணவு',
+    telugu: 'స్వంత పంట నుండి గృహ వినియోగం',
+    marathi: 'स्वतःच्या शेतातील उत्पादनातून केलेला उपभोग',
+    gujarati: 'ઘરના ખેત ઉત્પાદનમાંથી વપરાશ',
+    kannada: 'ಸ್ವಂತ ಕೃಷಿ ಉತ್ಪನ್ನದಿಂದ ಬಳಕೆ',
+    malayalam: 'സ്വന്തം കൃഷിയിൽ നിന്നുള്ള ഉപഭോഗം',
+    odia: 'ନିଜ ଚାଷ ଉତ୍ପାଦନରୁ ଉପଭୋଗ',
+    punjabi: 'ਆਪਣੀ ਖੇਤੀ ਉਪਜ ਵਿੱਚੋਂ ਖਪਤ',
+    official_reference: 'HCES Round 80 Food Schedule, Para 5.2',
+    concept: 'Commodities obtained from family farm or kitchen garden for household consumption, evaluated at farmgate price.'
+  }
+];
+
+const LOCALIZED_QUESTIONS = [
+  {
+    id: 'upas_schedule_10',
+    survey: 'Periodic Labour Force Survey (PLFS)',
+    schedule_code: 'Schedule 10.4',
+    title: 'Usual Principal Activity Status (UPAS) Determination',
+    official_english: 'What was the usual principal activity status of the member during the 365 days preceding the date of survey? (Codes: 11, 21, 31, 41, 51, 81, 91-97)',
+    target_concept: 'Major time criterion over reference year',
+    probing_warning: 'Do not accept "I do nothing" immediately from rural women. Probe specifically for unpaid family poultry, livestock tending, crop storage, or family enterprise assistance (Codes 21 & 31).',
+    translations: {
+      hi: {
+        standard_literal: 'सर्वेक्षण की तारीख से पहले के 365 दिनों के दौरान सदस्य की मुख्य सामान्य क्रियाकलाप स्थिति क्या थी?',
+        conversational_script: 'पिछले एक साल (365 दिन) में आपने सबसे ज्यादा समय किस काम में बिताया? जैसे अपनी खेती, अपनी दुकान, किसी दफ्तर में पक्की नौकरी, या दिहाड़ी मजदूरी?',
+        dialect_notes: 'अवधी/भोजपुरी क्षेत्र में: "रउआ पिछिला साल भर में सबसे बेसी दिन का काम करत रहलीं?"',
+        key_phrases: ['खेती-किसानी', 'अपनी दुकान', 'पक्की नौकरी', 'दिहाड़ी मजदूरी']
+      },
+      bn: {
+        standard_literal: 'সমীক্ষার তারিখের পূর্ববর্তী ৩৬৫ দিনে সদস্যের প্রধান স্বাভাবিক কার্যকলাপের স্থিতি কী ছিল?',
+        conversational_script: 'গত এক বছরে (৩৬৫ দিনে) আপনি বেশিরভাগ সময় কোন কাজে ব্যয় করেছেন? যেমন নিজের চাষবাস, নিজস্ব ব্যবসা, স্থায়ী চাকরি, নাকি দৈনিক মজুরি?',
+        dialect_notes: 'রাঢ় ও বরেন্দ্র অঞ্চলে: "গত বচ্ছরে বেশিরভাগ দিন আপনে কী কাজ কইরছেন?"',
+        key_phrases: ['নিজের চাষবাস', 'দোকান/ব্যবসা', 'স্থায়ী চাকরি', 'দৈনিক মজুরি']
+      },
+      ta: {
+        standard_literal: 'கணக்கெடுப்பு தேதிக்கு முந்தைய 365 நாட்களில் உறுப்பினரின் வழக்கமான முதன்மை நடவடிக்கை நிலை என்ன?',
+        conversational_script: 'கடந்த ஒரு வருடத்தில் நீங்கள் அதிக நேரம் செய்த முதன்மை வேலை என்ன? உங்களது சொந்த விவசாயமா, சொந்த வியாபாரமா, மாத சம்பள வேலையா அல்லது தினக்கூலியா?',
+        dialect_notes: 'கொங்கு/தென் மாவட்டங்களில்: "போன ஒரு வருசத்துல அதிக நாளு என்ன வேலை பாத்தீங்க?"',
+        key_phrases: ['சொந்த விவசாயம்', 'வியாபாரம்', 'மாத சம்பள வேலை', 'தினக்கூலி']
+      },
+      te: {
+        standard_literal: 'సర్వే తేదీకి ముందున్న 365 రోజులలో సభ్యుని సాధారణ ప్రధాన కార్యకలాప స్థితి ఏమిటి?',
+        conversational_script: 'గత ఒక సంవత్సర కాలంలో మీరు ఎక్కువ సమయం ఏ పనిలో గడిపారు? స్వంత వ్యవసాయం, స్వంత వ్యాపారం, నెలసరి ఉద్యోగమా లేక రోజువారీ కూలీ పనా?',
+        dialect_notes: 'రాయలసీమ/కోస్తా ప్రాంతాల్లో: "పోయిన ఏడాదంతా ఎక్కువగా ఏ పని చేసుకుంటూ గడిపారు?"',
+        key_phrases: ['స్వంత వ్యవసాయం', 'వ్యాపారం', 'నెలసరి ఉద్యోగం', 'కూలీ పని']
+      },
+      mr: {
+        standard_literal: 'सर्वेक्षणाच्या तारखेच्या आधीच्या ३६५ दिवसांत सदस्याची मुख्य नेहमीची कार्यकलाप स्थिती काय होती?',
+        conversational_script: 'गेल्या एका वर्षात (३६५ दिवसांत) तुम्ही जास्त वेळ कोणत्या कामात घालवला? स्वतःची शेती, स्वतःचे दुकान, नियमित नोकरी की रोजंदारीवरील काम?',
+        dialect_notes: 'विदर्भ/मराठवाड्यात: "मागच्या वर्षभरात तुम्ही सर्वात जास्त दिवस काय काम केलं?"',
+        key_phrases: ['स्वतःची शेती', 'दुकान/व्यवसाय', 'नियमित नोकरी', 'रोजंदारी']
+      }
+    }
+  },
+  {
+    id: 'hces_homegrown_cereals',
+    survey: 'Household Consumer Expenditure Survey (HCES)',
+    schedule_code: 'Schedule 1.0 (Block 5)',
+    title: 'Consumption of Home-Grown Agricultural Produce',
+    official_english: 'Report the quantity and imputed value (at local producer/farmgate price) of cereals, pulses, and vegetables consumed out of home-grown stock during the last 30 days.',
+    target_concept: 'Imputed farmgate valuation of own farm consumption',
+    probing_warning: 'Do not price produce using urban supermarket or retail market rates. Always anchor valuation to the local village mandi producer price.',
+    translations: {
+      hi: {
+        standard_literal: 'पिछले 30 दिनों में घरेलू उपज से उपभोग किए गए खाद्यान्न और सब्जियों की मात्रा और आरोपित मूल्य दर्ज करें।',
+        conversational_script: 'पिछले 30 दिनों में आपके घर में जो गेहूं, चावल या सब्जियां खाई गईं, उनमें से कितनी आपके अपने खेत या बाड़ी की थीं? अगर वही फसल गांव की मंडी में बेचते, तो क्या भाव मिलता?',
+        dialect_notes: 'खेत खलिहान की भाषा: "घर के उपजायल अनाज केतना खियईनी, आ ओकर मंडी भाव का बा?"',
+        key_phrases: ['अपने खेत का अनाज', 'मंडी भाव', 'खेत की उपज']
+      },
+      bn: {
+        standard_literal: 'গত ৩০ দিনে গৃহপালিত বা খামারজাত ফসল থেকে ব্যবহৃত খাদ্যশস্যের পরিমাণ ও আনুমানিক মূল্য জানান।',
+        conversational_script: 'গত ৩০ দিনে আপনার পরিবারে চাল, ডাল বা শাকসবজি যা খাওয়া হয়েছে, তার কতটা আপনাদের নিজেদের ক্ষেত বা বাগানের? ওই ফসল গ্রামের হাটে বিক্রি করলে কী দাম পেতেন?',
+        dialect_notes: 'গ্রাম্য বাংলায়: "নিজের ক্ষেতের কতটা ধান-চাল ঘরে খেয়েছেন, আর হাটের পাইকারি দর কত?"',
+        key_phrases: ['নিজের ক্ষেতের ধান', 'হাটের পাইকারি দর', 'বাগানের সবজি']
+      },
+      ta: {
+        standard_literal: 'கடந்த 30 நாட்களில் சொந்த விளைச்சலில் இருந்து நுகரப்பட்ட தானியங்கள் மற்றும் காய்கறிகளின் அளவு மற்றும் உத்தேச மதிப்பை பதிவு செய்யவும்.',
+        conversational_script: 'கடந்த 30 நாட்களில் உங்கள் வீட்டில் சமைக்கப்பட்ட அரிசி, தானியங்கள் மற்றும் காய்கறிகளில் எவ்வளவு உங்கள் சொந்த வயலில் விளைந்தது? அதை உள்ளூர் சந்தையில் விற்றால் என்ன விலை கிடைக்கும்?',
+        dialect_notes: 'கிராமப்புற வழக்கு: "வீட்டுக்குன்னு களத்துல இருந்து எடுத்த தானியம் எம்புட்டு? சந்தை விலை என்ன?"',
+        key_phrases: ['சொந்த வயல் விளைச்சல்', 'உள்ளூர் சந்தை விலை', 'தானிய அளவு']
+      },
+      te: {
+        standard_literal: 'గత 30 రోజులలో స్వంత పంట నుండి వినియోగించిన ఆహార ధాన్యాల పరిమాణం మరియు ఊహాత్మక విలువను నివేదించండి.',
+        conversational_script: 'గత 30 రోజులలో మీ ఇంట్లో వండిన బియ్యం, పప్పులు లేదా కూరగాయలలో ఎంత మీ స్వంత పొలం నుండి వచ్చింది? దాన్ని స్థానిక మార్కెట్లో అమ్మితే ఎంత ధర వస్తుంది?',
+        dialect_notes: 'పల్లెటూరి సంభాషణ: "మీ పొలం నుండి ఇంటి ఖర్చుకు ఎంత ధాన్యం వాడారు? మార్కెట్ ధర ఎంత?"',
+        key_phrases: ['స్వంత పొలం ధాన్యం', 'స్థానిక మార్కెట్ ధర', 'ఇంటి ఖర్చు']
+      },
+      mr: {
+        standard_literal: 'गेल्या ३० दिवसांत स्वतःच्या शेतातील उत्पादनातून वापरलेल्या धान्याची मात्रा आणि अंदाजित मूल्य नोंदवा.',
+        conversational_script: 'गेल्या ३० दिवसांत तुमच्या घरात जे गहू, तांदूळ किंवा भाज्या खाल्ल्या गेल्या, त्यापैकी किती तुमच्या स्वतःच्या शेतातल्या होत्या? तेच धान्य गावातल्या बाजारात विकले असते तर काय भाव मिळाला असता?',
+        dialect_notes: 'ग्रामीण बोली: "घरच्या शेतातलं किती धान्य खाण्यात वापरलं, आणि बाजारातला भाव काय होता?"',
+        key_phrases: ['स्वतःच्या शेतातले धान्य', 'बाजारातला भाव', 'घरचा वापर']
+      }
+    }
+  },
+  {
+    id: 'asuse_mixed_income',
+    survey: 'Annual Survey of Unincorporated Sector Enterprises (ASUSE)',
+    schedule_code: 'Schedule 2.1',
+    title: 'Gross Receipts vs Intermediate Operating Costs & Mixed Income',
+    official_english: 'State the gross receipts, intermediate operational costs (raw materials, electricity, transport), and net mixed income generated by the enterprise during the reference month.',
+    target_concept: 'Separation of enterprise operational costs from household electricity/fuel',
+    probing_warning: 'Ensure the enterprise owner does not count household domestic power bills as business intermediate consumption. Distinguish pure operating expenses.',
+    translations: {
+      hi: {
+        standard_literal: 'संदर्भ माह के दौरान उद्यम द्वारा अर्जित सकल प्राप्तियां, मध्यवर्ती परिचालन लागत और शुद्ध मिश्रित आय दर्ज करें।',
+        conversational_script: 'पिछले महीने आपकी दुकान या काम में कुल कितने रुपये का गल्ला (कुल बिक्री) आया? और कच्चा माल, दुकान की बिजली का बिल, किराया और गाड़ी का भाड़ा काटकर आपके हाथ में शुद्ध कितनी बचत रही?',
+        dialect_notes: 'दुकानदार बोली: "कुल कितना गल्ला आया, और माल-भाड़ा बिजली निकाल के हाथ में क्या बचा?"',
+        key_phrases: ['दुकान का गल्ला', 'कच्चा माल खर्च', 'दुकान की बिजली', 'शुद्ध बचत']
+      },
+      bn: {
+        standard_literal: 'উল্লেখিত মাসে ব্যবসা থেকে মোট প্রাপ্তি, পরিচালন ব্যয় এবং নেট মিশ্র আয় উল্লেখ করুন।',
+        conversational_script: 'গত মাসে আপনার দোকান বা ব্যবসার মোট ক্যাশ বিক্রি কত হয়েছিল? আর কাঁচামাল, বিদ্যুৎ বিল এবং ভাড়ার খরচ বাদ দিয়ে আপনার হাতে নিখাদ লাভ কত রইল?',
+        dialect_notes: 'বাজারের ভাষা: "মোট কত টাকার বেচাকেনা হলো, আর সব খরচ খরচা দিয়ে নিট লাভ কত?"',
+        key_phrases: ['মোট ক্যাশ বিক্রি', 'কাঁচামালের খরচ', 'দোকানের বিদ্যুৎ', 'নিখাদ লাভ']
+      },
+      ta: {
+        standard_literal: 'குறிப்பிட்ட மாதத்தில் நிறுவனத்தின் மொத்த வரவு, இடைநிலை செயல்பாட்டு செலவுகள் மற்றும் நிகர கலப்பு வருவாயை தெரிவிக்கவும்.',
+        conversational_script: 'கடந்த மாதத்தில் உங்கள் வியாபாரத்தின் மொத்த விற்பனை வரவு எவ்வளவு? மூலப்பொருள், மின் கட்டணம், கடை வாடகை போன்ற செலவுகளைக் கழித்து கையில் நின்ற நிகர லாபம் எவ்வளவு?',
+        dialect_notes: 'வணிக வழக்கு: "மொத்த வியாபாரம் என்ன ஆச்சு? எல்லா செலவும் போக கையில் மிஞ்சியது எவ்வளவு?"',
+        key_phrases: ['மொத்த விற்பனை வரவு', 'மூலப்பொருள் செலவு', 'கடை வாடகை', 'நிகர லாபம்']
+      },
+      te: {
+        standard_literal: 'సూచించిన నెలలో సంస్థ ఆర్జించిన స్థూల ఆదాయం, నిర్వహణ ఖర్చులు మరియు నికర మిశ్రమ ఆదాయాన్ని తెలియజేయండి.',
+        conversational_script: 'గత నెలలో మీ వ్యాపారంలో వచ్చిన మొత్తం ఆదాయం ఎంత? ముడిసరుకులు, విద్యుత్ బిల్లు, అద్దె ఖర్చులు పోను మీ చేతికి మిగిలిన నికర లాభం ఎంత?',
+        dialect_notes: 'వ్యాపార సంభాషణ: "మొత్తం గల్లా ఎంత వచ్చింది? ఖర్చులు పోను చేతిలో మిగిలింది ఎంత?"',
+        key_phrases: ['మొత్తం గల్లా', 'ముడిసరుకుల ఖర్చు', 'షాపు అద్దె', 'నికర లాభం']
+      },
+      mr: {
+        standard_literal: 'संदर्भ महिन्यात उद्योगाने कमावलेली एकूण प्राप्ती, कार्यचालन खर्च आणि निव्वळ मिश्र उत्पन्न नोंदवा.',
+        conversational_script: 'गेल्या महिन्यात तुमच्या दुकानात किंवा धंद्यात एकूण किती रुपयांची विक्री झाली? आणि कच्चा माल, दुकानाचे लाईट बिल, भाडे आणि वाहतूक खर्च वजा जाता तुमच्या हातात निव्वळ किती नफा उरला?',
+        dialect_notes: 'व्यापारी भाषा: "एकूण गल्ला किती झाला, आणि सर्व खर्च वजा करून खिशात काय शिल्लक राहिलं?"',
+        key_phrases: ['एकूण विक्री/गल्ला', 'कच्चा माल खर्च', 'दुकानाचे लाईट बिल', 'निव्वळ नफा']
+      }
+    }
+  }
+];
+
+// 1. Get Supported Languages
+app.get('/api/localizer/languages', (req, res) => {
+  res.json({ success: true, languages: BHASHINI_LANGUAGES });
+});
+
+// 2. Get MoSPI Statistical Lexicon Matrix
+app.get('/api/localizer/lexicon', (req, res) => {
+  res.json({ success: true, lexicon: MOSPI_LEXICON });
+});
+
+// 3. Get Pre-loaded Schedule Questions
+app.get('/api/localizer/questions', (req, res) => {
+  res.json({ success: true, questions: LOCALIZED_QUESTIONS });
+});
+
+// 4. Adapt Question to Regional Language & Conversational Dialect
+app.post('/api/localizer/adapt', (req, res) => {
+  const { question_id = 'upas_schedule_10', target_lang = 'hi', tone = 'conversational' } = req.body;
+  const question = LOCALIZED_QUESTIONS.find(q => q.id === question_id) || LOCALIZED_QUESTIONS[0];
+  const langObj = BHASHINI_LANGUAGES.find(l => l.code === target_lang) || BHASHINI_LANGUAGES[0];
+
+  const translation = question.translations[target_lang] || question.translations['hi'];
+
+  res.json({
+    success: true,
+    question_id: question.id,
+    survey: question.survey,
+    schedule_code: question.schedule_code,
+    title: question.title,
+    official_english: question.official_english,
+    target_language: langObj,
+    tone,
+    adaptation: {
+      standard_literal: translation.standard_literal,
+      conversational_field_script: translation.conversational_script,
+      dialect_notes: translation.dialect_notes,
+      key_phrases: translation.key_phrases,
+      probing_warning: question.probing_warning,
+      speech_text: translation.conversational_script
+    }
+  });
+});
+
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
