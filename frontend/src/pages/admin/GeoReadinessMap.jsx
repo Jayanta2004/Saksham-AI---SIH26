@@ -82,35 +82,37 @@ export default function GeoReadinessMap() {
 
   return (
     <div className="space-y-6 pb-12">
-      {/* Header & Context */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 p-6 rounded-2xl text-white shadow-xl relative overflow-hidden">
-        <div className="absolute right-0 top-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="relative z-10 space-y-2">
-          <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-full bg-blue-500/20 text-blue-300 text-xs font-semibold flex items-center gap-1 border border-blue-400/30">
-              <Globe className="w-3.5 h-3.5" />
-              GIS & Bhuvan Spatial Analytics
-            </span>
-            <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-semibold flex items-center gap-1 border border-emerald-400/30">
-              <Radio className="w-3.5 h-3.5 animate-pulse" />
-              Live NSSO RO Telemetry
-            </span>
+      {/* Header & Context (High-Contrast Light Theme) */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-50/90 via-white to-emerald-50/90 border border-blue-200 p-6 md:p-8 shadow-sm">
+        <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-blue-200/30 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="space-y-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-900 border border-blue-300">
+                <Globe className="w-3.5 h-3.5 text-blue-700" />
+                GIS & Bhuvan Spatial Analytics
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-900 border border-emerald-300">
+                <Radio className="w-3.5 h-3.5 text-emerald-700 animate-pulse" />
+                Live NSSO RO Telemetry
+              </span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
+              National Geo-Statistical Capability & Field Readiness Map
+            </h1>
+            <p className="text-slate-600 text-sm max-w-3xl leading-relaxed">
+              Real-time geospatial readiness index across all 6 statistical zones. Audits field operations staffing, CAPI tablet adoption, local dialect coverage, and dispatches targeted NSSTA mobile training missions.
+            </p>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
-            National Geo-Statistical Capability & Field Readiness Map
-          </h1>
-          <p className="text-slate-300 text-sm max-w-3xl leading-relaxed">
-            Real-time geospatial readiness index across all 6 statistical zones. Audits field operations staffing, CAPI tablet adoption, local dialect coverage, and dispatches targeted NSSTA mobile training missions.
-          </p>
-        </div>
 
-        <button
-          onClick={fetchGeoData}
-          className="relative z-10 self-start md:self-center px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-semibold flex items-center gap-2 transition-all shadow-sm"
-        >
-          <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
-          Refresh GIS Telemetry
-        </button>
+          <button
+            onClick={fetchGeoData}
+            className="self-start md:self-center px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold flex items-center gap-2 transition-all shadow-sm cursor-pointer"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+            Refresh GIS Telemetry
+          </button>
+        </div>
       </div>
 
       {/* Top Macro Metric Cards */}

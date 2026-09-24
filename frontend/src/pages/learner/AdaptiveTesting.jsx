@@ -117,24 +117,24 @@ export default function AdaptiveTesting() {
 
   return (
     <div className="space-y-6 pb-16">
-      {/* Header Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-purple-950 to-slate-900 p-6 rounded-2xl text-white shadow-xl relative overflow-hidden">
-        <div className="absolute right-0 top-0 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="relative z-10 space-y-2">
-          <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-full bg-purple-500/20 text-purple-300 text-xs font-semibold flex items-center gap-1 border border-purple-400/30">
-              <Brain className="w-3.5 h-3.5" />
+      {/* Top Header Banner (High-Contrast Light Theme) */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-purple-50/90 via-white to-blue-50/90 border border-purple-200 p-6 md:p-8 shadow-sm">
+        <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-purple-200/30 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative z-10 space-y-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-purple-100 text-purple-900 border border-purple-300">
+              <Brain className="w-3.5 h-3.5 text-purple-700" />
               2-Parameter Logistic (2PL) Item Response Theory
             </span>
-            <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-semibold flex items-center gap-1 border border-emerald-400/30">
-              <Zap className="w-3.5 h-3.5" />
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-900 border border-emerald-300">
+              <Zap className="w-3.5 h-3.5 text-emerald-700" />
               Maximum Fisher Information (CAT)
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
             Adaptive Computerized Diagnostic Testing Arena
           </h1>
-          <p className="text-slate-300 text-sm max-w-3xl leading-relaxed">
+          <p className="text-slate-600 text-sm max-w-3xl leading-relaxed">
             Dynamic psychometric assessment where question difficulty automatically recalibrates in real-time based on your responses, converging on your true latent statistical ability (&theta;) with mathematical precision.
           </p>
         </div>

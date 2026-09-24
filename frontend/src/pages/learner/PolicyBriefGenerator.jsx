@@ -156,24 +156,24 @@ ${generatedBrief.signatory.institution}
 
   return (
     <div className="space-y-6 pb-16">
-      {/* Header Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 p-6 rounded-2xl text-white shadow-xl relative overflow-hidden">
-        <div className="absolute right-0 top-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="relative z-10 space-y-2">
-          <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-full bg-blue-500/20 text-blue-300 text-xs font-semibold flex items-center gap-1 border border-blue-400/30">
-              <Sparkles className="w-3.5 h-3.5" />
+      {/* Top Header Banner (High-Contrast Light Theme) */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-50/90 via-white to-indigo-50/90 border border-blue-200 p-6 md:p-8 shadow-sm">
+        <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-blue-200/30 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative z-10 space-y-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-900 border border-blue-300">
+              <Sparkles className="w-3.5 h-3.5 text-blue-700" />
               Automated Statistical Policy Studio
             </span>
-            <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-semibold flex items-center gap-1 border border-emerald-400/30">
-              <FileCheck className="w-3.5 h-3.5" />
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-900 border border-emerald-300">
+              <FileCheck className="w-3.5 h-3.5 text-emerald-700" />
               MoSPI Standard Publication Format
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
             Official Press Note & Executive Policy Brief Synthesizer
           </h1>
-          <p className="text-slate-300 text-sm max-w-3xl leading-relaxed">
+          <p className="text-slate-600 text-sm max-w-3xl leading-relaxed">
             Synthesizes official Government of India statistical press releases, cabinet summaries, and economic policy briefs directly from microdata indicators with methodology citations and policy implications.
           </p>
         </div>
