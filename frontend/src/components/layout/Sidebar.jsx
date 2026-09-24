@@ -28,7 +28,8 @@ import {
   Mic,
   SearchCheck,
   Languages,
-  Globe
+  Globe,
+  GitPullRequest
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -46,6 +47,7 @@ const learnerNav = [
   { name: 'Data Scrutiny Studio', path: '/scrutiny-studio', icon: SearchCheck },
   { name: 'Bhashini Localizer', path: '/survey-localizer', icon: Languages },
   { name: 'NIF SDG Tracker', path: '/sdg-tracker', icon: Globe },
+  { name: 'Peer Code Review', path: '/code-review', icon: GitPullRequest },
   { name: 'Statistical Copilot', path: '/ai-assistant', icon: Bot },
   { name: 'Statistical Sandbox', path: '/playground', icon: Terminal },
   { name: 'CAPI Field Simulator', path: '/capi-simulator', icon: Smartphone },

@@ -36,6 +36,7 @@ import VivaExaminer from '../pages/learner/VivaExaminer';
 import ScrutinyStudio from '../pages/learner/ScrutinyStudio';
 import SurveyLocalizer from '../pages/learner/SurveyLocalizer';
 import SdgTracker from '../pages/learner/SdgTracker';
+import CodeReviewStudio from '../pages/learner/CodeReviewStudio';
 
 // Admin Pages
 import AdminDashboard from '../pages/admin/AdminDashboard';
@@ -92,6 +93,7 @@ const AppRoutes = () => {
         <Route path="/scrutiny-studio" element={<ScrutinyStudio />} />
         <Route path="/survey-localizer" element={<SurveyLocalizer />} />
         <Route path="/sdg-tracker" element={<SdgTracker />} />
+        <Route path="/code-review" element={<CodeReviewStudio />} />
       </Route>
 
       {/* Admin Protected Routes */}

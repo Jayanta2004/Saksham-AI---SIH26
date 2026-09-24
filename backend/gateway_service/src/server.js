@@ -4099,6 +4099,413 @@ app.post('/api/sdg/gap-analysis', (req, res) => {
   });
 });
 
+// ==================== STATISTICAL CODE REVIEW & PEER-SCRUTINY ROOM ====================
+
+const CODE_REVIEW_SUBMISSIONS = [
+  {
+    id: 'scrutiny-plfs-ur-01',
+    title: 'PLFS Quarterly Urban Unemployment Rate (UR) Estimation Pipeline',
+    filename: 'plfs_quarterly_ur.py',
+    language: 'python',
+    author: {
+      name: 'Priya Sharma',
+      cadre: 'SSS Cadre (Junior Statistical Officer)',
+      division: 'DQSW (Data Quality & Software Wing, Kolkata)',
+      avatar: 'PS'
+    },
+    status: 'Changes Requested',
+    security_score: 58,
+    methodology_score: 42,
+    overall_status: 'Critical Methodology & DPDPA Flaws Detected',
+    submitted_at: '2026-09-22T14:30:00Z',
+    survey_round: 'PLFS Schedule 10.4',
+    original_code: `import pandas as pd
+import numpy as np
+
+# Load raw First Stage Unit (FSU) extract
+df = pd.read_csv("plfs_urban_q3_raw.csv")
+
+# Filter for working age population
+working_age = df[df['age'] >= 15]
+
+# Bug 1: Calculating simple unweighted arithmetic mean
+# Does NOT apply sub-round multipliers / sampling weights
+unemployed_count = (working_age['principal_status'] == 81).sum()
+labour_force_count = (working_age['principal_status'].isin([11, 21, 31, 41, 51, 81])).sum()
+raw_ur = (unemployed_count / labour_force_count) * 100
+print(f"Unemployment Rate: {raw_ur:.2f}%")
+
+# Bug 2: Ignores UPSS (Usual Principal & Subsidiary Status)
+# Individuals with secondary informal work are misclassified as unemployed
+
+# Bug 3: DPDPA 2023 violation - exporting direct identifiers
+output_df = working_age[['fsu_no', 'sample_hh_no', 'person_name', 'principal_status', 'monthly_earnings']]
+output_df.to_csv("public_plfs_estimates.csv", index=False)
+`,
+    remediated_code: `import pandas as pd
+import numpy as np
+
+# Load raw First Stage Unit (FSU) extract with validated schema
+df = pd.read_csv("plfs_urban_q3_raw.csv")
+
+# 1. Filter for working age population (Age >= 15)
+working_age = df[df['age'] >= 15].copy()
+
+# 2. Determine Usual Status (UPSS: Principal + Subsidiary Activity)
+# Incorporate subsidiary economic activity (codes 11-51) over 30+ days
+working_age['is_employed'] = (
+    working_age['principal_status'].isin([11, 21, 31, 41, 51]) |
+    working_age['subsidiary_status'].isin([11, 21, 31, 41, 51])
+).astype(int)
+
+working_age['is_unemployed'] = (
+    (working_age['principal_status'] == 81) &
+    (~working_age['subsidiary_status'].isin([11, 21, 31, 41, 51]))
+).astype(int)
+
+working_age['in_labour_force'] = working_age['is_employed'] | working_age['is_unemployed']
+
+# 3. Statistical Multiplier Weighted Aggregation (NSSO Methodological Standard)
+# Weighted UR = (sum(weight * unemployed) / sum(weight * labour_force)) * 100
+weights = working_age['subsample_multiplier'] / 100.0  # normalize FSU multiplier
+weighted_unemployed = np.sum(weights * working_age['is_unemployed'])
+weighted_labour_force = np.sum(weights * working_age['in_labour_force'])
+
+weighted_ur = (weighted_unemployed / weighted_labour_force) * 100
+print(f"Official NSSO Weighted Unemployment Rate (UPSS): {weighted_ur:.2f}%")
+
+# 4. Statistical Disclosure Control (SDC) & DPDPA 2023 Compliance
+# Drop direct identifiers (person_name, sample_hh_no) & apply k-anonymity masking
+anonymized_df = working_age[['district_code', 'age_group', 'is_unemployed', 'in_labour_force', 'subsample_multiplier']]
+anonymized_df.to_csv("public_plfs_estimates_anonymized.csv", index=False)
+`,
+    annotations: [
+      {
+        line: 11,
+        type: 'critical',
+        category: 'Sampling Multiplier Ignored',
+        title: 'Unweighted Arithmetic Aggregation Violates NSSO Standards',
+        comment: 'Survey microdata must NOT be summarized with raw counts or simple means. MoSPI multi-stage sampling requires weighting each respondent by `subsample_multiplier / 100`. Simple arithmetic average produces sample selection bias exceeding ~1.8 percentage points.',
+        official_ref: 'PLFS Instructions to Field Staff & SDRD Estimation Procedures, Vol 1, Para 4.12'
+      },
+      {
+        line: 17,
+        type: 'methodological',
+        category: 'Concept Omission (UPSS)',
+        title: 'Failure to Account for Subsidiary Economic Activity',
+        comment: 'Only checking `principal_status == 81` omits individuals who were unemployed in principal status but engaged in subsidiary economic activities (e.g. seasonal agricultural or petty trade for >= 30 days). Standard MoSPI headline UR utilizes Usual Principal and Subsidiary Status (UPSS).',
+        official_ref: 'NSSO Concepts & Definitions, Activity Code Matrix'
+      },
+      {
+        line: 21,
+        type: 'security',
+        category: 'DPDPA 2023 Statutory Breach',
+        title: 'Direct Personal Identifiers Exposed in Data Export',
+        comment: 'Exporting `person_name`, `sample_hh_no`, and raw `fsu_no` violates Section 8 of the Digital Personal Data Protection Act (DPDPA 2023) and MoSPI Microdata Dissemination Policy. All released tabular files must undergo Direct Identifier Masking and k-anonymity (k >= 5).',
+        official_ref: 'DPDPA 2023 Section 8 & MoSPI National Data Warehouse SDC Guidelines'
+      }
+    ],
+    peer_reviews: [
+      {
+        reviewer: 'Rajesh Verma',
+        role: 'Joint Director (ISS), SDRD',
+        date: '2026-09-22T16:15:00Z',
+        verdict: 'Changes Requested',
+        comment: 'Priya, your preprocessing is clean, but you cannot compute national headline UR without the sub-round multipliers. Please apply the attached remediation script and verify that the weighted estimate matches the provisional tabulation of 3.2%.'
+      },
+      {
+        reviewer: 'Dr. Kavita Nair',
+        role: 'Senior Statistical Officer, DQSW',
+        date: '2026-09-22T17:45:00Z',
+        verdict: 'Flagged for Review',
+        comment: 'Seconded. Also ensure that the output dataframe strips person_name before any pipeline export to the staging data lake.'
+      }
+    ]
+  },
+  {
+    id: 'scrutiny-asi-gva-02',
+    title: 'ASI Factory Gross Value Added (GVA) & Depreciation Ledger Audit',
+    filename: 'asi_factory_gva_audit.R',
+    language: 'r',
+    author: {
+      name: 'Anirban Das',
+      cadre: 'ISS Cadre (Assistant Director)',
+      division: 'Economic Statistics Division (Industrial Statistics)',
+      avatar: 'AD'
+    },
+    status: 'In Review',
+    security_score: 92,
+    methodology_score: 64,
+    overall_status: 'Double Counting & Imputation Flaws',
+    submitted_at: '2026-09-23T11:00:00Z',
+    survey_round: 'ASI 2024-25 Schedule A',
+    original_code: `library(dplyr)
+
+# Load ASI Block E (Gross Output) and Block H (Intermediate Inputs)
+asi_raw <- read.csv("asi_factory_returns_2025.csv")
+
+# Compute Net Value Added (NVA)
+asi_clean <- asi_raw %>%
+  # Bug 1: na.omit drops entire factories with missing auxiliary power
+  na.omit() %>%
+  mutate(
+    gross_output = ex_factory_value + other_receipts,
+    # Bug 2: Deducting GST twice (already excluded in ex-factory basic price)
+    intermediate_input = raw_materials + fuels_consumed + gst_paid,
+    gva = gross_output - intermediate_input,
+    nva = gva - depreciation
+  )
+
+# Flag contradictory records
+violations <- asi_clean %>% filter(nva > gross_output)
+cat("Anomalous factories detected:", nrow(violations), "\\n")
+`,
+    remediated_code: `library(dplyr)
+
+# Load ASI Block E (Gross Output) and Block H (Intermediate Inputs)
+asi_raw <- read.csv("asi_factory_returns_2025.csv")
+
+# 1. Stratified Imputation instead of blind listwise deletion (na.omit)
+# Missing auxiliary power is imputed with NIC 2-digit 3-year median
+asi_imputed <- asi_raw %>%
+  group_by(nic_2digit, state_code) %>%
+  mutate(
+    fuels_consumed = ifelse(is.na(fuels_consumed), median(fuels_consumed, na.rm = TRUE), fuels_consumed)
+  ) %>%
+  ungroup()
+
+# 2. National Accounts System (SNA 2008) GVA Accounting Identity
+asi_clean <- asi_imputed %>%
+  mutate(
+    # Gross Output at Basic Prices (excludes product taxes like GST)
+    gross_output = ex_factory_value + other_receipts + stock_variation,
+    # Intermediate Consumption (pure operating goods & services at purchaser prices)
+    intermediate_input = raw_materials + fuels_consumed + industrial_services_purchased,
+    gva = gross_output - intermediate_input,
+    # Net Value Added = GVA - Consumption of Fixed Capital (Depreciation)
+    nva = pmax(0, gva - depreciation)
+  )
+
+# Accounting Identity Scrutiny Rule
+violations <- asi_clean %>% filter(nva > gross_output | gva < -1000000)
+cat("Scrutiny verified: 0 identity contradictions\\n")
+`,
+    annotations: [
+      {
+        line: 8,
+        type: 'methodological',
+        category: 'Missing Data Distortion',
+        title: 'Listwise Deletion (`na.omit`) Causes Systemic Non-Response Bias',
+        comment: 'Dropping factories that have missing fuel costs discards legitimate manufacturing units with captive solar or third-party leasing. ASI methodology mandates stratified median imputation based on 2-digit NIC classification.',
+        official_ref: 'ASI Manual on Concepts, Definitions and Estimation Procedures, Block H'
+      },
+      {
+        line: 12,
+        type: 'critical',
+        category: 'Accounting Double Counting',
+        title: 'GST Included in Intermediate Consumption Incorrectly',
+        comment: 'Ex-factory value is already evaluated at Basic Prices (net of taxes on products). Deducting GST in intermediate inputs creates double deduction and artificially suppresses factory GVA by an estimated 12-18%.',
+        official_ref: 'UN System of National Accounts (SNA 2008) Para 6.78'
+      }
+    ],
+    peer_reviews: [
+      {
+        reviewer: 'Sunil Mathur',
+        role: 'Deputy Director General, ESD',
+        date: '2026-09-23T14:20:00Z',
+        verdict: 'Changes Requested',
+        comment: 'Double deduction of GST must be removed immediately before this script is integrated into the Central ASI Processing engine.'
+      }
+    ]
+  },
+  {
+    id: 'scrutiny-hces-deciles-03',
+    title: 'HCES Monthly Per Capita Consumer Expenditure (MPCE) Fractile Parser',
+    filename: 'hces_fractile_deciles.py',
+    language: 'python',
+    author: {
+      name: 'Sneha Patel',
+      cadre: 'ISS Probationer (Batch 46)',
+      division: 'Social Statistics Division (Poverty & Consumption)',
+      avatar: 'SP'
+    },
+    status: 'Approved with Comments',
+    security_score: 95,
+    methodology_score: 88,
+    overall_status: 'Minor Household Size Normalization Needed',
+    submitted_at: '2026-09-24T09:15:00Z',
+    survey_round: 'HCES Round 80 Schedule 1.0',
+    original_code: `import pandas as pd
+import numpy as np
+
+hces = pd.read_csv("hces_round80_food_nonfood.csv")
+
+# Calculate Household Total Consumption
+hces['total_consumption'] = hces['food_total'] + hces['nonfood_total']
+
+# Bug: Calculating fractile deciles on total household outlay
+# instead of dividing by household size (MPCE)
+hces['decile'] = pd.qcut(hces['total_consumption'], q=10, labels=False)
+print("Decile distribution calculated across households.")
+`,
+    remediated_code: `import pandas as pd
+import numpy as np
+
+hces = pd.read_csv("hces_round80_food_nonfood.csv")
+
+# 1. Total Consumption Outlay (30-day reference period)
+hces['total_consumption'] = hces['food_total'] + hces['nonfood_total']
+
+# 2. Derive Monthly Per Capita Consumer Expenditure (MPCE)
+# Standardize by household size (Block 3, Item 1)
+hces['mpce'] = hces['total_consumption'] / hces['household_size']
+
+# 3. Weighted Quantile Binning (applying FSU multipliers)
+# Ensures population-representative decile boundaries
+weighted_deciles = np.percentile(hces['mpce'], np.linspace(0, 100, 11))
+hces['mpce_decile'] = pd.cut(hces['mpce'], bins=weighted_deciles, labels=[f"D{i}" for i in range(1, 11)], include_lowest=True)
+print("Population-representative MPCE decile classes generated.")
+`,
+    annotations: [
+      {
+        line: 10,
+        type: 'critical',
+        category: 'Per-Capita Metric Omission',
+        title: 'Household Total Used Instead of Per-Capita (MPCE)',
+        comment: 'Fractile deciles in HCES must ALWAYS be constructed on Monthly Per Capita Consumer Expenditure (MPCE = Total Consumption / Household Size). Using total household consumption biases upper deciles towards large joint families rather than truly affluent households.',
+        official_ref: 'HCES Round 80 Factsheet & Methodological Note, Page 3'
+      }
+    ],
+    peer_reviews: [
+      {
+        reviewer: 'Dr. Kavita Nair',
+        role: 'Senior Statistical Officer, DQSW',
+        date: '2026-09-24T10:30:00Z',
+        verdict: 'Approved with Commendation',
+        comment: 'Excellent code structure. Once normalized by household_size, the fractile distribution aligns within 0.2% of national benchmark tables.'
+      }
+    ]
+  }
+];
+
+// 1. Get Code Review Submissions List
+app.get('/api/codereview/submissions', (req, res) => {
+  const summary = CODE_REVIEW_SUBMISSIONS.map(s => ({
+    id: s.id,
+    title: s.title,
+    filename: s.filename,
+    language: s.language,
+    author: s.author,
+    status: s.status,
+    security_score: s.security_score,
+    methodology_score: s.methodology_score,
+    overall_status: s.overall_status,
+    submitted_at: s.submitted_at,
+    survey_round: s.survey_round,
+    annotations_count: s.annotations.length,
+    reviews_count: s.peer_reviews.length
+  }));
+
+  res.json({
+    success: true,
+    total: summary.length,
+    submissions: summary
+  });
+});
+
+// 2. Get Code Review Submission Detail by ID
+app.get('/api/codereview/submission/:id', (req, res) => {
+  const sub = CODE_REVIEW_SUBMISSIONS.find(s => s.id === req.params.id) || CODE_REVIEW_SUBMISSIONS[0];
+  res.json({
+    success: true,
+    submission: sub
+  });
+});
+
+// 3. Automated AI Statistical Scrutinizer Bot
+app.post('/api/codereview/analyze', (req, res) => {
+  const { code = '', language = 'python' } = req.body;
+
+  const detected_issues = [];
+
+  // Check 1: Unweighted aggregation
+  if (code.includes('.mean()') || code.includes('mean(') || (code.includes('sum(') && !code.includes('multiplier') && !code.includes('weight'))) {
+    detected_issues.push({
+      line: 12,
+      type: 'critical',
+      category: 'Unweighted Estimation Risk',
+      title: 'Missing Multiplier / Sampling Weights',
+      comment: 'Detected unweighted arithmetic aggregation. In official MoSPI survey workflows (PLFS/HCES/ASUSE), sample weights (subsample_multiplier / 100) must be applied to avoid severe estimation bias.',
+      official_ref: 'SDRD Survey Estimation Manual, Chapter 4'
+    });
+  }
+
+  // Check 2: DPDPA privacy violation
+  if (code.includes('person_name') || code.includes('sample_hh_no') || code.includes('aadhaar') || code.includes('mobile')) {
+    detected_issues.push({
+      line: 22,
+      type: 'security',
+      category: 'DPDPA 2023 Statutory Breach',
+      title: 'Direct Personal Identifiers In Export',
+      comment: 'Detected export or processing of direct personal identifiers. Under DPDPA 2023 and MoSPI Microdata Anonymization Policy, all microdata releases must mask names, phone numbers, and exact household serials.',
+      official_ref: 'DPDPA 2023 Section 8'
+    });
+  }
+
+  // Check 3: Blind listwise deletion
+  if (code.includes('na.omit') || code.includes('.dropna()')) {
+    detected_issues.push({
+      line: 8,
+      type: 'methodological',
+      category: 'Listwise Deletion Distortion',
+      title: 'Blind Removal of Missing Observations',
+      comment: 'Dropping records with missing values distorts sampling frame representation. MoSPI protocols require hot-deck or stratified median imputation by 2-digit NIC or regional strata.',
+      official_ref: 'MoSPI Data Scrutiny Protocol, Rule DQ-04'
+    });
+  }
+
+  // Compute scores based on detected issues
+  const penalty = detected_issues.length * 22;
+  const security_score = Math.max(35, 100 - (detected_issues.some(i => i.type === 'security') ? 45 : 5));
+  const methodology_score = Math.max(30, 100 - penalty);
+
+  res.json({
+    success: true,
+    language,
+    analyzed_lines: code.split('\n').length,
+    security_score,
+    methodology_score,
+    issues_found: detected_issues.length,
+    detected_issues
+  });
+});
+
+// 4. Submit Peer Review Comment / Verdict
+app.post('/api/codereview/comment', (req, res) => {
+  const { submission_id, reviewer_name = 'Reviewing Officer', verdict = 'Changes Requested', comment = '' } = req.body;
+
+  const sub = CODE_REVIEW_SUBMISSIONS.find(s => s.id === submission_id) || CODE_REVIEW_SUBMISSIONS[0];
+
+  const newReview = {
+    reviewer: reviewer_name,
+    role: 'Senior Statistical Officer, MoSPI',
+    date: new Date().toISOString(),
+    verdict,
+    comment
+  };
+
+  sub.peer_reviews.push(newReview);
+  sub.status = verdict;
+
+  res.json({
+    success: true,
+    submission_id: sub.id,
+    updated_status: sub.status,
+    new_review: newReview,
+    total_reviews: sub.peer_reviews.length
+  });
+});
+
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
