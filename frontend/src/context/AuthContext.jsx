@@ -60,13 +60,21 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const updateOfficerProfile = (updates) => {
+    setUser(prev => {
+      const nextUser = { ...prev, ...updates };
+      localStorage.setItem('saksham_user', JSON.stringify(nextUser));
+      return nextUser;
+    });
+  };
+
   const logout = () => {
     authService.logout();
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, demoLogin, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, demoLogin, logout, updateOfficerProfile }}>
       {children}
     </AuthContext.Provider>
   );

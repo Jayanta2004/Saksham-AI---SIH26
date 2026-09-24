@@ -194,8 +194,105 @@ export default function LearnerDashboard() {
               Role Readiness
             </div>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center">
-            <Activity className="w-5 h-5 text-blue-600" />
+        </div>
+      </div>
+
+      {/* 1.5. Officer Priority Mandate & Daily Directives Widget */}
+      <div className="bg-gradient-to-r from-blue-50/80 via-indigo-50/50 to-white border border-blue-200/80 p-5 rounded-2xl shadow-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3 border-b border-blue-100 pb-3">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-xs shadow-xs">
+              <Zap className="w-4 h-4" />
+            </div>
+            <div>
+              <div className="text-xs font-bold text-blue-900 uppercase tracking-wider">
+                Official MoSPI Daily Directive & Active Cadre Mandate
+              </div>
+              <div className="text-[11px] text-slate-600">
+                Targeted actions generated for {user?.designation || 'Senior Statistical Officer'} ({user?.department || 'Official Statistics System'})
+              </div>
+            </div>
+          </div>
+
+          <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 border border-blue-200 self-start sm:self-auto">
+            3 High-Priority Actions Pending
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          {/* Directive 1 */}
+          <div className="bg-white border border-slate-200/80 p-3.5 rounded-xl shadow-2xs hover:border-blue-400 transition-all flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="px-2 py-0.5 text-[10px] font-bold rounded-md bg-rose-50 text-rose-700 border border-rose-200 uppercase">
+                  Statutory Compliance
+                </span>
+                <span className="text-[10px] text-slate-500 font-mono">Due in 4 Days</span>
+              </div>
+              <h4 className="text-xs font-bold text-slate-900 leading-snug">
+                DPDPA 2023 Microdata Disclosure Control ($k$-Anonymity) Audit
+              </h4>
+              <p className="text-[11px] text-slate-600 mt-1 leading-relaxed">
+                Mandatory annual certification required prior to accessing raw primary survey unit extracts.
+              </p>
+            </div>
+            <Link
+              to="/assessments"
+              className="mt-3 inline-flex items-center text-xs font-bold text-blue-600 hover:text-blue-800 hover:underline gap-1 pt-2 border-t border-slate-100"
+            >
+              <span>Attempt Assessment</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          {/* Directive 2 */}
+          <div className="bg-white border border-slate-200/80 p-3.5 rounded-xl shadow-2xs hover:border-blue-400 transition-all flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="px-2 py-0.5 text-[10px] font-bold rounded-md bg-amber-50 text-amber-700 border border-amber-200 uppercase">
+                  Field Preparedness
+                </span>
+                <span className="text-[10px] text-slate-500 font-mono">Sub-Round 2</span>
+              </div>
+              <h4 className="text-xs font-bold text-slate-900 leading-snug">
+                CAPI Respondent Interview Simulation & Probing Practice
+              </h4>
+              <p className="text-[11px] text-slate-600 mt-1 leading-relaxed">
+                Complete 2 interactive farmer/gig-worker respondent trials to calibrate probing protocols under DPDPA.
+              </p>
+            </div>
+            <Link
+              to="/capi-simulator"
+              className="mt-3 inline-flex items-center text-xs font-bold text-blue-600 hover:text-blue-800 hover:underline gap-1 pt-2 border-t border-slate-100"
+            >
+              <span>Launch CAPI Simulator</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          {/* Directive 3 */}
+          <div className="bg-white border border-slate-200/80 p-3.5 rounded-xl shadow-2xs hover:border-blue-400 transition-all flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="px-2 py-0.5 text-[10px] font-bold rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 uppercase">
+                  Career Progression
+                </span>
+                <span className="text-[10px] text-slate-500 font-mono">Cadre Goal</span>
+              </div>
+              <h4 className="text-xs font-bold text-slate-900 leading-snug">
+                Small Area Estimation (SAE) for Sub-District SDG Indicators
+              </h4>
+              <p className="text-[11px] text-slate-600 mt-1 leading-relaxed">
+                Recommended prerequisite course for Junior Administrative Grade (JAG) and STS promotion empanelment.
+              </p>
+            </div>
+            <Link
+              to="/learning-path"
+              className="mt-3 inline-flex items-center text-xs font-bold text-blue-600 hover:text-blue-800 hover:underline gap-1 pt-2 border-t border-slate-100"
+            >
+              <span>Explore Learning Pathway</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
           </div>
         </div>
       </div>
@@ -239,7 +336,7 @@ export default function LearnerDashboard() {
                   Observed proficiency vs MoSPI official benchmark targets
                 </p>
               </div>
-              <Link to="/skills" className="text-xs text-blue-600 font-semibold hover:underline flex items-center gap-1">
+              <Link to="/skill-gap" className="text-xs text-blue-600 font-semibold hover:underline flex items-center gap-1">
                 <span>Full Matrix</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
