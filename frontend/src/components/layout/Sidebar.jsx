@@ -27,7 +27,8 @@ import {
   Shield,
   Mic,
   SearchCheck,
-  Languages
+  Languages,
+  Globe
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -44,6 +45,7 @@ const learnerNav = [
   { name: 'NSSTA Viva Examiner', path: '/viva-examiner', icon: Mic },
   { name: 'Data Scrutiny Studio', path: '/scrutiny-studio', icon: SearchCheck },
   { name: 'Bhashini Localizer', path: '/survey-localizer', icon: Languages },
+  { name: 'NIF SDG Tracker', path: '/sdg-tracker', icon: Globe },
   { name: 'Statistical Copilot', path: '/ai-assistant', icon: Bot },
   { name: 'Statistical Sandbox', path: '/playground', icon: Terminal },
   { name: 'CAPI Field Simulator', path: '/capi-simulator', icon: Smartphone },

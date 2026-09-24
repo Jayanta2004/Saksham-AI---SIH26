@@ -3702,6 +3702,403 @@ app.post('/api/localizer/adapt', (req, res) => {
   });
 });
 
+// ==================== MoSPI NIF / SDG INDICATOR TRACKER ====================
+
+const SDG_GOALS = [
+  { id: 1, code: 'SDG-1', title: 'No Poverty', color: '#E5243B', icon: 'Shield', total_nif_indicators: 19, on_track: 14, needs_accel: 3, data_lag: 2, custodian_div: 'SSD (Social Statistics Division)' },
+  { id: 2, code: 'SDG-2', title: 'Zero Hunger', color: '#DDA63A', icon: 'Wheat', total_nif_indicators: 18, on_track: 11, needs_accel: 5, data_lag: 2, custodian_div: 'SSD / MoAFW' },
+  { id: 3, code: 'SDG-3', title: 'Good Health & Well-Being', color: '#4C9F38', icon: 'HeartPulse', total_nif_indicators: 41, on_track: 29, needs_accel: 9, data_lag: 3, custodian_div: 'SSD / ORGI / MoHFW' },
+  { id: 4, code: 'SDG-4', title: 'Quality Education', color: '#C5192D', icon: 'GraduationCap', total_nif_indicators: 21, on_track: 16, needs_accel: 4, data_lag: 1, custodian_div: 'SSD / DoSEL' },
+  { id: 5, code: 'SDG-5', title: 'Gender Equality', color: '#FF3A21', icon: 'Users', total_nif_indicators: 28, on_track: 18, needs_accel: 7, data_lag: 3, custodian_div: 'SSD (Gender Statistics Unit)' },
+  { id: 6, code: 'SDG-6', title: 'Clean Water & Sanitation', color: '#26BDE2', icon: 'Droplets', total_nif_indicators: 19, on_track: 15, needs_accel: 3, data_lag: 1, custodian_div: 'SSD / DoDWS' },
+  { id: 7, code: 'SDG-7', title: 'Affordable & Clean Energy', color: '#FCC30B', icon: 'Zap', total_nif_indicators: 8, on_track: 7, needs_accel: 1, data_lag: 0, custodian_div: 'ESD (Energy Statistics Division)' },
+  { id: 8, code: 'SDG-8', title: 'Decent Work & Economic Growth', color: '#A21942', icon: 'Briefcase', total_nif_indicators: 32, on_track: 22, needs_accel: 8, data_lag: 2, custodian_div: 'SSD (Labour Statistics) / NAD' },
+  { id: 9, code: 'SDG-9', title: 'Industry, Innovation & Infrastructure', color: '#FD6925', icon: 'Factory', total_nif_indicators: 22, on_track: 17, needs_accel: 4, data_lag: 1, custodian_div: 'ESD / NAD / DPIIT' },
+  { id: 10, code: 'SDG-10', title: 'Reduced Inequalities', color: '#DD1367', icon: 'TrendingDown', total_nif_indicators: 14, on_track: 9, needs_accel: 3, data_lag: 2, custodian_div: 'SSD / NAD' },
+  { id: 11, code: 'SDG-11', title: 'Sustainable Cities & Communities', color: '#FD9D24', icon: 'Building2', total_nif_indicators: 16, on_track: 10, needs_accel: 4, data_lag: 2, custodian_div: 'SSD / MoHUA' },
+  { id: 12, code: 'SDG-12', title: 'Responsible Consumption & Production', color: '#BF8B2E', icon: 'RefreshCw', total_nif_indicators: 15, on_track: 11, needs_accel: 3, data_lag: 1, custodian_div: 'SSD (EnviStats) / CPCB' },
+  { id: 13, code: 'SDG-13', title: 'Climate Action', color: '#3F7E44', icon: 'CloudRain', total_nif_indicators: 9, on_track: 6, needs_accel: 2, data_lag: 1, custodian_div: 'SSD (Environment Statistics Unit)' },
+  { id: 14, code: 'SDG-14', title: 'Life Below Water', color: '#0A97D9', icon: 'Fish', total_nif_indicators: 7, on_track: 5, needs_accel: 2, data_lag: 0, custodian_div: 'SSD / MoES / DoF' },
+  { id: 15, code: 'SDG-15', title: 'Life on Land', color: '#56C02B', icon: 'Trees', total_nif_indicators: 17, on_track: 13, needs_accel: 3, data_lag: 1, custodian_div: 'SSD / FSI / MoEFCC' },
+  { id: 16, code: 'SDG-16', title: 'Peace, Justice & Strong Institutions', color: '#00689D', icon: 'Scale', total_nif_indicators: 18, on_track: 14, needs_accel: 3, data_lag: 1, custodian_div: 'SSD / NCRB / DoJ' },
+  { id: 17, code: 'SDG-17', title: 'Partnerships for the Goals', color: '#19486A', icon: 'Network', total_nif_indicators: 13, on_track: 10, needs_accel: 2, data_lag: 1, custodian_div: 'SSD / DEA / MEA' }
+];
+
+const NIF_INDICATORS = [
+  {
+    id: 'nif-8-5-2',
+    goal_id: 8,
+    nif_code: 'NIF 8.5.2',
+    un_code: 'SDG 8.5.2',
+    title: 'Unemployment Rate (UR) by Sex and Age Groups (Usual Principal & Subsidiary Status)',
+    target_2030: 3.0,
+    current_value: 3.2,
+    unit: '%',
+    baseline_2017: 6.1,
+    status: 'On Track',
+    confidence_tier: 'Tier 1 (High Reliability)',
+    custodian_division: 'SSD (Social Statistics Division)',
+    partner_agencies: ['Labour Bureau', 'Ministry of Labour & Employment'],
+    primary_microdata_source: 'Periodic Labour Force Survey (PLFS)',
+    schedule_block_citation: 'Schedule 10.4, Block 5 (Demographic Particulars) & Block 5.1 (Activity Status: UPSS codes 81)',
+    periodicity: 'Quarterly Urban Bulletin / Annual Comprehensive Report',
+    formula_latex: '\\text{Unemployment Rate (UR)} = \\left( \\frac{\\sum w_i \\cdot I(U_i = 1)}{\\sum w_i \\cdot I(LF_i = 1)} \\right) \\times 100',
+    formula_narrative: 'Number of unemployed persons per 100 persons in the labour force (where Labour Force = Employed + Unemployed). Multipliers applied at First Stage Unit (FSU) sub-round level.',
+    data_flow_stages: [
+      { stage: 'Field CAPI Enumeration', agency: 'FOD (Field Operations Division)', status: 'Active (Quarterly)' },
+      { stage: 'Automated Forensic Scrutiny', agency: 'DQSW (Data Quality & Software Wing)', status: 'Clean Validated' },
+      { stage: 'Macro Aggregation & Estimation', agency: 'SSD / SDRD', status: 'Published July 2025' },
+      { stage: 'NITI Aayog SDG Index Ingestion', agency: 'NITI Aayog SDG Dashboard', status: 'Synchronized' }
+    ],
+    trend: [
+      { year: '2019-20', value: 4.8 },
+      { year: '2020-21', value: 4.2 },
+      { year: '2021-22', value: 4.1 },
+      { year: '2022-23', value: 3.2 },
+      { year: '2023-24', value: 3.1 }
+    ]
+  },
+  {
+    id: 'nif-5-5-2',
+    goal_id: 5,
+    nif_code: 'NIF 5.5.2',
+    un_code: 'SDG 5.5.2',
+    title: 'Female Labour Force Participation Rate (FLFPR) for Persons Aged 15 Years & Above',
+    target_2030: 50.0,
+    current_value: 41.7,
+    unit: '%',
+    baseline_2017: 23.3,
+    status: 'On Track',
+    confidence_tier: 'Tier 1 (High Reliability)',
+    custodian_division: 'SSD (Gender Statistics Unit)',
+    partner_agencies: ['Ministry of Women & Child Development (MWCD)'],
+    primary_microdata_source: 'Periodic Labour Force Survey (PLFS)',
+    schedule_block_citation: 'Schedule 10.4, Block 4 (Demographic Particulars) & Block 5 (Activity Status Codes 11, 21, 31, 41, 51, 81)',
+    periodicity: 'Annual (July to June)',
+    formula_latex: '\\text{FLFPR} = \\left( \\frac{\\sum_{f \\in LF, \\text{age} \\ge 15} w_f}{\\sum_{f, \\text{age} \\ge 15} w_f} \\right) \\times 100',
+    formula_narrative: 'Percentage of female population aged 15 years and above who are either working (employed) or actively seeking work (unemployed). Probe specifically for unpaid family enterprise support (Codes 21 & 31).',
+    data_flow_stages: [
+      { stage: 'Field CAPI Enumeration', agency: 'FOD (Field Operations Division)', status: 'Active (Annual)' },
+      { stage: 'Gender Weight Calibrations', agency: 'SDRD & DQSW', status: 'Completed' },
+      { stage: 'National Indicators Compilation', agency: 'SSD Gender Unit', status: 'Published' },
+      { stage: 'Global SDG Voluntary Review (VNR)', agency: 'UN Statistics Division (UNSD)', status: 'Reported' }
+    ],
+    trend: [
+      { year: '2019-20', value: 30.0 },
+      { year: '2020-21', value: 32.5 },
+      { year: '2021-22', value: 32.8 },
+      { year: '2022-23', value: 37.0 },
+      { year: '2023-24', value: 41.7 }
+    ]
+  },
+  {
+    id: 'nif-9-2-1',
+    goal_id: 9,
+    nif_code: 'NIF 9.2.1',
+    un_code: 'SDG 9.2.1',
+    title: 'Manufacturing Value Added (MVA) as a Proportion of Total Gross Value Added (GVA)',
+    target_2030: 25.0,
+    current_value: 17.3,
+    unit: '%',
+    baseline_2015: 16.3,
+    status: 'Needs Acceleration',
+    confidence_tier: 'Tier 1 (High Reliability)',
+    custodian_division: 'NAD (National Accounts Division) / ESD',
+    partner_agencies: ['Department for Promotion of Industry and Internal Trade (DPIIT)'],
+    primary_microdata_source: 'Annual Survey of Industries (ASI) & MCA-21 Corporate Database',
+    schedule_block_citation: 'ASI Schedule Block E (Output), Block H (Input) & MCA-21 Company Filings (GVA at Basic Prices)',
+    periodicity: 'Annual National Accounts & Quarterly GDP Estimates',
+    formula_latex: '\\text{MVA Share} = \\left( \\frac{\\text{Gross Value Added in Manufacturing (Current Prices)}}{\\text{Total Gross Value Added (Current Prices)}} \\right) \\times 100',
+    formula_narrative: 'Ratio of net economic output generated by organized and unorganized manufacturing sectors to aggregate economy GVA at basic prices.',
+    data_flow_stages: [
+      { stage: 'ASI Factory Web Portal Submission', agency: 'FOD Industrial Statistics Wing', status: 'Completed' },
+      { stage: 'MCA-21 Financial Aggregation', agency: 'Ministry of Corporate Affairs', status: 'Processed' },
+      { stage: 'GVA National Synthesis', agency: 'NAD (CSO)', status: 'Annual NAS 2025' },
+      { stage: 'NITI Aayog & UNIDO Reporting', agency: 'UNIDO Statistical Yearbook', status: 'Synchronized' }
+    ],
+    trend: [
+      { year: '2019-20', value: 16.5 },
+      { year: '2020-21', value: 15.9 },
+      { year: '2021-22', value: 17.0 },
+      { year: '2022-23', value: 17.2 },
+      { year: '2023-24', value: 17.3 }
+    ]
+  },
+  {
+    id: 'nif-1-2-1',
+    goal_id: 1,
+    nif_code: 'NIF 1.2.1',
+    un_code: 'SDG 1.2.1',
+    title: 'Multidimensional Poverty Headcount Ratio (MPI) & Deprivation Intensity',
+    target_2030: 5.0,
+    current_value: 11.28,
+    unit: '%',
+    baseline_2015: 24.85,
+    status: 'On Track',
+    confidence_tier: 'Tier 1 (High Reliability)',
+    custodian_division: 'SSD (Social Statistics Division) / NITI Aayog',
+    partner_agencies: ['Oxford Poverty & Human Development Initiative (OPHI)', 'UNDP India'],
+    primary_microdata_source: 'Household Consumption Expenditure Survey (HCES) & NFHS-5',
+    schedule_block_citation: 'HCES Schedule 1.0 Block 5 (Food/Non-Food Outlays) & NFHS Health/Living Standards Schedule',
+    periodicity: 'Triennial / 5-Year Comprehensive Rounds',
+    formula_latex: '\\text{MPI} = H \\times A = \\left( \\frac{q}{N} \\right) \\times \\left( \\frac{\\sum_{i=1}^q c_i}{q \\cdot d} \\right)',
+    formula_narrative: 'Multidimensional Poverty Index (MPI) equals Headcount Ratio (H) multiplied by Average Intensity of Deprivation (A) across 12 weighted indicators spanning Health, Education, and Standard of Living.',
+    data_flow_stages: [
+      { stage: 'Field Primary Survey', agency: 'MoSPI FOD & MoHFW IIPS', status: 'Completed' },
+      { stage: 'Deprivation Weight Matrix Matching', agency: 'NITI Aayog & MoSPI SSD', status: 'Calculated' },
+      { stage: 'District-wise Disaggregation', agency: 'Social Statistics Division', status: 'National Report' },
+      { stage: 'Global SDG Progress Tracker', agency: 'UNDP Global MPI Registry', status: 'Validated' }
+    ],
+    trend: [
+      { year: '2015-16', value: 24.85 },
+      { year: '2019-21', value: 14.96 },
+      { year: '2022-23', value: 12.40 },
+      { year: '2023-24', value: 11.28 }
+    ]
+  },
+  {
+    id: 'nif-3-1-1',
+    goal_id: 3,
+    nif_code: 'NIF 3.1.1',
+    un_code: 'SDG 3.1.1',
+    title: 'Maternal Mortality Ratio (MMR) per 100,000 Live Births',
+    target_2030: 70.0,
+    current_value: 97.0,
+    unit: 'Deaths / 100k Live Births',
+    baseline_2014: 130.0,
+    status: 'On Track',
+    confidence_tier: 'Tier 1 (High Reliability)',
+    custodian_division: 'SSD (Vital Statistics Unit) / ORGI',
+    partner_agencies: ['Ministry of Health & Family Welfare (MoHFW)'],
+    primary_microdata_source: 'Sample Registration System (SRS) Special Bulletins',
+    schedule_block_citation: 'SRS Form 10 (Death of Female aged 15-49) & Form 2 (Live Births Enumeration)',
+    periodicity: 'Annual Special Bulletin on Maternal Mortality',
+    formula_latex: '\\text{MMR} = \\left( \\frac{\\text{Total Maternal Deaths in Reference Year}}{\\text{Total Registered Live Births}} \\right) \\times 100000',
+    formula_narrative: 'The annual number of female deaths from any cause related to or aggravated by pregnancy or its management (excluding accidental or incidental causes) during pregnancy and childbirth or within 42 days of termination, per 100,000 live births.',
+    data_flow_stages: [
+      { stage: 'SRS Dual Record System', agency: 'FOD & State Registrar Part-time Enumerators', status: 'Continuous' },
+      { stage: 'Verbal Autopsy Scrutiny', agency: 'Office of Registrar General of India (ORGI)', status: 'Audited' },
+      { stage: 'Inter-Departmental Reconcile', agency: 'MoSPI SSD Vital Statistics', status: 'Verified' },
+      { stage: 'WHO / UNICEF Joint Monitoring', agency: 'UN Maternal Mortality Estimation Group', status: 'Reported' }
+    ],
+    trend: [
+      { year: '2016-18', value: 113.0 },
+      { year: '2017-19', value: 103.0 },
+      { year: '2018-20', value: 97.0 },
+      { year: '2021-22', value: 93.0 }
+    ]
+  },
+  {
+    id: 'nif-13-2-1',
+    goal_id: 13,
+    nif_code: 'NIF 13.2.1',
+    un_code: 'SDG 13.2.1',
+    title: 'Renewable Energy Share in Total Installed Grid Capacity & Generation',
+    target_2030: 50.0,
+    current_value: 44.8,
+    unit: '%',
+    baseline_2015: 30.5,
+    status: 'On Track',
+    confidence_tier: 'Tier 1 (High Reliability)',
+    custodian_division: 'ESD (Energy Statistics Division)',
+    partner_agencies: ['Ministry of New & Renewable Energy (MNRE)', 'Central Electricity Authority (CEA)'],
+    primary_microdata_source: 'Energy Statistics India (Annual MoSPI ESD Publication) & CEA Monthly Executive Summaries',
+    schedule_block_citation: 'ESD Energy Balance Tables, Renewable Power Generation Matrix (Solar, Wind, Small Hydro, Biomass)',
+    periodicity: 'Monthly CEA Bulletins / Annual Energy Statistics India',
+    formula_latex: '\\text{Renewable Share} = \\left( \\frac{\\text{Installed Non-Fossil Power Capacity (MW)}}{\\text{Total Installed Grid Capacity (MW)}} \\right) \\times 100',
+    formula_narrative: 'Percentage contribution of non-fossil fuel sources (Solar, Wind, Biomass, Hydro, Nuclear) to India’s total cumulative utility power generation capacity.',
+    data_flow_stages: [
+      { stage: 'State Grid Substation Telemetry', agency: 'State Load Despatch Centres (SLDC)', status: 'Live Daily' },
+      { stage: 'National Grid Reconciliation', agency: 'Central Electricity Authority (CEA)', status: 'Monthly' },
+      { stage: 'Energy Balance & Carbon Intensity', agency: 'MoSPI ESD (Energy Statistics)', status: 'Annual Synthesis' },
+      { stage: 'UNFCCC NDC Tracking Dashboard', agency: 'MoEFCC & UNSD Energy Statistics', status: 'Committed' }
+    ],
+    trend: [
+      { year: '2020-21', value: 38.5 },
+      { year: '2021-22', value: 40.2 },
+      { year: '2022-23', value: 42.1 },
+      { year: '2023-24', value: 44.8 }
+    ]
+  },
+  {
+    id: 'nif-12-4-1',
+    goal_id: 12,
+    nif_code: 'NIF 12.4.1',
+    un_code: 'SDG 12.4.1',
+    title: 'Percentage of Hazardous Waste Safely Treated & Recycled to Total Hazardous Waste Generated',
+    target_2030: 80.0,
+    current_value: 48.5,
+    unit: '%',
+    baseline_2018: 34.2,
+    status: 'Needs Acceleration',
+    confidence_tier: 'Tier 2 (Emerging Administrative Framework)',
+    custodian_division: 'SSD (Environment Statistics Unit - EnviStats)',
+    partner_agencies: ['Central Pollution Control Board (CPCB)', 'State Pollution Control Boards (SPCBs)'],
+    primary_microdata_source: 'EnviStats India (MoSPI) & CPCB Annual Hazardous Waste Inventory',
+    schedule_block_citation: 'EnviStats Vol. 1 (Environmental Accounts) Block 4: Chemical and Hazardous Industrial Waste Treatment Facilities',
+    periodicity: 'Annual Report',
+    formula_latex: '\\text{Recycling Ratio} = \\left( \\frac{\\text{Hazardous Waste Recycled + Utilized (MT)}}{\\text{Total Hazardous Waste Generated (MT)}} \\right) \\times 100',
+    formula_narrative: 'Total quantity of hazardous and other industrial waste processed through Common Hazardous Waste Treatment, Storage and Disposal Facilities (TSDF) as a percentage of total volume generated.',
+    data_flow_stages: [
+      { stage: 'Factory Manifest Filing', agency: 'Industrial Units to State Pollution Boards', status: 'Semi-Automated' },
+      { stage: 'National Waste Inventory Audit', agency: 'CPCB Waste Management Division', status: 'Annual Compilation' },
+      { stage: 'EnviStats Green Economy Matrix', agency: 'MoSPI SSD EnviStats Team', status: 'Published' },
+      { stage: 'Basel Convention Dissemination', agency: 'UNEP Global Waste Platform', status: 'Reported' }
+    ],
+    trend: [
+      { year: '2020-21', value: 41.2 },
+      { year: '2021-22', value: 44.0 },
+      { year: '2022-23', value: 46.8 },
+      { year: '2023-24', value: 48.5 }
+    ]
+  }
+];
+
+const STATE_SDG_PERFORMANCE = [
+  { state: 'Kerala', code: 'KL', overall_score: 79, category: 'Front Runner', rank: 1, top_sdg: 'SDG 3 (Health: 92)', lag_sdg: 'SDG 9 (Industry: 56)', reporting_timeliness: '99.4%', sample_size_fsu: 1420 },
+  { state: 'Tamil Nadu', code: 'TN', overall_score: 78, category: 'Front Runner', rank: 2, top_sdg: 'SDG 1 (No Poverty: 88)', lag_sdg: 'SDG 6 (Clean Water: 68)', reporting_timeliness: '98.8%', sample_size_fsu: 2840 },
+  { state: 'Himachal Pradesh', code: 'HP', overall_score: 76, category: 'Front Runner', rank: 3, top_sdg: 'SDG 4 (Education: 86)', lag_sdg: 'SDG 8 (Work: 64)', reporting_timeliness: '97.2%', sample_size_fsu: 860 },
+  { state: 'Maharashtra', code: 'MH', overall_score: 74, category: 'Front Runner', rank: 4, top_sdg: 'SDG 9 (Industry: 82)', lag_sdg: 'SDG 5 (Gender: 52)', reporting_timeliness: '98.1%', sample_size_fsu: 4100 },
+  { state: 'Karnataka', code: 'KA', overall_score: 73, category: 'Front Runner', rank: 5, top_sdg: 'SDG 8 (Growth: 78)', lag_sdg: 'SDG 2 (Hunger: 58)', reporting_timeliness: '97.5%', sample_size_fsu: 2650 },
+  { state: 'Gujarat', code: 'GJ', overall_score: 72, category: 'Front Runner', rank: 6, top_sdg: 'SDG 9 (Industry: 85)', lag_sdg: 'SDG 3 (Health: 62)', reporting_timeliness: '96.8%', sample_size_fsu: 2420 },
+  { state: 'Telangana', code: 'TG', overall_score: 71, category: 'Front Runner', rank: 7, top_sdg: 'SDG 7 (Energy: 84)', lag_sdg: 'SDG 5 (Gender: 54)', reporting_timeliness: '96.2%', sample_size_fsu: 1780 },
+  { state: 'West Bengal', code: 'WB', overall_score: 66, category: 'Front Runner', rank: 8, top_sdg: 'SDG 1 (Poverty: 72)', lag_sdg: 'SDG 8 (Decent Work: 51)', reporting_timeliness: '94.0%', sample_size_fsu: 3200 },
+  { state: 'Odisha', code: 'OD', overall_score: 64, category: 'Performer', rank: 9, top_sdg: 'SDG 13 (Climate: 76)', lag_sdg: 'SDG 1 (Poverty: 50)', reporting_timeliness: '95.4%', sample_size_fsu: 1950 },
+  { state: 'Rajasthan', code: 'RJ', overall_score: 62, category: 'Performer', rank: 10, top_sdg: 'SDG 7 (Solar: 80)', lag_sdg: 'SDG 5 (Gender: 44)', reporting_timeliness: '93.7%', sample_size_fsu: 2900 },
+  { state: 'Uttar Pradesh', code: 'UP', overall_score: 58, category: 'Performer', rank: 11, top_sdg: 'SDG 7 (Clean Energy: 68)', lag_sdg: 'SDG 3 (Health: 46)', reporting_timeliness: '92.1%', sample_size_fsu: 6850 },
+  { state: 'Bihar', code: 'BR', overall_score: 52, category: 'Performer', rank: 12, top_sdg: 'SDG 13 (Climate: 64)', lag_sdg: 'SDG 1 (Poverty: 38)', reporting_timeliness: '89.5%', sample_size_fsu: 4320 }
+];
+
+// 1. Get SDG Overview & Summary KPIs
+app.get('/api/sdg/overview', (req, res) => {
+  const total_indicators = 312;
+  const on_track = 214;
+  const needs_acceleration = 72;
+  const data_lag = 26;
+  const tier_1_count = 198;
+  const tier_2_count = 84;
+  const tier_3_count = 30;
+
+  res.json({
+    success: true,
+    total_goals: SDG_GOALS.length,
+    total_nif_indicators: total_indicators,
+    status_summary: {
+      on_track,
+      needs_acceleration,
+      data_lag,
+      on_track_pct: ((on_track / total_indicators) * 100).toFixed(1)
+    },
+    tier_classification: {
+      tier_1: { count: tier_1_count, label: 'Tier 1: Established MoSPI Survey / Admin Data' },
+      tier_2: { count: tier_2_count, label: 'Tier 2: Methodologically Clear, Variable Frequency' },
+      tier_3: { count: tier_3_count, label: 'Tier 3: Evolving Methodology / New Big Data Source' }
+    },
+    custodian_divisions: [
+      { name: 'Social Statistics Division (SSD)', indicators: 148, role: 'NIF Apex Coordination & Social Disaggregation' },
+      { name: 'National Accounts Division (NAD)', indicators: 46, role: 'Macroeconomic, GVA, Capital Formation' },
+      { name: 'Economic Statistics Division (ESD)', indicators: 42, role: 'Energy, IIP, Price Statistics & ASI' },
+      { name: 'Survey Design & Research (SDRD)', indicators: 76, role: 'Sampling Framework & CAPI Questionnaire Design' }
+    ]
+  });
+});
+
+// 2. Get List of 17 UN SDGs with NIF Indicators
+app.get('/api/sdg/goals', (req, res) => {
+  res.json({
+    success: true,
+    goals: SDG_GOALS
+  });
+});
+
+// 3. Get Filterable NIF Indicators
+app.get('/api/sdg/indicators', (req, res) => {
+  const { goal_id, status, custodian } = req.query;
+
+  let filtered = [...NIF_INDICATORS];
+
+  if (goal_id) {
+    filtered = filtered.filter(i => i.goal_id === parseInt(goal_id));
+  }
+  if (status) {
+    filtered = filtered.filter(i => i.status.toLowerCase() === status.toLowerCase());
+  }
+  if (custodian) {
+    filtered = filtered.filter(i => i.custodian_division.toLowerCase().includes(custodian.toLowerCase()));
+  }
+
+  res.json({
+    success: true,
+    count: filtered.length,
+    indicators: filtered
+  });
+});
+
+// 4. Get Indicator Profile by ID
+app.get('/api/sdg/indicator/:id', (req, res) => {
+  const indicator = NIF_INDICATORS.find(i => i.id === req.params.id) || NIF_INDICATORS[0];
+  const goal = SDG_GOALS.find(g => g.id === indicator.goal_id);
+
+  res.json({
+    success: true,
+    indicator,
+    goal
+  });
+});
+
+// 5. Get State SDG Performance Heatmap & Disaggregation
+app.get('/api/sdg/states', (req, res) => {
+  res.json({
+    success: true,
+    total_states_ranked: STATE_SDG_PERFORMANCE.length,
+    national_composite_average: 67.8,
+    states: STATE_SDG_PERFORMANCE
+  });
+});
+
+// 6. Cadre Diagnostic & Gap Remediation Action Engine
+app.post('/api/sdg/gap-analysis', (req, res) => {
+  const { indicator_id, state_code } = req.body;
+
+  const indicator = NIF_INDICATORS.find(i => i.id === indicator_id) || NIF_INDICATORS[0];
+  const state = STATE_SDG_PERFORMANCE.find(s => s.code === state_code) || STATE_SDG_PERFORMANCE[0];
+
+  const recommendations = [
+    {
+      cadre: 'ISS Officers (JTS / STS / JAG)',
+      division: indicator.custodian_division,
+      skill_focus: 'Small Area Estimation (SAE) & Synthetic Disaggregation',
+      recommended_course: 'NSSTA Workshop: SAE Methodologies for Sub-District SDG Indicators',
+      action_item: `Implement Empirical Best Linear Unbiased Prediction (EBLUP) to estimate ${indicator.nif_code} down to district levels in ${state.state}.`
+    },
+    {
+      cadre: 'SSS Cadre (Junior & Senior Statistical Officers)',
+      division: 'FOD (Field Operations Division)',
+      skill_focus: 'CAPI Validation & Probing Protocols',
+      recommended_course: 'iGOT Karmayogi: Advanced Probing Techniques for Sensitive SDG Survey Blocks',
+      action_item: `Conduct refresher workshop on ${indicator.schedule_block_citation} before next quarter sub-round in ${state.state} regional offices.`
+    },
+    {
+      cadre: 'Statistical Data Engineers / Data Analysts',
+      division: 'DQSW & National Data Warehouse',
+      skill_focus: 'Automated Pipeline Validation & Anomaly Rules',
+      recommended_course: 'Python/R for Official Statistics: Microdata Automated Scrutiny Scripts',
+      action_item: `Deploy Benford law and identity scrutiny bots on raw survey submissions to cut validation lag from 45 days to 48 hours.`
+    }
+  ];
+
+  res.json({
+    success: true,
+    indicator_code: indicator.nif_code,
+    indicator_title: indicator.title,
+    analyzed_state: state.state,
+    state_rank: state.rank,
+    state_score: state.overall_score,
+    data_quality_gap: indicator.status === 'Needs Acceleration' ? 'High Critical Gap' : 'Moderate Monitoring Required',
+    recommendations
+  });
+});
+
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
