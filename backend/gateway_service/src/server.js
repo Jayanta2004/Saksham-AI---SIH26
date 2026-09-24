@@ -35,25 +35,21 @@ app.use(express.json({ limit: '25mb' }));
 // Diagnostic endpoint to check deployed email configuration
 app.get('/api/auth/email-health', (req, res) => {
   const hasSmtp = Boolean(process.env.SMTP_USER && process.env.SMTP_PASS);
-  const hasResend = Boolean(process.env.RESEND_API_KEY);
   const hasBrevo = Boolean(process.env.BREVO_API_KEY);
 
   res.json({
-    status: hasSmtp || hasResend || hasBrevo ? 'configured' : 'unconfigured',
+    status: hasSmtp || hasBrevo ? 'configured' : 'unconfigured',
     providers: {
       smtp: {
         configured: hasSmtp,
         host: process.env.SMTP_HOST || 'smtp.gmail.com',
         user: process.env.SMTP_USER ? `${process.env.SMTP_USER.slice(0, 3)}***@${process.env.SMTP_USER.split('@')[1] || ''}` : null
       },
-      resend: {
-        configured: hasResend
-      },
       brevo: {
         configured: hasBrevo
       }
     },
-    cloud_notice: 'Render free tier blocks ports 25, 465, 587. If using Render free tier, configure RESEND_API_KEY or BREVO_API_KEY (HTTPS port 443).'
+    cloud_notice: 'Render free tier blocks ports 25, 465, 587. If using Render free tier, configure BREVO_API_KEY (HTTPS port 443).'
   });
 });
 // root route

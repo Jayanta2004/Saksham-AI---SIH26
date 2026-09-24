@@ -10,7 +10,6 @@ class EmailService {
   logEmailConfigStatus() {
     const user = process.env.SMTP_USER;
     const pass = process.env.SMTP_PASS;
-    const resend = process.env.RESEND_API_KEY;
     const brevo = process.env.BREVO_API_KEY;
 
     if (user && pass) {
@@ -19,15 +18,12 @@ class EmailService {
       console.warn('[EmailService] ⚠️ SMTP_USER or SMTP_PASS not set in environment variables.');
     }
 
-    if (resend) {
-      console.log('[EmailService] Resend API Key configured (HTTPS port 443 fallback active).');
-    }
     if (brevo) {
       console.log('[EmailService] Brevo API Key configured (HTTPS port 443 fallback active).');
     }
 
-    if (!user && !resend && !brevo) {
-      console.warn('[EmailService] 🚨 CRITICAL: No live email dispatch credentials configured! In your cloud dashboard (Render/Railway), add SMTP_USER/SMTP_PASS, RESEND_API_KEY, or BREVO_API_KEY.');
+    if (!user && !brevo) {
+      console.warn('[EmailService] 🚨 CRITICAL: No live email dispatch credentials configured! In your cloud dashboard (Render/Railway), add SMTP_USER/SMTP_PASS or BREVO_API_KEY.');
     }
   }
 
@@ -214,41 +210,7 @@ Ministry of Statistics & Programme Implementation (MoSPI), Government of India`;
       }
     }
 
-    // 3. Try Resend API (HTTPS port 443 - note: onboarding@resend.dev sandbox only allows sending to your own registered email until a domain is verified at resend.com/domains)
-    const resendKey = process.env.RESEND_API_KEY;
-    if (resendKey && resendKey.startsWith('re_')) {
-      try {
-        const fromAddr = process.env.RESEND_FROM || 'Saksham AI <onboarding@resend.dev>';
-        const response = await axios.post(
-          'https://api.resend.com/emails',
-          {
-            from: fromAddr,
-            to: [toEmail],
-            subject,
-            text: textContent,
-            html: htmlContent
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${resendKey}`,
-              'Content-Type': 'application/json'
-            },
-            timeout: 8000
-          }
-        );
-
-        console.log(`[EmailService] OTP email dispatched via Resend API to ${toEmail}. Resend ID: ${response.data?.id}`);
-        return { success: true, liveDispatched: true, provider: 'resend', id: response.data?.id };
-      } catch (resendErr) {
-        const errMsg = resendErr?.response?.data?.message || resendErr.message;
-        console.error('[EmailService] Resend API error:', errMsg);
-        if (errMsg?.includes('only send testing emails to your own email address')) {
-          console.warn('[EmailService] ⚠️ Resend Sandbox Restriction: onboarding@resend.dev can only send to your own registered Resend email. To send to other users, either: 1) Verify a custom domain at resend.com/domains, or 2) Add BREVO_API_KEY in Render dashboard (Brevo sends to any email for free).');
-        }
-      }
-    }
-
-    console.warn(`[EmailService] ⚠️ Live email could not be dispatched to ${toEmail}. Check cloud environment variables (SMTP_USER/SMTP_PASS, RESEND_API_KEY, or BREVO_API_KEY). Simulated OTP: ${otp}`);
+    console.warn(`[EmailService] ⚠️ Live email could not be dispatched to ${toEmail}. Check cloud environment variables (SMTP_USER/SMTP_PASS or BREVO_API_KEY). Simulated OTP: ${otp}`);
     return { success: true, liveDispatched: false, demoOtp: otp };
   }
 }

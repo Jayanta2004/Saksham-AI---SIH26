@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { KeyRound, ArrowLeft, CheckCircle2, Loader2, RefreshCw, AlertTriangle } from 'lucide-react';
+import { KeyRound, ArrowLeft, CheckCircle2, Loader2, AlertTriangle } from 'lucide-react';
 import api from '../../services/api';
 import ThemeToggle from '../../components/common/ThemeToggle';
 
@@ -14,26 +14,12 @@ export default function ForgotPassword() {
   const [liveEmailSent, setLiveEmailSent] = useState(false);
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [resendSeconds, setResendSeconds] = useState(0);
-  const [resendMessage, setResendMessage] = useState('');
   const navigate = useNavigate();
-
-  // Resend countdown timer
-  useEffect(() => {
-    let timer;
-    if (resendSeconds > 0) {
-      timer = setInterval(() => {
-        setResendSeconds((prev) => prev - 1);
-      }, 1000);
-    }
-    return () => clearInterval(timer);
-  }, [resendSeconds]);
 
   // Step 1: Request OTP
   const handleRequestOtp = async (e) => {
     e.preventDefault();
     setError('');
-    setResendMessage('');
 
     if (!email.trim()) {
       setError('Please enter your registered email address.');
@@ -47,31 +33,9 @@ export default function ForgotPassword() {
       if (res.data?.success) {
         setLiveEmailSent(Boolean(res.data.live_email_sent));
         setStep(2);
-        setResendSeconds(30);
       }
     } catch (err) {
       setError(err?.response?.data?.error || 'No account found with this registered email address.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  // Resend OTP
-  const handleResendOtp = async () => {
-    if (resendSeconds > 0 || isSubmitting) return;
-    setError('');
-    setResendMessage('');
-    setIsSubmitting(true);
-
-    try {
-      const res = await api.post('/api/auth/forgot-password', { email: email.trim() });
-      if (res.data?.success) {
-        setLiveEmailSent(Boolean(res.data.live_email_sent));
-        setResendMessage('A new verification code has been dispatched.');
-        setResendSeconds(30);
-      }
-    } catch (err) {
-      setError(err?.response?.data?.error || 'Failed to resend code. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -221,28 +185,10 @@ export default function ForgotPassword() {
               </div>
             )}
 
-            {resendMessage && (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-2.5 text-xs text-blue-800 flex items-center gap-1.5 font-medium">
-                <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-                <span>{resendMessage}</span>
-              </div>
-            )}
-
             <div>
-              <div className="flex justify-between items-center mb-1">
-                <label className="block text-xs font-medium text-slate-700" htmlFor="otp">
-                  6-Digit Verification Code
-                </label>
-                <button
-                  type="button"
-                  disabled={resendSeconds > 0 || isSubmitting}
-                  onClick={handleResendOtp}
-                  className="text-[11px] font-medium text-blue-600 hover:underline disabled:text-slate-400 disabled:no-underline transition-colors flex items-center gap-1"
-                >
-                  <RefreshCw className={`w-3 h-3 ${isSubmitting ? 'animate-spin' : ''}`} />
-                  {resendSeconds > 0 ? `Resend in ${resendSeconds}s` : 'Resend code'}
-                </button>
-              </div>
+              <label className="block text-xs font-medium text-slate-700 mb-1" htmlFor="otp">
+                6-Digit Verification Code
+              </label>
               <input
                 id="otp"
                 name="otp"

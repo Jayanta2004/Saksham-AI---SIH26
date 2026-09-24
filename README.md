@@ -325,7 +325,7 @@ cp frontend/.env.example frontend/.env
 #### 2. Email OTP Delivery Configuration (Choose One Option)
 
 > [!IMPORTANT]
-> **Cloud Deployment Notice (Render Free Tier):** Render Free Tier strictly blocks outbound TCP ports `25`, `465`, and `587`. For cloud deployments on Render Free Tier, use **Option B (Brevo)** or **Option C (Resend)**, which communicate over HTTPS Port 443. Check your deployed server status anytime at `GET /api/auth/email-health`.
+> **Cloud Deployment Notice (Render Free Tier):** Render Free Tier strictly blocks outbound TCP ports `25`, `465`, and `587`. For cloud deployments on Render Free Tier, use **Option B (Brevo REST API)**, which communicates over HTTPS Port 443 and delivers to any email address globally without custom domain setup. Check your deployed server status anytime at `GET /api/auth/email-health`.
 
 * **Option A: Gmail / Standard SMTP (Best for Localhost & Paid Cloud / VPS)**
   ```env
@@ -338,20 +338,12 @@ cp frontend/.env.example frontend/.env
   *(Generate an App Password at: Google Account → Security → 2-Step Verification → App passwords)*
 
 * **Option B: Brevo REST API (RECOMMENDED for Render Free Tier — No Domain Needed)**
-  Sends 300 free emails/day to **any recipient email address globally** without custom domain DNS setup:
+  Sends 300 free emails/day to **any recipient email address globally** without custom domain DNS setup (HTTPS port 443):
   ```env
   BREVO_API_KEY=xkeysib-your_brevo_api_key_here
   BREVO_FROM_EMAIL=your_verified_gmail_address@gmail.com
   ```
   *(Sign up at [brevo.com](https://www.brevo.com) → Profile → SMTP & API → API Keys)*
-
-* **Option C: Resend API (HTTPS Port 443)**
-  ```env
-  RESEND_API_KEY=re_your_api_key_here
-  RESEND_FROM="Saksham AI <onboarding@resend.dev>"
-  ```
-  > [!WARNING]
-  > When using `onboarding@resend.dev`, Resend's free sandbox policy **only delivers to your registered account email**. To send OTPs to any email address, verify a custom domain at [resend.com/domains](https://resend.com/domains) and set `RESEND_FROM="Saksham AI <otp@yourdomain.com>"`.
 
 #### 3. Python AI Engine (`backend/ai_service/.env`)
 
