@@ -15,7 +15,6 @@ import ForgotPassword from '../pages/auth/ForgotPassword';
 // Learner Pages
 import LearnerDashboard from '../pages/learner/LearnerDashboard';
 import Profile from '../pages/learner/Profile';
-import MySkills from '../pages/learner/MySkills';
 import SkillGap from '../pages/learner/SkillGap';
 import PersonalizedLearningPath from '../pages/learner/PersonalizedLearningPath';
 import RecommendedCourses from '../pages/learner/RecommendedCourses';
@@ -24,11 +23,9 @@ import TrainingProgrammes from '../pages/learner/TrainingProgrammes';
 import Assessments from '../pages/learner/Assessments';
 import QuizArena from '../pages/learner/QuizArena';
 import AiAssistant from '../pages/learner/AiAssistant';
-import MyProgress from '../pages/learner/MyProgress';
 import Certificates from '../pages/learner/Certificates';
 import StatisticalPlayground from '../pages/learner/StatisticalPlayground';
 import CapiSimulator from '../pages/learner/CapiSimulator';
-import CadreLeaderboard from '../pages/learner/CadreLeaderboard';
 import PolicyBriefGenerator from '../pages/learner/PolicyBriefGenerator';
 import SyntheticDataStudio from '../pages/learner/SyntheticDataStudio';
 import AdaptiveTesting from '../pages/learner/AdaptiveTesting';
@@ -72,7 +69,7 @@ const AppRoutes = () => {
       >
         <Route path="/dashboard" element={<LearnerDashboard />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/skills" element={<MySkills />} />
+        <Route path="/skills" element={<Navigate to="/skill-gap" replace />} />
         <Route path="/skill-gap" element={<SkillGap />} />
         <Route path="/learning-path" element={<PersonalizedLearningPath />} />
         <Route path="/courses" element={<RecommendedCourses />} />
@@ -81,11 +78,11 @@ const AppRoutes = () => {
         <Route path="/assessments" element={<Assessments />} />
         <Route path="/quiz/:id" element={<QuizArena />} />
         <Route path="/ai-assistant" element={<AiAssistant />} />
-        <Route path="/progress" element={<MyProgress />} />
+        <Route path="/progress" element={<Navigate to="/dashboard" replace />} />
         <Route path="/certificates" element={<Certificates />} />
         <Route path="/playground" element={<StatisticalPlayground />} />
         <Route path="/capi-simulator" element={<CapiSimulator />} />
-        <Route path="/leaderboard" element={<CadreLeaderboard />} />
+        <Route path="/leaderboard" element={<Navigate to="/dashboard" replace />} />
         <Route path="/brief-generator" element={<PolicyBriefGenerator />} />
         <Route path="/synthetic-data" element={<SyntheticDataStudio />} />
         <Route path="/adaptive-test" element={<AdaptiveTesting />} />

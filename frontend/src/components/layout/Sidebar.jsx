@@ -3,7 +3,6 @@ import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard,
   User,
-  Target,
   TrendingUp,
   Route,
   BookOpen,
@@ -21,7 +20,6 @@ import {
   Brain,
   Terminal,
   Smartphone,
-  Trophy,
   UserCheck,
   MapPin,
   Shield,
@@ -33,44 +31,69 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
-const learnerNav = [
-  { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
-  { name: 'My Profile', path: '/profile', icon: User },
-  { name: 'My Skills', path: '/skills', icon: Target },
-  { name: 'Skill Gap Radar', path: '/skill-gap', icon: TrendingUp },
-  { name: 'Learning Pathways', path: '/learning-path', icon: Route },
-  { name: 'iGOT Courses', path: '/courses', icon: BookOpen },
-  { name: 'NSSTA Workshops', path: '/training', icon: GraduationCap },
-  { name: 'AI Assessments', path: '/assessments', icon: CheckSquare },
-  { name: 'Adaptive CAT Testing', path: '/adaptive-test', icon: Brain },
-  { name: 'NSSTA Viva Examiner', path: '/viva-examiner', icon: Mic },
-  { name: 'Data Scrutiny Studio', path: '/scrutiny-studio', icon: SearchCheck },
-  { name: 'Bhashini Localizer', path: '/survey-localizer', icon: Languages },
-  { name: 'NIF SDG Tracker', path: '/sdg-tracker', icon: Globe },
-  { name: 'Peer Code Review', path: '/code-review', icon: GitPullRequest },
-  { name: 'Statistical Copilot', path: '/ai-assistant', icon: Bot },
-  { name: 'Statistical Sandbox', path: '/playground', icon: Terminal },
-  { name: 'CAPI Field Simulator', path: '/capi-simulator', icon: Smartphone },
-  { name: 'Cadre Leaderboard', path: '/leaderboard', icon: Trophy },
-  { name: 'Policy Brief Studio', path: '/brief-generator', icon: FileText },
-  { name: 'Synthetic Microdata', path: '/synthetic-data', icon: Shield },
-  { name: 'Progress & Analytics', path: '/progress', icon: BarChart2 },
-  { name: 'Certificates', path: '/certificates', icon: Award },
+const learnerSections = [
+  {
+    title: 'Core Capacity Building',
+    items: [
+      { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
+      { name: 'My Profile & Cadre', path: '/profile', icon: User },
+      { name: 'Skill Gap & Radar', path: '/skill-gap', icon: TrendingUp },
+      { name: 'Learning Pathways', path: '/learning-path', icon: Route },
+      { name: 'iGOT Course Catalog', path: '/courses', icon: BookOpen },
+      { name: 'NSSTA Workshops', path: '/training', icon: GraduationCap },
+    ]
+  },
+  {
+    title: 'Evaluation & Testing',
+    items: [
+      { name: 'Assessment Arena', path: '/assessments', icon: CheckSquare },
+      { name: 'Adaptive CAT Testing', path: '/adaptive-test', icon: Brain },
+      { name: 'NSSTA Viva Examiner', path: '/viva-examiner', icon: Mic },
+    ]
+  },
+  {
+    title: 'MoSPI Operational Studios',
+    items: [
+      { name: 'CAPI Field Simulator', path: '/capi-simulator', icon: Smartphone },
+      { name: 'Data Scrutiny Studio', path: '/scrutiny-studio', icon: SearchCheck },
+      { name: 'Bhashini Localizer', path: '/survey-localizer', icon: Languages },
+      { name: 'NIF SDG Tracker', path: '/sdg-tracker', icon: Globe },
+      { name: 'Peer Code Review', path: '/code-review', icon: GitPullRequest },
+      { name: 'Statistical Sandbox', path: '/playground', icon: Terminal },
+      { name: 'Policy Brief Studio', path: '/brief-generator', icon: FileText },
+      { name: 'Synthetic Microdata', path: '/synthetic-data', icon: Shield },
+    ]
+  },
+  {
+    title: 'Intelligence & Records',
+    items: [
+      { name: 'Statistical Copilot', path: '/ai-assistant', icon: Bot },
+      { name: 'Verified Certificates', path: '/certificates', icon: Award },
+    ]
+  }
 ];
 
-const adminNav = [
-  { name: 'Workforce Intel', path: '/admin/dashboard', icon: LayoutDashboard },
-  { name: 'User Management', path: '/admin/users', icon: Users },
-  { name: 'Deputation Matcher', path: '/admin/deputation', icon: UserCheck },
-  { name: 'Competency Matrix', path: '/admin/competencies', icon: Target },
-  { name: 'Course Catalog', path: '/admin/courses', icon: BookOpen },
-  { name: 'Academy Training', path: '/admin/training', icon: GraduationCap },
-  { name: 'Assessment Studio', path: '/admin/assessments', icon: CheckSquare },
-  { name: 'RAG Content Studio', path: '/admin/content', icon: Layers },
-  { name: 'Division Analytics', path: '/admin/analytics', icon: BarChart2 },
-  { name: 'Geo-Statistical Map', path: '/admin/geo-readiness', icon: MapPin },
-  { name: 'Reports', path: '/admin/reports', icon: FileText },
-  { name: 'System Settings', path: '/admin/settings', icon: Settings },
+const adminSections = [
+  {
+    title: 'Workforce Intelligence',
+    items: [
+      { name: 'Workforce Intel', path: '/admin/dashboard', icon: LayoutDashboard },
+      { name: 'User Management', path: '/admin/users', icon: Users },
+      { name: 'Deputation Matcher', path: '/admin/deputation', icon: UserCheck },
+      { name: 'Geo-Readiness Map', path: '/admin/geo-readiness', icon: MapPin },
+    ]
+  },
+  {
+    title: 'Governance & Analytics',
+    items: [
+      { name: 'Competency Matrix', path: '/admin/competencies', icon: TrendingUp },
+      { name: 'Assessment Studio', path: '/admin/assessments', icon: CheckSquare },
+      { name: 'AI Content Studio', path: '/admin/content', icon: Layers },
+      { name: 'Division Analytics', path: '/admin/analytics', icon: BarChart2 },
+      { name: 'Official Reports', path: '/admin/reports', icon: FileText },
+      { name: 'System Settings', path: '/admin/settings', icon: Settings },
+    ]
+  }
 ];
 
 export default function Sidebar({ isOpen, onClose }) {
@@ -85,7 +108,7 @@ export default function Sidebar({ isOpen, onClose }) {
     userRole === 'trainer' ||
     userRole === 'system admin';
 
-  const navItems = isAdmin ? adminNav : learnerNav;
+  const sections = isAdmin ? adminSections : learnerSections;
   const initial = (user?.full_name || user?.name || user?.username || user?.email || 'U')
     .charAt(0)
     .toUpperCase();
@@ -132,28 +155,37 @@ export default function Sidebar({ isOpen, onClose }) {
         </div>
       </div>
 
-      {/* Navigation Links */}
-      <nav className="flex-1 px-3 py-3 overflow-y-auto space-y-1">
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          return (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              onClick={onClose}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
-                  isActive
-                    ? 'bg-blue-50 text-blue-700 border-l-2 border-blue-600 font-bold shadow-xs'
-                    : 'text-slate-700 hover:text-slate-900 hover:bg-slate-100'
-                }`
-              }
-            >
-              <Icon className="w-4 h-4 shrink-0" />
-              <span className="truncate">{item.name}</span>
-            </NavLink>
-          );
-        })}
+      {/* Categorized Navigation Links */}
+      <nav className="flex-1 px-3 py-3 overflow-y-auto space-y-4">
+        {sections.map((section, secIdx) => (
+          <div key={secIdx} className="space-y-1">
+            {section.title && (
+              <div className="px-3 pt-1 pb-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                {section.title}
+              </div>
+            )}
+            {section.items.map((item) => {
+              const Icon = item.icon;
+              return (
+                <NavLink
+                  key={item.path}
+                  to={item.path}
+                  onClick={onClose}
+                  className={({ isActive }) =>
+                    `flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
+                      isActive
+                        ? 'bg-blue-50 text-blue-700 border-l-2 border-blue-600 font-bold shadow-xs'
+                        : 'text-slate-700 hover:text-slate-900 hover:bg-slate-100'
+                    }`
+                  }
+                >
+                  <Icon className="w-4 h-4 shrink-0" />
+                  <span className="truncate">{item.name}</span>
+                </NavLink>
+              );
+            })}
+          </div>
+        ))}
       </nav>
 
       {/* Bottom Profile / Logout */}
