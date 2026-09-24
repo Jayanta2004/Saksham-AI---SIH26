@@ -25,7 +25,8 @@ import {
   UserCheck,
   MapPin,
   Shield,
-  Mic
+  Mic,
+  SearchCheck
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -40,6 +41,7 @@ const learnerNav = [
   { name: 'AI Assessments', path: '/assessments', icon: CheckSquare },
   { name: 'Adaptive CAT Testing', path: '/adaptive-test', icon: Brain },
   { name: 'NSSTA Viva Examiner', path: '/viva-examiner', icon: Mic },
+  { name: 'Data Scrutiny Studio', path: '/scrutiny-studio', icon: SearchCheck },
   { name: 'Statistical Copilot', path: '/ai-assistant', icon: Bot },
   { name: 'Statistical Sandbox', path: '/playground', icon: Terminal },
   { name: 'CAPI Field Simulator', path: '/capi-simulator', icon: Smartphone },

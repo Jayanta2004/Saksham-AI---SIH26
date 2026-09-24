@@ -3102,6 +3102,337 @@ app.post('/api/viva/evaluate-turn', (req, res) => {
   });
 });
 
+// ==========================================
+// STEP 12: AUTOMATED STATISTICAL FORENSICS & ANOMALY DETECTIVE (DATA SCRUTINY STUDIO)
+// ==========================================
+
+const SCRUTINY_DATASETS = [
+  {
+    id: 'hces_round_80_scrutiny',
+    title: 'Household Consumer Expenditure Survey (HCES Round 80)',
+    survey_name: 'HCES Rural & Urban Schedule 1.0',
+    round_no: 80,
+    division: 'National Sample Survey Office (SDRD / FOD)',
+    sample_size: 45,
+    description: 'Unit-level household consumer expenditure returns across 5 survey blocks. Contains deliberate field anomalies including household expenditure exceeding income by 400%, CAPI interview velocity violations, and digit heaping.',
+    primary_metric: 'total_expenditure',
+    records: [
+      { id: 'SCH-8001', fsu: '1041', stratum: 'Rural Inland', enumerator_id: 'ENUM-401', hh_size: 4, gross_income: 24000, food_exp: 11200, non_food_exp: 8400, total_expenditure: 19600, loan_borrowed: 0, duration_mins: 48, status: 'Audited Clean' },
+      { id: 'SCH-8002', fsu: '1041', stratum: 'Rural Inland', enumerator_id: 'ENUM-401', hh_size: 5, gross_income: 31000, food_exp: 14500, non_food_exp: 10200, total_expenditure: 24700, loan_borrowed: 0, duration_mins: 52, status: 'Audited Clean' },
+      { id: 'SCH-8003', fsu: '1042', stratum: 'Rural Coastal', enumerator_id: 'ENUM-882', hh_size: 3, gross_income: 9500, food_exp: 38200, non_food_exp: 14600, total_expenditure: 52800, loan_borrowed: 0, duration_mins: 38, status: 'Flagged Critical' },
+      { id: 'SCH-8004', fsu: '1042', stratum: 'Rural Coastal', enumerator_id: 'ENUM-882', hh_size: 6, gross_income: 12000, food_exp: 42000, non_food_exp: 19000, total_expenditure: 61000, loan_borrowed: 0, duration_mins: 35, status: 'Flagged Critical' },
+      { id: 'SCH-8005', fsu: '2081', stratum: 'Urban Metro', enumerator_id: 'ENUM-914', hh_size: 4, gross_income: 68000, food_exp: 22000, non_food_exp: 29000, total_expenditure: 51000, loan_borrowed: 0, duration_mins: 4, status: 'Flagged Warning' },
+      { id: 'SCH-8006', fsu: '2081', stratum: 'Urban Metro', enumerator_id: 'ENUM-914', hh_size: 3, gross_income: 54000, food_exp: 18500, non_food_exp: 24000, total_expenditure: 42500, loan_borrowed: 0, duration_mins: 5, status: 'Flagged Warning' },
+      { id: 'SCH-8007', fsu: '3105', stratum: 'Semi-Urban', enumerator_id: 'ENUM-743', hh_size: 4, gross_income: 40000, food_exp: 10000, non_food_exp: 20000, total_expenditure: 30000, loan_borrowed: 0, duration_mins: 36, status: 'Flagged Warning' },
+      { id: 'SCH-8008', fsu: '3105', stratum: 'Semi-Urban', enumerator_id: 'ENUM-743', hh_size: 5, gross_income: 50000, food_exp: 20000, non_food_exp: 20000, total_expenditure: 40000, loan_borrowed: 0, duration_mins: 34, status: 'Flagged Warning' },
+      { id: 'SCH-8009', fsu: '3105', stratum: 'Semi-Urban', enumerator_id: 'ENUM-743', hh_size: 4, gross_income: 60000, food_exp: 30000, non_food_exp: 20000, total_expenditure: 50000, loan_borrowed: 0, duration_mins: 32, status: 'Flagged Warning' },
+      { id: 'SCH-8010', fsu: '4201', stratum: 'Hill Tract', enumerator_id: 'ENUM-319', hh_size: 4, gross_income: 28000, food_exp: 12400, non_food_exp: 9800, total_expenditure: 22200, loan_borrowed: 0, duration_mins: 44, status: 'Audited Clean' },
+      { id: 'SCH-8011', fsu: '4201', stratum: 'Hill Tract', enumerator_id: 'ENUM-319', hh_size: 2, gross_income: 185000, food_exp: 84000, non_food_exp: 196000, total_expenditure: 280000, loan_borrowed: 0, duration_mins: 46, status: 'Flagged Critical' },
+      { id: 'SCH-8012', fsu: '1041', stratum: 'Rural Inland', enumerator_id: 'ENUM-401', hh_size: 4, gross_income: 26500, food_exp: 12100, non_food_exp: 9400, total_expenditure: 21500, loan_borrowed: 0, duration_mins: 42, status: 'Audited Clean' },
+      { id: 'SCH-8013', fsu: '1041', stratum: 'Rural Inland', enumerator_id: 'ENUM-401', hh_size: 3, gross_income: 19800, food_exp: 9600, non_food_exp: 7200, total_expenditure: 16800, loan_borrowed: 0, duration_mins: 40, status: 'Audited Clean' },
+      { id: 'SCH-8014', fsu: '1042', stratum: 'Rural Coastal', enumerator_id: 'ENUM-882', hh_size: 5, gross_income: 14000, food_exp: 39500, non_food_exp: 18200, total_expenditure: 57700, loan_borrowed: 0, duration_mins: 33, status: 'Flagged Critical' },
+      { id: 'SCH-8015', fsu: '2081', stratum: 'Urban Metro', enumerator_id: 'ENUM-914', hh_size: 4, gross_income: 82000, food_exp: 26000, non_food_exp: 34000, total_expenditure: 60000, loan_borrowed: 0, duration_mins: 6, status: 'Flagged Warning' }
+    ]
+  },
+  {
+    id: 'asi_factory_ledger_scrutiny',
+    title: 'Annual Survey of Industries (ASI 2024-25 Factory Ledger)',
+    survey_name: 'ASI Schedule 1 Factory Returns',
+    round_no: 2024,
+    division: 'Industrial Statistics Wing (CSO ISW Kolkata)',
+    sample_size: 35,
+    description: 'Enterprise accounting ledgers for manufacturing factories. Scrutinizes accounting identities (Gross Output vs Net Value Added), power/fuel consumption anomalies, and capital depreciation inconsistencies.',
+    primary_metric: 'gross_output_lakhs',
+    records: [
+      { id: 'ASI-701', state: 'Maharashtra', nic_2digit: '20', workers: 120, gross_output_lakhs: 480.5, intermediate_consumption_lakhs: 310.2, net_value_added_lakhs: 142.3, depreciation_lakhs: 28.0, power_fuel_lakhs: 42.5, enumerator_id: 'ASI-E04', status: 'Audited Clean' },
+      { id: 'ASI-702', state: 'Gujarat', nic_2digit: '24', workers: 240, gross_output_lakhs: 1250.0, intermediate_consumption_lakhs: 820.0, net_value_added_lakhs: 360.0, depreciation_lakhs: 70.0, power_fuel_lakhs: 110.0, enumerator_id: 'ASI-E12', status: 'Audited Clean' },
+      { id: 'ASI-703', state: 'Tamil Nadu', nic_2digit: '13', workers: 85, gross_output_lakhs: 240.0, intermediate_consumption_lakhs: 190.0, net_value_added_lakhs: 310.0, depreciation_lakhs: 15.0, power_fuel_lakhs: 22.0, enumerator_id: 'ASI-E21', status: 'Flagged Critical' },
+      { id: 'ASI-704', state: 'Maharashtra', nic_2digit: '28', workers: 320, gross_output_lakhs: 980.0, intermediate_consumption_lakhs: 640.0, net_value_added_lakhs: 290.0, depreciation_lakhs: 50.0, power_fuel_lakhs: 0.0, enumerator_id: 'ASI-E04', status: 'Flagged Critical' },
+      { id: 'ASI-705', state: 'West Bengal', nic_2digit: '10', workers: 60, gross_output_lakhs: 180.0, intermediate_consumption_lakhs: 240.0, net_value_added_lakhs: -75.0, depreciation_lakhs: 15.0, power_fuel_lakhs: 18.0, enumerator_id: 'ASI-E33', status: 'Flagged Warning' },
+      { id: 'ASI-706', state: 'Gujarat', nic_2digit: '20', workers: 180, gross_output_lakhs: 720.0, intermediate_consumption_lakhs: 480.0, net_value_added_lakhs: 195.0, depreciation_lakhs: 45.0, power_fuel_lakhs: 64.0, enumerator_id: 'ASI-E12', status: 'Audited Clean' },
+      { id: 'ASI-707', state: 'Tamil Nadu', nic_2digit: '29', workers: 410, gross_output_lakhs: 1850.0, intermediate_consumption_lakhs: 1220.0, net_value_added_lakhs: 510.0, depreciation_lakhs: 120.0, power_fuel_lakhs: 145.0, enumerator_id: 'ASI-E21', status: 'Audited Clean' }
+    ]
+  },
+  {
+    id: 'plfs_labour_scrutiny',
+    title: 'Periodic Labour Force Survey (PLFS Urban Quarterly)',
+    survey_name: 'PLFS Schedule 10.4 Household Member Returns',
+    round_no: 2024,
+    division: 'Survey Design & Research Division (SDRD New Delhi)',
+    sample_size: 40,
+    description: 'Demographic and employment microdata records. Scrutinizes demographic minimum legal age for salaried employment, extreme weekly working hours (>100 hrs), and educational-occupational code contradictions.',
+    primary_metric: 'weekly_earnings_inr',
+    records: [
+      { id: 'PLFS-901', age: 34, gender: 'Male', education: 'Graduate in Science', activity_status: 'Regular Salaried', weekly_hours: 44, weekly_earnings_inr: 18500, fsu_no: '8021', enumerator_id: 'PLFS-E08', status: 'Audited Clean' },
+      { id: 'PLFS-902', age: 29, gender: 'Female', education: 'Post Graduate', activity_status: 'Regular Salaried', weekly_hours: 40, weekly_earnings_inr: 22000, fsu_no: '8021', enumerator_id: 'PLFS-E08', status: 'Audited Clean' },
+      { id: 'PLFS-903', age: 9, gender: 'Male', education: 'Primary', activity_status: 'Regular Salaried (Manager)', weekly_hours: 48, weekly_earnings_inr: 16000, fsu_no: '8024', enumerator_id: 'PLFS-E19', status: 'Flagged Critical' },
+      { id: 'PLFS-904', age: 67, gender: 'Male', education: 'Secondary', activity_status: 'Self Employed Own Account', weekly_hours: 118, weekly_earnings_inr: 7500, fsu_no: '8024', enumerator_id: 'PLFS-E19', status: 'Flagged Critical' },
+      { id: 'PLFS-905', age: 42, gender: 'Male', education: 'Illiterate', activity_status: 'Data Science Specialist (NCO 2120)', weekly_hours: 42, weekly_earnings_inr: 35000, fsu_no: '8030', enumerator_id: 'PLFS-E25', status: 'Flagged Warning' },
+      { id: 'PLFS-906', age: 51, gender: 'Female', education: 'Higher Secondary', activity_status: 'Casual Labour in Agriculture', weekly_hours: 36, weekly_earnings_inr: 3200, fsu_no: '8030', enumerator_id: 'PLFS-E25', status: 'Audited Clean' }
+    ]
+  }
+];
+
+// 1. Get Scrutiny Datasets
+app.get('/api/scrutiny/datasets', (req, res) => {
+  const datasets = SCRUTINY_DATASETS.map(d => ({
+    id: d.id,
+    title: d.title,
+    survey_name: d.survey_name,
+    round_no: d.round_no,
+    division: d.division,
+    sample_size: d.records.length,
+    description: d.description,
+    primary_metric: d.primary_metric
+  }));
+  res.json({ success: true, datasets });
+});
+
+// 2. Run Forensic Data Scrutiny Audit
+app.post('/api/scrutiny/run-audit', (req, res) => {
+  const { dataset_id = 'hces_round_80_scrutiny', enabled_checks = { benford: true, logical_rules: true, outliers: true, capi_velocity: true } } = req.body;
+  const dataset = SCRUTINY_DATASETS.find(d => d.id === dataset_id) || SCRUTINY_DATASETS[0];
+
+  const records = dataset.records;
+  const flaggedSchedules = [];
+
+  // ==========================================
+  // A. BENFORD'S LAW DIGITAL ANALYSIS
+  // ==========================================
+  // Extract leading digits (1-9) from numerical fields
+  const digitsCount = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 };
+  let validNumbers = 0;
+
+  records.forEach(r => {
+    const val = r[dataset.primary_metric] || r.gross_income || r.total_expenditure || r.gross_output_lakhs || r.weekly_earnings_inr;
+    if (val && !isNaN(val) && val > 0) {
+      const firstDigit = parseInt(String(val).replace(/[^0-9]/g, '')[0], 10);
+      if (firstDigit >= 1 && firstDigit <= 9) {
+        digitsCount[firstDigit] += 1;
+        validNumbers += 1;
+      }
+    }
+  });
+
+  // Theoretical Benford P(d) = log10(1 + 1/d)
+  const theoreticalBenford = {
+    1: 30.1, 2: 17.6, 3: 12.5, 4: 9.7, 5: 7.9,
+    6: 6.7, 7: 5.8, 8: 5.1, 9: 4.6
+  };
+
+  let chiSquareStat = 0;
+  const benfordComparison = [];
+
+  for (let d = 1; d <= 9; d++) {
+    const observedFreq = validNumbers > 0 ? parseFloat(((digitsCount[d] / validNumbers) * 100).toFixed(1)) : 0;
+    const expectedFreq = theoreticalBenford[d];
+    
+    // Chi-Square contribution
+    const expectedCount = (expectedFreq / 100) * (validNumbers || 1);
+    const observedCount = digitsCount[d];
+    const diff = observedCount - expectedCount;
+    chiSquareStat += (diff * diff) / Math.max(0.01, expectedCount);
+
+    benfordComparison.push({
+      digit: d,
+      observed_pct: observedFreq,
+      benford_pct: expectedFreq,
+      count: observedCount
+    });
+  }
+
+  chiSquareStat = parseFloat(chiSquareStat.toFixed(2));
+  let benfordVerdict = 'Normal Conformity (Natural Distribution)';
+  let benfordColor = 'text-emerald-700';
+
+  if (chiSquareStat > 22.0) {
+    benfordVerdict = 'Severe Non-Conformity (Fabrication / Rounding Heaping Suspected)';
+    benfordColor = 'text-red-700';
+  } else if (chiSquareStat > 14.0) {
+    benfordVerdict = 'Moderate Deviation (Rounding Artifacts)';
+    benfordColor = 'text-amber-700';
+  }
+
+  // ==========================================
+  // B. LOGICAL RULE SCRUTINY
+  // ==========================================
+  records.forEach(r => {
+    // 1. HCES Rules
+    if (dataset.id === 'hces_round_80_scrutiny') {
+      if (r.total_expenditure > (r.gross_income * 2.5) && (!r.loan_borrowed || r.loan_borrowed === 0)) {
+        flaggedSchedules.push({
+          schedule_id: r.id,
+          fsu_no: r.fsu,
+          enumerator_id: r.enumerator_id,
+          severity: 'CRITICAL',
+          rule_violated: 'Solvency Discrepancy (Expenditure >> Income)',
+          details: `Reported consumption expenditure (₹${r.total_expenditure.toLocaleString('en-IN')}) exceeds gross income (₹${r.gross_income.toLocaleString('en-IN')}) by ${Math.round((r.total_expenditure / r.gross_income) * 100)}% with ₹0 debt or asset liquidation.`,
+          action_mandated: 'Issue formal query to Field Supervisor. Mandate physical re-verification of FSU.'
+        });
+      }
+      if (r.duration_mins && r.duration_mins < 8) {
+        flaggedSchedules.push({
+          schedule_id: r.id,
+          fsu_no: r.fsu,
+          enumerator_id: r.enumerator_id,
+          severity: 'WARNING',
+          rule_violated: 'CAPI Velocity Anomaly (<8 mins completion)',
+          details: `Complete 12-page household schedule was marked finished in ${r.duration_mins} minutes. Standard operational minimum is 35 minutes.`,
+          action_mandated: 'Inspect tablet GPS telemetry timestamp logs and question-level dwell times.'
+        });
+      }
+      if (r.total_expenditure % 10000 === 0 && r.gross_income % 10000 === 0 && r.food_exp % 10000 === 0) {
+        flaggedSchedules.push({
+          schedule_id: r.id,
+          fsu_no: r.fsu,
+          enumerator_id: r.enumerator_id,
+          severity: 'WARNING',
+          rule_violated: 'Severe Digit Heaping (Multiple of ₹10,000)',
+          details: `All reported monetary variables are perfect multiples of ₹10,000, indicating superficial estimation without itemized schedule probing.`,
+          action_mandated: 'Reject schedule. Order re-canvassing with itemized sub-item consumption ledgers.'
+        });
+      }
+      if (r.total_expenditure > 150000) {
+        flaggedSchedules.push({
+          schedule_id: r.id,
+          fsu_no: r.fsu,
+          enumerator_id: r.enumerator_id,
+          severity: 'CRITICAL',
+          rule_violated: 'Statistical Outlier (> 5.0 SD Above Stratum Mean)',
+          details: `Monthly expenditure ₹${r.total_expenditure.toLocaleString('en-IN')} exceeds stratum 99th percentile by 380%.`,
+          action_mandated: 'Supervisory scrutiny required to confirm high-net-worth status or decimal entry error.'
+        });
+      }
+    }
+
+    // 2. ASI Rules
+    if (dataset.id === 'asi_factory_ledger_scrutiny') {
+      if (r.net_value_added_lakhs > r.gross_output_lakhs) {
+        flaggedSchedules.push({
+          schedule_id: r.id,
+          fsu_no: r.state,
+          enumerator_id: r.enumerator_id,
+          severity: 'CRITICAL',
+          rule_violated: 'Accounting Identity Contradiction (NVA > Gross Output)',
+          details: `Reported Net Value Added (₹${r.net_value_added_lakhs} Lakhs) exceeds total Gross Output (₹${r.gross_output_lakhs} Lakhs). Mathematically invalid under SNA 2008 identity.`,
+          action_mandated: 'Immediate audit query to CSO ISW Kolkata desk. Recompute from audited balance sheets.'
+        });
+      }
+      if (r.workers > 100 && r.power_fuel_lakhs === 0) {
+        flaggedSchedules.push({
+          schedule_id: r.id,
+          fsu_no: r.state,
+          enumerator_id: r.enumerator_id,
+          severity: 'CRITICAL',
+          rule_violated: 'Operational Impossibility (Heavy Plant Zero Power Cost)',
+          details: `Factory employs ${r.workers} workers in heavy manufacturing but reports ₹0 power and fuel consumption.`,
+          action_mandated: 'Obtain electricity utility invoice for reference fiscal year.'
+        });
+      }
+    }
+
+    // 3. PLFS Rules
+    if (dataset.id === 'plfs_labour_scrutiny') {
+      if (r.age < 14 && r.activity_status.toLowerCase().includes('salaried')) {
+        flaggedSchedules.push({
+          schedule_id: r.id,
+          fsu_no: r.fsu_no,
+          enumerator_id: r.enumerator_id,
+          severity: 'CRITICAL',
+          rule_violated: 'Statutory Age Contradiction (Child Labour in Salaried Role)',
+          details: `Individual aged ${r.age} recorded in regular salaried managerial position with ${r.weekly_hours} weekly hours worked.`,
+          action_mandated: 'Flag for mandatory field re-visit. Correct age transcription error.'
+        });
+      }
+      if (r.weekly_hours > 90) {
+        flaggedSchedules.push({
+          schedule_id: r.id,
+          fsu_no: r.fsu_no,
+          enumerator_id: r.enumerator_id,
+          severity: 'CRITICAL',
+          rule_violated: 'Extreme Velocity / Ergonomic Impossibility (>90 hrs/week)',
+          details: `Reported weekly hours worked (${r.weekly_hours} hrs/week) exceeds ergonomic threshold (>12 hrs/day for 7 consecutive days).`,
+          action_mandated: 'Scrutinize dual-activity code recording.'
+        });
+      }
+      if (r.education.toLowerCase().includes('illiterate') && r.activity_status.toLowerCase().includes('data science')) {
+        flaggedSchedules.push({
+          schedule_id: r.id,
+          fsu_no: r.fsu_no,
+          enumerator_id: r.enumerator_id,
+          severity: 'WARNING',
+          rule_violated: 'Educational-Occupational Discordance (NCO Contradiction)',
+          details: `Recorded education level '${r.education}' contradicts professional occupation code '${r.activity_status}'.`,
+          action_mandated: 'Re-code occupation using 3-digit NCO-2015 taxonomy manual.'
+        });
+      }
+    }
+  });
+
+  // Calculate Overall Data Health Index (0-100)
+  const totalRecords = records.length;
+  const criticalCount = flaggedSchedules.filter(f => f.severity === 'CRITICAL').length;
+  const warningCount = flaggedSchedules.filter(f => f.severity === 'WARNING').length;
+  
+  const cleanRatio = (totalRecords - Math.min(totalRecords, flaggedSchedules.length)) / totalRecords;
+  const healthIndex = Math.max(45, Math.min(95, Math.round(50 + (cleanRatio * 45) - (chiSquareStat > 22 ? 10 : chiSquareStat > 14 ? 5 : 0))));
+
+  let healthTier = 'Good Quality (Ready for Compilation)';
+  let healthColor = 'text-emerald-700';
+
+  if (healthIndex < 65) {
+    healthTier = 'Substandard (Requires Extensive Supervisory Re-Audit)';
+    healthColor = 'text-red-700';
+  } else if (healthIndex < 80) {
+    healthTier = 'Moderate Deficits (Corrective Queries Dispatched)';
+    healthColor = 'text-amber-700';
+  }
+
+  // Generate Official Scrutiny Office Memorandum
+  const memoDate = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+  const memoNumber = `MoSPI/NSSO/DQSW/2026/SCRUTINY-${Math.floor(1000 + Math.random() * 9000)}`;
+
+  const scrutinyMemo = {
+    memo_number: memoNumber,
+    date: memoDate,
+    issuing_authority: 'National Sample Survey Office — Data Quality & Scrutiny Wing (DQSW)',
+    nodal_officer: 'Smt. Ritu Saxena, Deputy Director General (Data Scrutiny & CAPI Audit)',
+    survey_subject: dataset.title,
+    flagged_schedules_count: flaggedSchedules.length,
+    critical_count: criticalCount,
+    warning_count: warningCount,
+    executive_summary: `Preliminary algorithmic scrutiny of ${dataset.title} (${dataset.survey_name}) has detected ${flaggedSchedules.length} substantive anomalies across ${criticalCount} critical violations and ${warningCount} supervisory warnings. Benford Chi-Square analysis reflects ${chiSquareStat} (${benfordVerdict}).`,
+    directives: [
+      `1. Supervisory re-visits are mandated for all schedules flagged under 'CRITICAL' severity within 7 working days.`,
+      `2. Field investigators with CAPI velocity anomalies (< 8 mins) are to undergo mandatory scrutiny of telemetry logs.`,
+      `3. Regional Offices (RO) must reconcile solvency contradictions with bank passbooks or crop sale mandi receipts.`,
+      `4. Corrected returns must be submitted through the CAPI Data Validation Portal before final multiplier tabulation.`
+    ]
+  };
+
+  res.json({
+    success: true,
+    dataset: {
+      id: dataset.id,
+      title: dataset.title,
+      survey_name: dataset.survey_name,
+      division: dataset.division,
+      total_records_analyzed: totalRecords
+    },
+    health_index: healthIndex,
+    health_tier: healthTier,
+    health_color: healthColor,
+    benford_analysis: {
+      chi_square_stat: chiSquareStat,
+      verdict: benfordVerdict,
+      verdict_color: benfordColor,
+      digits_distribution: benfordComparison
+    },
+    flagged_schedules: flaggedSchedules,
+    scrutiny_memo: scrutinyMemo
+  });
+});
+
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
