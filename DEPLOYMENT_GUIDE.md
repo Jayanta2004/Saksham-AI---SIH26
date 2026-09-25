@@ -138,9 +138,9 @@ docker compose logs -f ai_service
     - *Option 1 (Direct SMTP / Paid Render or VPS):*
       - `SMTP_HOST=smtp.gmail.com`
       - `SMTP_PORT=587`
-      - `SMTP_USER=webbyashu21@gmail.com`
-      - `SMTP_PASS=cpfwqenogqhklcqq`
-      - `SMTP_FROM="Saksham AI - MoSPI" <webbyashu21@gmail.com>`
+      - `SMTP_USER=your_gmail@gmail.com`
+      - `SMTP_PASS=your_16_char_app_password`
+      - `SMTP_FROM="Saksham AI - MoSPI" <your_gmail@gmail.com>`
     - *Option 2 (Render Free Tier - Uses HTTPS Port 443 which is never blocked):*
       - `BREVO_API_KEY=xkeysib-...` (from https://brevo.com - sends to any address globally)
       - `BREVO_FROM_EMAIL=your_email@gmail.com`

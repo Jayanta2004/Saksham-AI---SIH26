@@ -184,7 +184,7 @@ Ministry of Statistics & Programme Implementation (MoSPI), Government of India`;
     const brevoKey = process.env.BREVO_API_KEY;
     if (brevoKey) {
       try {
-        const senderEmail = process.env.BREVO_FROM_EMAIL || process.env.SMTP_USER || 'webbyashu21@gmail.com';
+        const senderEmail = process.env.BREVO_FROM_EMAIL || process.env.SMTP_USER || 'noreply@mospi.gov.in';
         const response = await axios.post(
           'https://api.brevo.com/v3/smtp/email',
           {
