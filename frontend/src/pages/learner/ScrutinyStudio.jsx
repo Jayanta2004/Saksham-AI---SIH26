@@ -45,7 +45,8 @@ export default function ScrutinyStudio() {
 
   const fetchDatasets = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/scrutiny/datasets');
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const res = await fetch(`${API_URL}/api/scrutiny/datasets`);
       const data = await res.json();
       if (data.success && data.datasets) {
         setDatasets(data.datasets);
@@ -62,7 +63,8 @@ export default function ScrutinyStudio() {
   const runAudit = async (datasetId = selectedDatasetId) => {
     setAuditing(true);
     try {
-      const res = await fetch('http://localhost:5000/api/scrutiny/run-audit', {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const res = await fetch(`${API_URL}/api/scrutiny/run-audit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
