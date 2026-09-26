@@ -562,42 +562,50 @@ export default function AiAssistant() {
   const currentPrompts = PROMPTS_BY_LANG[selectedLang] || PROMPTS_BY_LANG.en;
 
   return (
-    <div className="flex h-[calc(100vh-8rem)] rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-xs relative">
+    <div className="flex h-[calc(100vh-8rem)] rounded-3xl border border-slate-200/60 bg-slate-50/30 overflow-hidden shadow-xl shadow-slate-200/40 relative backdrop-blur-2xl">
       {/* -------------------------------------------------------------------- */}
       {/* LEFT COLUMN: Conversation Sessions List                              */}
       {/* -------------------------------------------------------------------- */}
-      <div className="w-72 border-r border-slate-200 bg-slate-50/70 hidden md:flex flex-col">
-        <div className="p-4 border-b border-slate-200 flex items-center justify-between">
-          <span className="font-headline font-bold text-xs uppercase tracking-wider text-slate-500">
-            Chat Sessions
+      <div className="w-72 border-r border-slate-200/60 bg-white/60 backdrop-blur-xl hidden md:flex flex-col z-10">
+        <div className="p-5 border-b border-slate-200/60 flex items-center justify-between">
+          <span className="font-headline font-bold text-xs uppercase tracking-widest text-slate-500 flex items-center gap-2">
+            <BookOpen className="w-4 h-4 text-slate-400" />
+            Chat History
           </span>
           <button
             onClick={handleNewChat}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow-xs transition"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg text-xs font-bold shadow-md shadow-blue-500/20 transition-all transform hover:scale-105 active:scale-95"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>New Chat</span>
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-2 space-y-1">
+        <div className="flex-1 overflow-y-auto p-3 space-y-1.5 scrollbar-thin scrollbar-thumb-slate-200">
           {conversations.map((c) => {
             const isActive = c.id === activeId;
             return (
               <div
                 key={c.id}
                 onClick={() => setActiveId(c.id)}
-                className={`group flex items-center justify-between p-2.5 rounded-xl cursor-pointer transition ${
-                  isActive ? 'bg-white text-blue-700 shadow-2xs font-semibold border border-slate-200' : 'text-slate-600 hover:bg-white/60'
+                className={`group flex items-center justify-between p-3 rounded-xl cursor-pointer transition-all duration-200 ${
+                  isActive 
+                    ? 'bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/50 shadow-sm' 
+                    : 'bg-transparent border border-transparent hover:bg-slate-100/50 hover:border-slate-200/50'
                 }`}
               >
-                <div className="flex items-center gap-2 overflow-hidden">
-                  <MessageSquare className={`w-4 h-4 shrink-0 ${isActive ? 'text-blue-600' : 'text-slate-400'}`} />
-                  <span className="text-xs truncate">{c.title}</span>
+                <div className="flex items-center gap-3 overflow-hidden">
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${isActive ? 'bg-blue-100 text-blue-600' : 'bg-slate-100 text-slate-500 group-hover:bg-slate-200'}`}>
+                    <MessageSquare className="w-4 h-4" />
+                  </div>
+                  <div className="flex flex-col overflow-hidden">
+                    <span className={`text-sm truncate font-medium ${isActive ? 'text-blue-900' : 'text-slate-700'}`}>{c.title}</span>
+                    <span className="text-[10px] text-slate-400 font-mono mt-0.5">{c.timeLabel}</span>
+                  </div>
                 </div>
                 <button
                   onClick={(e) => handleDeleteConv(e, c.id)}
-                  className="opacity-0 group-hover:opacity-100 p-1 text-slate-400 hover:text-rose-600 rounded transition"
+                  className={`p-1.5 rounded-md transition-all ${isActive ? 'opacity-100 text-slate-400 hover:text-rose-500 hover:bg-rose-50' : 'opacity-0 group-hover:opacity-100 text-slate-400 hover:text-rose-500 hover:bg-slate-200'}`}
                   title="Delete chat"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
@@ -611,39 +619,43 @@ export default function AiAssistant() {
       {/* -------------------------------------------------------------------- */}
       {/* RIGHT COLUMN: Chat Area with Voice & Multilingual Controls           */}
       {/* -------------------------------------------------------------------- */}
-      <div className="flex-1 flex flex-col bg-slate-50/50 relative">
+      <div className="flex-1 flex flex-col relative bg-slate-50/30 overflow-hidden">
+        
+        {/* Abstract Background Elements for Premium Feel */}
+        <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-blue-50/50 to-transparent pointer-events-none z-0" />
+        <div className="absolute -top-32 -right-32 w-96 h-96 bg-indigo-200/20 rounded-full blur-3xl pointer-events-none z-0" />
+        <div className="absolute top-40 -left-32 w-72 h-72 bg-blue-200/20 rounded-full blur-3xl pointer-events-none z-0" />
+
         {/* Header Bar */}
-        <div className="p-3.5 sm:p-4 border-b border-slate-200 flex items-center justify-between bg-white">
-          <div className="flex items-center gap-3">
-            <div className="relative w-10 h-10 flex items-center justify-center rounded-xl bg-purple-50 border border-purple-200">
-              <Bot className="w-5 h-5 text-purple-600" />
+        <div className="px-6 py-4 border-b border-slate-200/60 flex items-center justify-between bg-white/80 backdrop-blur-xl z-10 shadow-sm">
+          <div className="flex items-center gap-4">
+            <div className="relative w-12 h-12 flex items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-md shadow-indigo-500/20">
+              <Bot className="w-6 h-6 text-white" />
+              <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full border-2 border-white shadow-sm" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="font-headline font-bold text-sm text-slate-900">
-                  Statistical AI Copilot
+                <h2 className="font-headline font-bold text-lg text-slate-900 tracking-tight">
+                  Saksham AI Copilot
                 </h2>
-                <span className="text-[10px] px-2 py-0.5 rounded-full font-bold bg-amber-50 text-amber-800 border border-amber-200 flex items-center gap-1">
-                  <Sparkles className="w-2.5 h-2.5 text-amber-600" /> Voice &amp; Bhashini Ready
+                <span className="text-[10px] px-2 py-0.5 rounded-full font-bold bg-amber-100/80 text-amber-800 border border-amber-200 flex items-center gap-1">
+                  <Sparkles className="w-3 h-3 text-amber-600" /> Bhashini Ready
                 </span>
               </div>
-              <div className="flex items-center gap-2 mt-0.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)] animate-pulse" />
-                <span className="text-[10px] font-mono text-slate-600">
-                  Online &bull; Grounded in MoSPI SNA 2008 &amp; NSS Standards
-                </span>
+              <div className="text-xs text-slate-500 mt-0.5 flex items-center gap-1.5">
+                <Brain className="w-3.5 h-3.5" /> Official Statistical & Governance Assistant
               </div>
             </div>
           </div>
 
           {/* Regional Indian Language Selector Dropdown */}
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5 shadow-2xs">
-              <Languages className="w-4 h-4 text-blue-600 shrink-0" />
+            <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-xl px-3 py-2 shadow-sm transition-all hover:shadow-md hover:border-blue-300">
+              <Languages className="w-4 h-4 text-indigo-600 shrink-0" />
               <select
                 value={selectedLang}
                 onChange={(e) => setSelectedLang(e.target.value)}
-                className="bg-transparent text-xs font-semibold text-slate-700 outline-none cursor-pointer pr-1"
+                className="bg-transparent text-xs font-bold text-slate-700 outline-none cursor-pointer"
                 title="Select official Indian language for AI responses & voice input"
               >
                 {INDIAN_LANGUAGES.map((lang) => (
@@ -657,65 +669,73 @@ export default function AiAssistant() {
         </div>
 
         {/* Message Stream */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-8 z-10 pb-40 scrollbar-thin scrollbar-thumb-slate-200">
           {messages.map((msg, idx) => {
             const isUser = msg.sender === 'user';
             const isSpeaking = speakingMsgIdx === idx;
 
             return (
-              <div key={idx} className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
-                <div
-                  className={`max-w-[85%] sm:max-w-[78%] rounded-2xl p-4 sm:p-5 shadow-sm space-y-2 ${
-                    isUser
-                      ? 'bg-blue-600 text-white rounded-br-none'
-                      : 'bg-white border border-slate-200 rounded-bl-none'
-                  }`}
-                >
-                  <FormattedMessage text={msg.text} isUser={isUser} />
-
-                  {/* Actions & Timestamp Bar */}
+              <div key={idx} className={`flex ${isUser ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2 duration-300`}>
+                <div className="flex gap-4 max-w-[85%] lg:max-w-[75%]">
+                  {!isUser && (
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-100 to-purple-100 border border-indigo-200 flex items-center justify-center shrink-0 mt-1 shadow-sm">
+                      <Bot className="w-4 h-4 text-indigo-700" />
+                    </div>
+                  )}
+                  
                   <div
-                    className={`pt-1 border-t flex items-center justify-between text-[10px] font-mono ${
-                      isUser ? 'border-blue-500/40 text-blue-100' : 'border-slate-100 text-slate-500'
+                    className={`rounded-3xl p-5 sm:p-6 shadow-sm relative group ${
+                      isUser
+                        ? 'bg-gradient-to-br from-blue-600 to-indigo-600 text-white rounded-br-sm shadow-blue-600/20'
+                        : 'bg-white border border-slate-200/80 rounded-bl-sm shadow-slate-200/50'
                     }`}
                   >
-                    <span>{msg.timestamp}</span>
+                    <FormattedMessage text={msg.text} isUser={isUser} />
 
-                    {/* AI Response Tools: TTS & Copy */}
-                    {!isUser && (
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => handleCopyMessage(idx, msg.text)}
-                          className="hover:text-blue-600 flex items-center gap-1 transition"
-                          title="Copy message"
-                        >
-                          {copiedIdx === idx ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
-                          <span>{copiedIdx === idx ? 'Copied' : 'Copy'}</span>
-                        </button>
+                    {/* Actions & Timestamp Bar */}
+                    <div
+                      className={`pt-3 mt-3 border-t flex items-center justify-between text-[11px] font-mono opacity-60 group-hover:opacity-100 transition-opacity ${
+                        isUser ? 'border-white/20 text-blue-50' : 'border-slate-100 text-slate-500'
+                      }`}
+                    >
+                      <span>{msg.timestamp}</span>
 
-                        <button
-                          onClick={() => handleToggleSpeak(idx, msg.text)}
-                          className={`flex items-center gap-1 transition px-1.5 py-0.5 rounded ${
-                            isSpeaking
-                              ? 'bg-purple-100 text-purple-700 font-bold'
-                              : 'hover:text-blue-600'
-                          }`}
-                          title={isSpeaking ? 'Stop speaking' : 'Read aloud (Voice TTS)'}
-                        >
-                          {isSpeaking ? (
-                            <>
-                              <VolumeX className="w-3 h-3 text-purple-700 animate-pulse" />
-                              <span>Stop Audio</span>
-                            </>
-                          ) : (
-                            <>
-                              <Volume2 className="w-3 h-3" />
-                              <span>Read Aloud</span>
-                            </>
-                          )}
-                        </button>
-                      </div>
-                    )}
+                      {/* AI Response Tools: TTS & Copy */}
+                      {!isUser && (
+                        <div className="flex items-center gap-3">
+                          <button
+                            onClick={() => handleCopyMessage(idx, msg.text)}
+                            className="hover:text-indigo-600 flex items-center gap-1.5 transition-colors"
+                            title="Copy message"
+                          >
+                            {copiedIdx === idx ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                            <span className="font-semibold">{copiedIdx === idx ? 'Copied' : 'Copy'}</span>
+                          </button>
+
+                          <button
+                            onClick={() => handleToggleSpeak(idx, msg.text)}
+                            className={`flex items-center gap-1.5 transition-all px-2 py-1 rounded-md ${
+                              isSpeaking
+                                ? 'bg-indigo-100 text-indigo-700 font-bold shadow-sm'
+                                : 'hover:bg-slate-100 hover:text-indigo-600 font-semibold'
+                            }`}
+                            title={isSpeaking ? 'Stop speaking' : 'Read aloud (Voice TTS)'}
+                          >
+                            {isSpeaking ? (
+                              <>
+                                <VolumeX className="w-3.5 h-3.5 text-indigo-700 animate-pulse" />
+                                <span>Stop Audio</span>
+                              </>
+                            ) : (
+                              <>
+                                <Volume2 className="w-3.5 h-3.5" />
+                                <span>Read Aloud</span>
+                              </>
+                            )}
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -723,106 +743,132 @@ export default function AiAssistant() {
           })}
 
           {loading && (
-            <div className="flex justify-start">
-              <div className="bg-white border border-slate-200 p-4 rounded-2xl rounded-bl-none flex items-center gap-3">
-                <Loader2 className="w-4 h-4 animate-spin text-purple-600" />
-                <span className="text-xs text-slate-600 font-mono">
-                  Synthesizing statistical rationale in {activeLangObj.label}...
-                </span>
+            <div className="flex justify-start animate-in fade-in">
+              <div className="flex gap-4 max-w-[85%]">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-100 to-purple-100 border border-indigo-200 flex items-center justify-center shrink-0 mt-1 shadow-sm">
+                  <Bot className="w-4 h-4 text-indigo-700" />
+                </div>
+                <div className="bg-white border border-slate-200/80 p-5 rounded-3xl rounded-bl-sm flex items-center gap-4 shadow-sm">
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                    <div className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                    <div className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                  </div>
+                  <span className="text-xs text-slate-500 font-medium">
+                    Analyzing in {activeLangObj.label}...
+                  </span>
+                </div>
               </div>
             </div>
           )}
-          <div ref={messagesEndRef} />
+          <div ref={messagesEndRef} className="h-4" />
         </div>
 
         {/* Global Floating Audio Player Notification when speaking */}
         {speakingMsgIdx !== null && (
-          <div className="absolute top-16 left-1/2 -translate-x-1/2 z-20 bg-purple-900/90 backdrop-blur-md text-white px-4 py-2 rounded-full shadow-lg border border-purple-700 flex items-center gap-3 text-xs font-semibold animate-in fade-in slide-in-from-top-2">
-            <span className="w-2 h-2 rounded-full bg-purple-400 animate-ping" />
-            <Volume2 className="w-4 h-4 text-purple-300" />
+           <div className="absolute top-24 left-1/2 -translate-x-1/2 z-50 bg-slate-900/95 backdrop-blur-xl text-white px-5 py-2.5 rounded-full shadow-2xl border border-slate-700 flex items-center gap-3 text-xs font-bold animate-in fade-in slide-in-from-top-4">
+            <div className="relative flex h-3 w-3">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-indigo-500"></span>
+            </div>
             <span>Narrating response in {activeLangObj.label}...</span>
             <button
               onClick={handleStopSpeaking}
-              className="ml-2 px-2 py-0.5 bg-white/20 hover:bg-white/30 rounded-md text-[11px] font-bold transition flex items-center gap-1"
+              className="ml-3 px-3 py-1 bg-white/10 hover:bg-rose-500/80 hover:text-white rounded-full transition-all flex items-center gap-1.5"
             >
-              <StopCircle className="w-3 h-3" /> Stop
+              <StopCircle className="w-3.5 h-3.5" /> Stop
             </button>
           </div>
         )}
 
-        {/* Prompt Suggestion Chips (Localized) */}
-        {messages.length <= 3 && (
-          <div className="px-4 pb-2 flex flex-wrap gap-2">
-            {currentPrompts.map((p, i) => (
-              <button
-                key={i}
-                onClick={() => handleSend(p)}
-                className="text-[11px] bg-white border border-slate-200 px-3 py-1.5 rounded-full hover:border-blue-500 text-slate-700 hover:text-blue-600 transition-all text-left shadow-2xs"
-              >
-                {p}
-              </button>
-            ))}
-          </div>
-        )}
+        {/* Floating Input Area (ChatGPT Style) */}
+        <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-slate-50 via-slate-50/90 to-transparent pt-10 pb-6 px-4 z-20">
+          <div className="max-w-4xl mx-auto w-full relative">
+            
+            {/* Prompt Suggestion Chips (Localized) */}
+            {messages.length <= 3 && (
+              <div className="absolute -top-14 left-0 w-full flex flex-wrap justify-center gap-2 px-2 animate-in fade-in slide-in-from-bottom-4">
+                {currentPrompts.slice(0, 3).map((p, i) => (
+                  <button
+                    key={i}
+                    onClick={() => handleSend(p)}
+                    className="text-[11px] font-medium bg-white/80 backdrop-blur-md border border-slate-200/80 px-4 py-2 rounded-full hover:border-indigo-400 hover:shadow-md hover:shadow-indigo-500/10 text-slate-600 hover:text-indigo-700 transition-all transform hover:-translate-y-0.5"
+                  >
+                    {p}
+                  </button>
+                ))}
+              </div>
+            )}
 
-        {/* Voice Recording Active Toast */}
-        {isListening && (
-          <div className="px-4 pb-1 flex items-center gap-2 text-xs font-semibold text-rose-600 animate-pulse">
-            <span className="w-2.5 h-2.5 rounded-full bg-rose-600 animate-ping" />
-            <span>Listening... Speak clearly in {activeLangObj.native} ({activeLangObj.label})</span>
-          </div>
-        )}
+            {/* Voice Recording Active Toast */}
+            {isListening && (
+              <div className="absolute -top-10 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-rose-100 text-rose-700 rounded-full text-xs font-bold flex items-center gap-2 shadow-sm border border-rose-200 animate-in fade-in zoom-in-95">
+                <span className="w-2 h-2 rounded-full bg-rose-600 animate-ping" />
+                Listening... Speak in {activeLangObj.native}
+              </div>
+            )}
 
-        {/* Input Pill with Voice Dictation (Mic) */}
-        <div className="p-4 border-t border-slate-200 bg-white">
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleSend();
-            }}
-            className={`flex items-center gap-2 bg-slate-50 p-1.5 rounded-2xl border transition-colors ${
-              isListening ? 'border-rose-500 ring-2 ring-rose-200 bg-rose-50/20' : 'border-slate-300 focus-within:border-blue-500'
-            }`}
-          >
-            {/* Microphone Voice Button */}
-            <button
-              type="button"
-              onClick={handleToggleVoiceInput}
-              className={`p-2.5 rounded-xl transition-all shrink-0 ${
-                isListening
-                  ? 'bg-rose-600 text-white shadow-md animate-bounce'
-                  : 'bg-slate-200/80 hover:bg-slate-300 text-slate-700 hover:text-slate-900'
+            {/* Input Box */}
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSend();
+              }}
+              className={`flex items-end gap-2 bg-white p-2 rounded-3xl border shadow-lg transition-all duration-300 ${
+                isListening 
+                  ? 'border-rose-400 shadow-rose-500/20 ring-4 ring-rose-50' 
+                  : 'border-slate-200 shadow-slate-200/50 focus-within:border-indigo-400 focus-within:shadow-indigo-500/20 focus-within:ring-4 focus-within:ring-indigo-50'
               }`}
-              title={
-                isListening
-                  ? 'Click to stop voice listening'
-                  : `Click to speak via microphone in ${activeLangObj.label}`
-              }
             >
-              {isListening ? <MicOff className="w-4 h-4 text-white" /> : <Mic className="w-4 h-4 text-slate-700" />}
-            </button>
+              {/* Microphone Voice Button */}
+              <button
+                type="button"
+                onClick={handleToggleVoiceInput}
+                className={`p-3.5 rounded-full transition-all shrink-0 ml-1 mb-1 ${
+                  isListening
+                    ? 'bg-rose-600 text-white shadow-lg shadow-rose-600/30 animate-pulse'
+                    : 'bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900'
+                }`}
+                title={isListening ? 'Stop listening' : `Speak in ${activeLangObj.label}`}
+              >
+                {isListening ? <MicOff className="w-5 h-5 text-white" /> : <Mic className="w-5 h-5 text-slate-700" />}
+              </button>
 
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder={
-                isListening
-                  ? `Listening to your voice in ${activeLangObj.native}...`
-                  : `Ask in ${activeLangObj.native} (${activeLangObj.label}) or type formula...`
-              }
-              className="flex-1 bg-transparent px-3 py-2 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 outline-none"
-            />
+              <textarea
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSend();
+                  }
+                }}
+                placeholder={
+                  isListening
+                    ? `Listening in ${activeLangObj.native}...`
+                    : `Message Saksham AI in ${activeLangObj.native} or type a statistical query...`
+                }
+                className="flex-1 bg-transparent px-3 py-4 text-sm text-slate-900 placeholder:text-slate-400 outline-none resize-none max-h-32 min-h-[56px] scrollbar-thin scrollbar-thumb-slate-200"
+                rows={1}
+              />
 
-            <button
-              type="submit"
-              disabled={!input.trim() || loading}
-              className="bg-blue-600 hover:bg-blue-700 text-white p-2.5 rounded-xl disabled:opacity-40 shadow-sm transition-all shrink-0"
-              title="Send message"
-            >
-              <Send className="w-4 h-4" />
-            </button>
-          </form>
+              <button
+                type="submit"
+                disabled={!input.trim() || loading}
+                className={`p-3.5 rounded-full transition-all shrink-0 mr-1 mb-1 shadow-sm ${
+                  !input.trim() || loading
+                    ? 'bg-slate-100 text-slate-400'
+                    : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:shadow-md hover:shadow-indigo-500/30 transform hover:scale-105 active:scale-95'
+                }`}
+                title="Send message"
+              >
+                <Send className="w-5 h-5" />
+              </button>
+            </form>
+            <div className="text-center mt-3 text-[10px] text-slate-400 font-medium">
+              Saksham AI can make mistakes. Verify critical statistical facts against official MoSPI & NSSO guidelines.
+            </div>
+          </div>
         </div>
       </div>
     </div>
